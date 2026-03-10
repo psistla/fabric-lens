@@ -7,8 +7,9 @@ Fabric Lens is a standalone React SPA that connects directly to Microsoft Fabric
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-blue.svg)](tsconfig.app.json)
 [![React](https://img.shields.io/badge/React-19-61dafb.svg)](package.json)
+[![Live Demo](https://img.shields.io/badge/demo-live-brightgreen.svg)](https://lively-grass-0fa393e10.2.azurestaticapps.net)
 
-> **Try it now:** Clone the repo, run `npm install && npm run dev`, and explore with sample data — no Azure setup required.
+> **[Live Demo](https://lively-grass-0fa393e10.2.azurestaticapps.net)** — Try it instantly in your browser with sample data, no setup required.
 
 ---
 
