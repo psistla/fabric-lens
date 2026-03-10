@@ -12,6 +12,25 @@ Fabric Lens is a standalone React SPA that connects directly to Microsoft Fabric
 
 ---
 
+## Screenshots
+
+| Dashboard | Workspaces |
+|-----------|------------|
+| ![Dashboard](docs/screenshots/dashboard.png) | ![Workspaces](docs/screenshots/workspaces.png) |
+
+| Capacity Monitor | Security Audit |
+|-----------------|----------------|
+| ![Capacity](docs/screenshots/capacity.png) | ![Security](docs/screenshots/security.png) |
+
+<details>
+<summary>Dark Mode</summary>
+
+![Dashboard Dark Mode](docs/screenshots/dashboard-dark.png)
+
+</details>
+
+---
+
 ## Features
 
 | Feature | Description |
