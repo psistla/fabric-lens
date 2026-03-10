@@ -1,95 +1,72 @@
 # Fabric Lens
 
-**Governance, health intelligence, and inventory management for Microsoft Fabric tenants.**
+**Open-source tenant governance & health intelligence for Microsoft Fabric.**
 
-Fabric Lens is a standalone React single-page application that connects directly to the Microsoft Fabric REST APIs via MSAL.js (Azure AD) authentication. No backend required -- everything runs in your browser.
+Fabric Lens is a standalone React SPA that connects directly to Microsoft Fabric REST APIs via MSAL.js authentication. No backend required — everything runs in your browser. Ships with a fully functional **demo mode** so you can explore immediately without an Azure tenant.
 
----
+[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-strict-blue.svg)](tsconfig.app.json)
+[![React](https://img.shields.io/badge/React-19-61dafb.svg)](package.json)
 
-## Screenshots
-
-| Dashboard | Workspace Explorer |
-|---|---|
-| ![Dashboard](docs/screenshots/dashboard.png) | ![Workspace Explorer](docs/screenshots/workspace-explorer.png) |
-
-| Health Scoring | Capacity Monitor |
-|---|---|
-| ![Health Scoring](docs/screenshots/health-scoring.png) | ![Capacity Monitor](docs/screenshots/capacity-monitor.png) |
+> **Try it now:** Clone the repo, run `npm install && npm run dev`, and explore with sample data — no Azure setup required.
 
 ---
 
 ## Features
 
-- **Dashboard** -- Tenant-wide overview with key metrics, artifact distribution charts, and capacity utilization at a glance.
-- **Workspace Explorer** -- Browse, search, and inspect every workspace in your tenant. View items, role assignments, and configuration details.
-- **Health Scoring** -- Automated 100-point health assessment for each workspace based on nine governance checks (descriptions, capacity assignment, Git integration, naming conventions, and more).
-- **Capacity Monitor** -- Track capacity SKUs, regions, and states. Visualize utilization over time.
-- **Security Audit** -- Review workspace role assignments and access patterns across the tenant. Requires Fabric Admin role.
-- **Export** -- Export workspace inventories, health reports, and audit data for offline analysis.
-- **Dark Mode** -- Full dark mode support via Tailwind CSS `dark:` variants. Toggle between light and dark themes.
-- **Demo Mode** -- Explore the full UI with synthetic data -- no Azure AD credentials required.
-
----
-
-## Prerequisites
-
-- **Node.js** 18 or later
-- **npm** 9 or later
-- **Azure AD App Registration** (required only for live data; demo mode works without it)
+| Feature | Description |
+|---------|-------------|
+| **Dashboard** | Tenant-wide overview with workspace/item/capacity stats, artifact distribution charts, governance issues, and average health score |
+| **Workspace Explorer** | Browse, search, and drill into every workspace. View items, health grades, capacity assignments, OneLake endpoints, and Git status |
+| **Health Scoring** | Automated 100-point governance assessment per workspace across 9 checks — description, capacity, domain, Git, naming, staleness, data layer, item count, and identity |
+| **Capacity Monitor** | Track SKUs, regions, and states with tier-based badges. Cost calculator with **live Azure pricing** from the Azure Retail Prices API |
+| **Security Audit** | Cross-workspace role mapping with search, role filter chips, sortable columns, and pagination. Flags over-permissioned users (Admin on 5+ workspaces) |
+| **CSV Export** | Export workspace inventories and security audit data for offline analysis |
+| **Dark Mode** | Full dark/light theme toggle |
+| **Demo Mode** | Realistic mock data — 3 capacities, 15 workspaces, 54+ items, 6 users — no Azure credentials needed |
 
 ---
 
 ## Quick Start
 
 ```bash
-# 1. Clone the repository
-git clone https://github.com/your-org/fabric-lens.git
+# Clone and install
+git clone https://github.com/psistla/fabric-lens.git
 cd fabric-lens
-
-# 2. Install dependencies
 npm install
 
-# 3. Start the development server
+# Start in demo mode (no configuration needed)
 npm run dev
 ```
 
-The app opens at [http://localhost:5173](http://localhost:5173).
-
-> **Demo Mode:** Launch the app without configuring any environment variables to explore the full UI with synthetic data. No Azure AD credentials are needed.
+Open [http://localhost:5173](http://localhost:5173). The app launches in **demo mode** automatically with sample data.
 
 ---
 
-## Azure AD Setup
-
-To connect Fabric Lens to a live Microsoft Fabric tenant, follow these steps:
+## Connecting to a Live Fabric Tenant
 
 ### 1. Create an App Registration
 
-1. Go to the [Azure Portal](https://portal.azure.com) and navigate to **Azure Active Directory > App registrations > New registration**.
-2. Set the **Name** to `Fabric Lens` (or any name you prefer).
-3. Under **Supported account types**, select the option that matches your tenant strategy (single-tenant or multi-tenant).
-4. Set the **Redirect URI** to `Single-page application (SPA)` with the value `http://localhost:5173`.
-5. Click **Register**.
+1. Go to the [Azure Portal](https://portal.azure.com) > **Microsoft Entra ID** > **App registrations** > **New registration**
+2. Name: `Fabric Lens` (or any name)
+3. Supported account types: match your tenant strategy (single or multi-tenant)
+4. Redirect URI: select **Single-page application (SPA)** and enter `http://localhost:5173`
+5. Click **Register**
 
 ### 2. Configure API Permissions
 
-1. In your new App Registration, go to **API permissions > Add a permission**.
-2. Select **Power BI Service**.
-3. Choose **Delegated permissions** and add the following scopes:
-   - `Workspace.Read.All`
-   - `Workspace.ReadWrite.All` (if write operations are needed)
-   - `Tenant.Read.All` (for admin APIs)
-   - `Capacity.Read.All`
-4. Click **Grant admin consent** (requires Global Admin or Privileged Role Administrator).
+In your App Registration > **API permissions** > **Add a permission**:
 
-### 3. Note Your IDs
+| API | Permission | Type |
+|-----|-----------|------|
+| Power BI Service | `Workspace.Read.All` | Delegated |
+| Power BI Service | `Tenant.Read.All` | Delegated |
+| Power BI Service | `Capacity.Read.All` | Delegated |
+| Azure Service Management | `user_impersonation` | Delegated |
 
-From the App Registration **Overview** page, copy:
+Click **Grant admin consent** (requires admin privileges).
 
-- **Application (client) ID**
-- **Directory (tenant) ID**
-
-### 4. Configure Environment Variables
+### 3. Configure Environment
 
 Create a `.env.local` file in the project root:
 
@@ -101,62 +78,56 @@ VITE_FABRIC_API_BASE=https://api.fabric.microsoft.com/v1
 VITE_ARM_API_BASE=https://management.azure.com
 ```
 
-### 5. Run with Live Data
+### 4. Run with Live Data
 
 ```bash
 npm run dev
 ```
 
-Log in with an Azure AD account that has access to your Fabric tenant. Users with the **Fabric Admin** role will see additional admin-only features (tenant-wide workspace listing, security audit).
+Sign in with an Azure AD account that has access to your Fabric tenant. Users with the **Fabric Admin** role will see additional features (tenant-wide workspace listing, security audit).
 
 ---
 
 ## Architecture
 
 ```
-+------------------------------------------------------------------+
-|                        Browser SPA                                |
-|                                                                   |
-|  +------------------+    +------------------+    +--------------+ |
-|  |   React Router   |    |  Zustand Stores  |    |   MSAL.js    | |
-|  |                  |    |                  |    |              | |
-|  |  /dashboard      |    |  workspaceStore  |    |  login()     | |
-|  |  /workspaces     |<-->|  capacityStore   |    |  acquireToken| |
-|  |  /capacity       |    |  scanStore       |    |              | |
-|  |  /security       |    |  uiStore         |    +-------+------+ |
-|  |  /settings       |    +--------+---------+            |        |
-|  +------------------+             |                      |        |
-|                                   v                      v        |
-|                          +--------+---------+    +-------+------+ |
-|                          |   fabricClient   |<---| Token inject | |
-|                          +--------+---------+    +--------------+ |
-+---------------------------|-------+-----|-------------------------+
-                            |       |     |
-                            v       v     v
-                     +------+-+ +---+--+ ++-------+
-                     | Fabric | | Admin| |  ARM   |
-                     | Core   | | API  | |  API   |
-                     | API    | |      | |        |
-                     +--------+ +------+ +--------+
+┌──────────────────────────────────────────────────────────────┐
+│                     Browser SPA (React 19)                   │
+│                                                              │
+│  ┌─────────────┐  ┌──────────────┐  ┌────────────────────┐  │
+│  │ React Router │  │Zustand Stores│  │     MSAL.js 5      │  │
+│  │              │  │              │  │                    │  │
+│  │ /dashboard   │  │workspaceStore│  │ login() / logout() │  │
+│  │ /workspaces  │◄►│capacityStore │  │ acquireTokenSilent │  │
+│  │ /capacity    │  │securityStore │  │                    │  │
+│  │ /security    │  │uiStore       │  └─────────┬──────────┘  │
+│  │ /settings    │  └──────┬───────┘            │             │
+│  └─────────────┘          │                    │             │
+│                           ▼                    ▼             │
+│                  ┌────────┴────────┐  ┌────────┴──────────┐  │
+│                  │  fabricClient   │◄─│  Token injection   │  │
+│                  └───┬────┬───┬───┘  └────────────────────┘  │
+│                      │    │   │                               │
+│  ┌───────────────────┼────┼───┼─────────────────────────┐    │
+│  │   Demo Mode       │    │   │   (mock data layer)     │    │
+│  │   isDemoMode ──►  │    │   │   3 capacities,         │    │
+│  │   bypass auth     │    │   │   15 workspaces,        │    │
+│  │   serve mocks     │    │   │   54+ items, 6 users    │    │
+│  └───────────────────┼────┼───┼─────────────────────────┘    │
+└──────────────────────┼────┼───┼──────────────────────────────┘
+                       │    │   │
+                       ▼    ▼   ▼
+          ┌────────┐ ┌─────┐ ┌─────┐ ┌──────────────────┐
+          │ Fabric │ │Admin│ │ ARM │ │ Azure Retail      │
+          │Core API│ │ API │ │ API │ │ Prices API        │
+          │        │ │     │ │     │ │ (public, no auth) │
+          └────────┘ └─────┘ └─────┘ └──────────────────┘
 ```
 
----
-
-## Key Directories
-
-| Directory | Purpose |
-|---|---|
-| `src/auth/` | MSAL configuration, AuthProvider, useAuth hook, ProtectedRoute |
-| `src/api/` | fabricClient (base HTTP), per-resource API modules, shared types |
-| `src/api/types/` | TypeScript interfaces for all API responses |
-| `src/store/` | Zustand stores (workspace, capacity, scan, UI) |
-| `src/components/layout/` | AppShell, Sidebar, Header |
-| `src/components/workspace/` | WorkspaceList, WorkspaceDetail, WorkspaceHealth |
-| `src/components/shared/` | DataTable, StatCard, SearchBar, EmptyState, Badge variants |
-| `src/components/charts/` | ArtifactDistribution, CapacityTimeline, HealthDistribution |
-| `src/pages/` | DashboardPage, WorkspacesPage, CapacityPage, SecurityPage, SettingsPage |
-| `src/hooks/` | useFabricApi, usePagination, useDebounce |
-| `src/utils/` | healthScore, formatters, constants |
+**Key design decisions:**
+- **No backend** — pure SPA with delegated permissions. Simplest deployment (static hosting), no server-side secrets
+- **MSAL popup auth** — preserves app state, falls back to redirect if popups blocked
+- **Live pricing** — Azure Retail Prices API (public, no auth) with 1-hour cache and graceful fallback
 
 ---
 
@@ -165,43 +136,67 @@ Log in with an Azure AD account that has access to your Fabric tenant. Users wit
 Each workspace is scored out of **100 points** across nine governance checks:
 
 | Check | Points | Description |
-|---|---|---|
+|-------|--------|-------------|
 | Has description | 10 | Workspace has a non-empty description |
 | Assigned to capacity | 15 | Workspace is linked to a Fabric capacity |
 | Assigned to domain | 10 | Workspace belongs to a defined domain |
 | Git integration | 15 | Workspace is connected to a Git repository |
-| Naming convention | 10 | Workspace name follows the configured naming pattern |
-| No stale items (90 days) | 10 | All items have been modified within the last 90 days |
-| Data layer present | 10 | Workspace contains at least one Lakehouse or Warehouse |
-| Reasonable item count | 10 | Workspace contains fewer than 100 items |
-| Workspace identity (SPN) | 10 | Workspace has a service principal identity configured |
+| Naming convention | 10 | Name follows the configured pattern |
+| No stale items | 10 | All items modified within 90 days |
+| Data layer present | 10 | Contains at least one Lakehouse or Warehouse |
+| Reasonable item count | 10 | Fewer than 100 items |
+| Workspace identity | 10 | Service principal identity configured |
+
+**Grades:** A (90+) · B (80+) · C (65+) · D (50+) · F (<50)
+
+---
+
+## Project Structure
+
+```
+src/
+  auth/           MSAL config, AuthProvider, useAuth, ProtectedRoute
+  api/            fabricClient, resource modules, azurePricing, demo, types/
+  data/           SKU specifications and derived pricing (skuSpecs.ts)
+  store/          Zustand stores (workspace, capacity, security, ui)
+  components/
+    layout/       AppShell, Sidebar, Header
+    workspace/    GovernanceIssues, HealthBadge, HealthDetail
+    shared/       DataTable, StatCard, SearchBar, EmptyState, ExportButton, ...
+    charts/       ItemsByTypeChart, WorkspacesByCapacityChart
+  pages/          Dashboard, Workspaces, WorkspaceDetail, Capacity, Security, Settings
+  utils/          healthScore, export (CSV), constants (single source of truth)
+```
 
 ---
 
 ## Scripts
 
 | Command | Description |
-|---|---|
-| `npm run dev` | Start the Vite dev server at `http://localhost:5173` |
-| `npm run build` | Production build to `dist/` |
-| `npm run preview` | Preview the production build locally |
-| `npm run lint` | Run ESLint |
-| `npm run type-check` | Run `tsc --noEmit` for type checking |
-| `npm run test` | Run Vitest test suite |
+|---------|-------------|
+| `npm run dev` | Dev server at `http://localhost:5173` |
+| `npm run build` | `tsc -b && vite build` — strict TypeScript + production build |
+| `npm run type-check` | `tsc --noEmit` — type checking only |
+| `npm run lint` | ESLint |
+| `npm run test` | Vitest (single run) |
+| `npm run test:watch` | Vitest (watch mode) |
 
 ---
 
 ## Tech Stack
 
-- **React 18** with TypeScript (strict mode)
-- **Vite** for build and development
-- **Tailwind CSS** + **shadcn/ui** for styling and components
-- **Zustand** for state management
-- **Recharts** for data visualization
-- **@azure/msal-browser** + **@azure/msal-react** for Azure AD authentication
-- **React Router v7** for client-side routing
-- **lucide-react** for icons
-- **Vitest** + **React Testing Library** for testing
+| | Technology |
+|--|-----------|
+| Framework | React 19 + TypeScript (strict) |
+| Build | Vite 7 |
+| Styling | Tailwind CSS v4 (`@tailwindcss/vite`) |
+| UI Primitives | Radix UI + class-variance-authority + tailwind-merge |
+| State | Zustand 5 |
+| Charts | Recharts 3 |
+| Auth | @azure/msal-browser 5 + @azure/msal-react 5 |
+| Router | React Router v7 |
+| Icons | lucide-react |
+| Testing | Vitest + React Testing Library |
 
 ---
 
@@ -213,7 +208,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, coding standards, 
 
 ## License
 
-MIT
+[MIT](LICENSE)
 
 ---
 
