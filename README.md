@@ -226,9 +226,23 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, coding standards, 
 
 ---
 
-## License
+## ⭐ Star This Repo
 
-[MIT](LICENSE)
+If fabric-lens saves you time governing your Fabric tenant, consider starring the repo. It helps others discover the tool and keeps the project visible.
+
+---
+
+## 📄 License
+
+MIT — use it, fork it, ship it.
+
+---
+
+## Built By
+
+**Prasanth Sistla** — Senior Architect Consultant
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-prasanthsistla-blue?logo=linkedin)](https://www.linkedin.com/in/prasanthsistla/)
 
 ---
 
