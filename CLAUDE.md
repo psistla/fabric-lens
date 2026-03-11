@@ -105,11 +105,21 @@ When adding new values, add them to constants.ts and import — do not inline.
   }
   ```
 
-### Styling
+### Styling & Design System
+- **Design guide:** See `DESIGN_GUIDE.md` for the full look & feel specification
+- **Design philosophy:** Precise. Dense. Trustworthy. (instrument panel aesthetic)
 - Tailwind v4 utility classes — no custom CSS unless necessary
 - Dark mode via Tailwind `dark:` prefix (class-based strategy)
 - `@custom-variant dark (&:where(.dark, .dark *));` in CSS entry point
-- Design goal: professional, data-dense (Azure Portal meets Linear)
+- Semantic color tokens defined as CSS custom properties in `src/index.css` (see DESIGN_GUIDE.md § Color System)
+- **Color palette:** Slate-based with blue-tinted dark mode (navy `#0B1120`, not pure black)
+- **Brand blue:** `#3B6CE7` (actions, links, focus rings, active states)
+- **Health grades:** A=emerald, B=blue, C=amber, D=orange, F=red (consistent across all components)
+- **Item types:** Each Fabric item type has a unique color (Lakehouse=blue, Notebook=violet, Pipeline=emerald, etc.)
+- **Typography:** Geist Sans + Geist Mono planned; currently system fonts via Tailwind defaults
+- **Icons:** Lucide React — 20px for nav, 16px inline, never mix filled/outlined on same surface
+- **Motion:** Functional only. 120ms hover, 200ms transitions, 300ms layout shifts. Ease-out only. No bounce/overshoot.
+- **Copy tone:** Professional, precise, quietly confident. Empty states guide, errors are actionable, health scores are opportunities not report cards
 
 ### File Naming
 - Components: PascalCase (`WorkspaceList.tsx`)
@@ -225,6 +235,7 @@ npm run test:watch   # Vitest (watch mode)
 7. Page → `src/pages/`
 8. Route → `App.tsx`
 9. Demo data → `src/api/demo.ts` (add mock data for demo mode)
+10. **Design audit** → Verify against `DESIGN_GUIDE.md` checklist (colors, spacing, dark mode, copy tone)
 
 ## Auth Notes
 - MSAL uses popup login (falls back to redirect if popups blocked)
