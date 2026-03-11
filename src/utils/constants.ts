@@ -51,13 +51,13 @@ export const ROLE_COLORS: Record<string, string> = {
 /** Default fallback color for unknown chart categories. */
 export const CHART_FALLBACK_COLOR = '#64748b';
 
-/** Shared Recharts tooltip style object (dark themed). */
+/** Shared Recharts tooltip style object (dark themed, uses design tokens). */
 export const CHART_TOOLTIP_STYLE: CSSProperties = {
-  backgroundColor: 'var(--color-slate-900, #0f172a)',
-  border: 'none',
-  borderRadius: '6px',
+  backgroundColor: 'var(--surface-inverse, #111827)',
+  border: '1px solid var(--border-default, #1E293B)',
+  borderRadius: 'var(--radius-md, 6px)',
   fontSize: '12px',
-  color: '#e2e8f0',
+  color: 'var(--text-inverse, #F9FAFB)',
 };
 
 // -- Health scoring --

@@ -24,7 +24,7 @@ const typeColors: Partial<Record<FabricItemType, string>> = {
 };
 
 const defaultColors =
-  'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300';
+  'bg-[var(--surface-secondary)] text-[var(--text-secondary)]';
 
 export function ItemTypeBadge({ type }: Props) {
   const colors = typeColors[type] ?? defaultColors;

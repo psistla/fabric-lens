@@ -66,27 +66,27 @@ export function DataTable<T>({
   function renderSortIcon(col: Column<T>) {
     if (!col.sortable) return null;
     if (sort.key !== col.key || !sort.direction) {
-      return <ArrowUpDown className="h-3 w-3 text-slate-400" />;
+      return <ArrowUpDown className="h-3 w-3 text-[var(--text-tertiary)]" />;
     }
     return sort.direction === 'asc' ? (
-      <ArrowUp className="h-3 w-3 text-blue-600" />
+      <ArrowUp className="h-3 w-3 text-[var(--brand-primary)]" />
     ) : (
-      <ArrowDown className="h-3 w-3 text-blue-600" />
+      <ArrowDown className="h-3 w-3 text-[var(--brand-primary)]" />
     );
   }
 
   return (
-    <div className="overflow-hidden rounded-lg border border-slate-200 dark:border-slate-800">
+    <div className="overflow-hidden rounded-lg border border-[var(--border-default)]">
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-900/50">
+            <tr className="border-b border-[var(--border-default)] bg-[var(--surface-secondary)]">
               {columns.map((col) => (
                 <th
                   key={String(col.key)}
-                  className={`px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400 ${
+                  className={`px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[var(--text-secondary)] ${
                     col.sortable
-                      ? 'cursor-pointer select-none hover:text-slate-700 dark:hover:text-slate-200'
+                      ? 'cursor-pointer select-none hover:text-[var(--text-primary)]'
                       : ''
                   }`}
                   onClick={col.sortable ? () => handleSort(col.key) : undefined}
@@ -99,13 +99,13 @@ export function DataTable<T>({
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-200 bg-white dark:divide-slate-800 dark:bg-slate-950">
+          <tbody className="divide-y divide-[var(--border-default)] bg-[var(--surface-primary)]">
             {loading &&
               Array.from({ length: 5 }).map((_, i) => (
                 <tr key={i}>
                   {columns.map((col) => (
                     <td key={String(col.key)} className="px-4 py-3">
-                      <div className="h-4 w-3/4 animate-pulse rounded bg-slate-200 dark:bg-slate-800" />
+                      <div className="h-4 w-3/4 animate-pulse rounded bg-[var(--surface-secondary)]" />
                     </td>
                   ))}
                 </tr>
@@ -115,7 +115,7 @@ export function DataTable<T>({
               <tr>
                 <td
                   colSpan={columns.length}
-                  className="px-4 py-12 text-center text-slate-500 dark:text-slate-400"
+                  className="px-4 py-12 text-center text-[var(--text-secondary)]"
                 >
                   {emptyMessage}
                 </td>
@@ -129,14 +129,14 @@ export function DataTable<T>({
                   onClick={onRowClick ? () => onRowClick(row) : undefined}
                   className={
                     onRowClick
-                      ? 'cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-900/50'
+                      ? 'cursor-pointer hover:bg-[var(--surface-tertiary)] transition-colors duration-[120ms]'
                       : ''
                   }
                 >
                   {columns.map((col) => (
                     <td
                       key={String(col.key)}
-                      className="px-4 py-3 text-slate-700 dark:text-slate-300"
+                      className="px-4 py-3 text-[var(--text-secondary)]"
                     >
                       {col.render
                         ? col.render(row[col.key], row)
@@ -151,8 +151,8 @@ export function DataTable<T>({
 
       {/* Footer with row count */}
       {!loading && (
-        <div className="border-t border-slate-200 bg-slate-50 px-4 py-2 dark:border-slate-800 dark:bg-slate-900/50">
-          <span className="text-xs text-slate-500 dark:text-slate-400">
+        <div className="border-t border-[var(--border-default)] bg-[var(--surface-secondary)] px-4 py-2">
+          <span className="text-xs text-[var(--text-secondary)]">
             {sortedData.length} {sortedData.length === 1 ? 'row' : 'rows'}
           </span>
         </div>

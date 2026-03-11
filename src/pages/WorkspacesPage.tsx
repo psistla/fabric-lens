@@ -53,7 +53,7 @@ export function WorkspacesPage() {
         header: 'Name',
         sortable: true,
         render: (_val, row) => (
-          <span className="font-medium text-slate-900 dark:text-slate-100">
+          <span className="font-medium text-[var(--text-primary)]">
             {row.displayName}
           </span>
         ),
@@ -63,7 +63,7 @@ export function WorkspacesPage() {
         header: 'Type',
         sortable: true,
         render: (_val, row) => (
-          <span className="inline-flex rounded-md bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+          <span className="inline-flex rounded-md bg-[var(--surface-secondary)] px-2 py-0.5 text-xs font-medium text-[var(--text-secondary)]">
             {row.type}
           </span>
         ),
@@ -83,7 +83,7 @@ export function WorkspacesPage() {
           }
           const cap = getCapacityById(row.capacityId);
           return (
-            <span className="text-slate-700 dark:text-slate-300">
+            <span className="text-[var(--text-secondary)]">
               {cap?.displayName ?? row.capacityId}
             </span>
           );
@@ -94,7 +94,7 @@ export function WorkspacesPage() {
         header: 'Region',
         sortable: true,
         render: (_val, row) => (
-          <span className="text-slate-500 dark:text-slate-400">
+          <span className="text-[var(--text-secondary)]">
             {row.capacityRegion ?? '—'}
           </span>
         ),
@@ -113,10 +113,10 @@ export function WorkspacesPage() {
     <div className="space-y-4 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-100">
+          <h1 className="text-2xl font-semibold tracking-[-0.02em] text-[var(--text-primary)]">
             Workspaces
           </h1>
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+          <p className="mt-1 text-sm text-[var(--text-secondary)]">
             Browse and manage tenant workspaces.
           </p>
         </div>
@@ -151,7 +151,7 @@ export function WorkspacesPage() {
             placeholder="Search workspaces..."
           />
         </div>
-        <span className="text-xs text-slate-500 dark:text-slate-400">
+        <span className="text-xs text-[var(--text-secondary)]">
           Showing {filtered.length} of {workspaces.length} workspaces
         </span>
       </div>

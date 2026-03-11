@@ -15,6 +15,7 @@ import { WorkspacesByCapacityChart } from '@/components/charts/WorkspacesByCapac
 import { GovernanceIssues } from '@/components/workspace/GovernanceIssues';
 import { calculateWorkspaceHealth } from '@/utils/healthScore';
 import { ExportButton } from '@/components/shared/ExportButton';
+import { HealthGrid } from '@/components/dashboard/HealthGrid';
 import { exportToJSON } from '@/utils/export';
 
 export function DashboardPage() {
@@ -172,15 +173,15 @@ export function DashboardPage() {
       <div className="space-y-6 p-6">
         <div className="flex items-center justify-between">
           <div>
-            <div className="h-7 w-40 animate-pulse rounded bg-slate-200 dark:bg-slate-800" />
-            <div className="mt-2 h-4 w-64 animate-pulse rounded bg-slate-200 dark:bg-slate-800" />
+            <div className="h-7 w-40 animate-pulse rounded bg-[var(--surface-secondary)]" />
+            <div className="mt-2 h-4 w-64 animate-pulse rounded bg-[var(--surface-secondary)]" />
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           {[1, 2, 3, 4].map((i) => (
             <div
               key={i}
-              className="h-[104px] animate-pulse rounded-lg bg-slate-200 dark:bg-slate-800"
+              className="h-[104px] animate-pulse rounded-lg bg-[var(--surface-secondary)]"
             />
           ))}
         </div>
@@ -188,7 +189,7 @@ export function DashboardPage() {
           {[1, 2].map((i) => (
             <div
               key={i}
-              className="h-80 animate-pulse rounded-lg bg-slate-200 dark:bg-slate-800"
+              className="h-80 animate-pulse rounded-lg bg-[var(--surface-secondary)]"
             />
           ))}
         </div>
@@ -201,16 +202,16 @@ export function DashboardPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-100">
+          <h1 className="text-2xl font-semibold tracking-[-0.02em] text-[var(--text-primary)]">
             Dashboard
           </h1>
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+          <p className="mt-1 text-sm text-[var(--text-secondary)]">
             Tenant overview and health summary.
           </p>
         </div>
         <div className="flex items-center gap-3">
           {refreshLabel && (
-            <span className="text-xs text-slate-400 dark:text-slate-500">
+            <span className="text-xs text-[var(--text-tertiary)]">
               {refreshLabel}
             </span>
           )}
@@ -220,7 +221,7 @@ export function DashboardPage() {
           <button
             onClick={() => void loadData()}
             disabled={loading}
-            className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:opacity-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+            className="inline-flex items-center gap-1.5 rounded-md border border-[var(--border-default)] bg-[var(--surface-primary)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:bg-[var(--surface-tertiary)] disabled:opacity-50"
           >
             <RefreshCw
               className={`h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`}
@@ -256,19 +257,27 @@ export function DashboardPage() {
 
       {/* Charts row */}
       <div className="grid gap-6 lg:grid-cols-2">
-        <div className="rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
-          <h2 className="mb-2 text-sm font-medium text-slate-900 dark:text-slate-100">
+        <div className="rounded-lg border border-[var(--border-default)] bg-[var(--surface-primary)] p-4">
+          <h2 className="mb-2 text-sm font-medium text-[var(--text-primary)]">
             Items by Type
           </h2>
           <ItemsByTypeChart data={itemsByType} />
         </div>
-        <div className="rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
-          <h2 className="mb-2 text-sm font-medium text-slate-900 dark:text-slate-100">
+        <div className="rounded-lg border border-[var(--border-default)] bg-[var(--surface-primary)] p-4">
+          <h2 className="mb-2 text-sm font-medium text-[var(--text-primary)]">
             Workspaces by Capacity
           </h2>
           <WorkspacesByCapacityChart data={workspacesByCapacity} />
         </div>
       </div>
+
+      {/* Health Grid */}
+      {workspaces.length > 0 && (
+        <HealthGrid
+          workspaces={workspaces}
+          allItemsByWorkspace={allItemsByWorkspace}
+        />
+      )}
 
       {/* Governance Issues */}
       <GovernanceIssues

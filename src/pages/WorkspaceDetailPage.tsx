@@ -23,7 +23,7 @@ import type { Item } from '@/api/types/item';
 function CopyText({ text }: { text: string }) {
   return (
     <span className="group inline-flex items-center gap-1.5">
-      <code className="rounded bg-slate-100 px-2 py-0.5 text-xs text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+      <code className="rounded bg-[var(--surface-secondary)] px-2 py-0.5 text-xs text-[var(--text-secondary)]">
         {text}
       </code>
       <button
@@ -31,7 +31,7 @@ function CopyText({ text }: { text: string }) {
         title="Copy"
         className="opacity-0 transition-opacity group-hover:opacity-100"
       >
-        <Copy className="h-3 w-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300" />
+        <Copy className="h-3 w-3 text-[var(--text-tertiary)] hover:text-[var(--text-primary)]" />
       </button>
     </span>
   );
@@ -89,7 +89,7 @@ export function WorkspaceDetailPage() {
       header: 'Name',
       sortable: true,
       render: (_val, row) => (
-        <span className="font-medium text-slate-900 dark:text-slate-100">
+        <span className="font-medium text-[var(--text-primary)]">
           {row.displayName}
         </span>
       ),
@@ -105,7 +105,7 @@ export function WorkspaceDetailPage() {
       header: 'Description',
       sortable: false,
       render: (_val, row) => (
-        <span className="text-slate-500 dark:text-slate-400">
+        <span className="text-[var(--text-secondary)]">
           {row.description || '—'}
         </span>
       ),
@@ -117,7 +117,7 @@ export function WorkspaceDetailPage() {
       <div className="p-6">
         <button
           onClick={() => void navigate('/workspaces')}
-          className="mb-4 flex items-center gap-1 text-sm text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+          className="mb-4 flex items-center gap-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Workspaces
@@ -133,13 +133,13 @@ export function WorkspaceDetailPage() {
   if (loading || !workspace) {
     return (
       <div className="space-y-4 p-6">
-        <div className="h-6 w-48 animate-pulse rounded bg-slate-200 dark:bg-slate-800" />
-        <div className="h-4 w-96 animate-pulse rounded bg-slate-200 dark:bg-slate-800" />
+        <div className="h-6 w-48 animate-pulse rounded bg-[var(--surface-secondary)]" />
+        <div className="h-4 w-96 animate-pulse rounded bg-[var(--surface-secondary)]" />
         <div className="grid grid-cols-3 gap-4">
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="h-24 animate-pulse rounded-lg bg-slate-200 dark:bg-slate-800"
+              className="h-24 animate-pulse rounded-lg bg-[var(--surface-secondary)]"
             />
           ))}
         </div>
@@ -152,7 +152,7 @@ export function WorkspaceDetailPage() {
       {/* Back button */}
       <button
         onClick={() => void navigate('/workspaces')}
-        className="flex items-center gap-1 text-sm text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+        className="flex items-center gap-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to Workspaces
@@ -161,7 +161,7 @@ export function WorkspaceDetailPage() {
       {/* Header */}
       <div>
         <div className="flex items-center gap-2">
-          <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-100">
+          <h1 className="text-2xl font-semibold tracking-[-0.02em] text-[var(--text-primary)]">
             {workspace.displayName}
           </h1>
           {healthScore && (
@@ -169,12 +169,12 @@ export function WorkspaceDetailPage() {
           )}
         </div>
         {workspace.description && (
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+          <p className="mt-1 text-sm text-[var(--text-secondary)]">
             {workspace.description}
           </p>
         )}
         <div className="mt-3 flex flex-wrap items-center gap-2">
-          <span className="inline-flex rounded-md bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+          <span className="inline-flex rounded-md bg-[var(--surface-secondary)] px-2 py-0.5 text-xs font-medium text-[var(--text-secondary)]">
             {workspace.type}
           </span>
           <StateBadge state={workspace.state} />
@@ -184,7 +184,7 @@ export function WorkspaceDetailPage() {
             </span>
           )}
           {workspace.capacityRegion && (
-            <span className="text-xs text-slate-500 dark:text-slate-400">
+            <span className="text-xs text-[var(--text-secondary)]">
               {workspace.capacityRegion}
             </span>
           )}
@@ -225,19 +225,19 @@ export function WorkspaceDetailPage() {
 
       {/* OneLake Endpoints */}
       {workspace.oneLakeEndpoints && (
-        <div className="rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
-          <h2 className="text-sm font-medium text-slate-900 dark:text-slate-100">
+        <div className="rounded-lg border border-[var(--border-default)] bg-[var(--surface-primary)] p-4">
+          <h2 className="text-sm font-medium text-[var(--text-primary)]">
             OneLake Endpoints
           </h2>
           <div className="mt-3 space-y-2">
             <div className="flex items-center gap-2">
-              <span className="w-10 text-xs text-slate-500 dark:text-slate-400">
+              <span className="w-10 text-xs text-[var(--text-secondary)]">
                 Blob
               </span>
               <CopyText text={workspace.oneLakeEndpoints.blobEndpoint} />
             </div>
             <div className="flex items-center gap-2">
-              <span className="w-10 text-xs text-slate-500 dark:text-slate-400">
+              <span className="w-10 text-xs text-[var(--text-secondary)]">
                 DFS
               </span>
               <CopyText text={workspace.oneLakeEndpoints.dfsEndpoint} />
@@ -248,19 +248,19 @@ export function WorkspaceDetailPage() {
 
       {/* Workspace Identity */}
       {workspace.workspaceIdentity ? (
-        <div className="rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
-          <h2 className="text-sm font-medium text-slate-900 dark:text-slate-100">
+        <div className="rounded-lg border border-[var(--border-default)] bg-[var(--surface-primary)] p-4">
+          <h2 className="text-sm font-medium text-[var(--text-primary)]">
             Workspace Identity
           </h2>
           <div className="mt-3 space-y-2">
             <div className="flex items-center gap-2">
-              <span className="w-24 text-xs text-slate-500 dark:text-slate-400">
+              <span className="w-24 text-xs text-[var(--text-secondary)]">
                 App ID
               </span>
               <CopyText text={workspace.workspaceIdentity.applicationId} />
             </div>
             <div className="flex items-center gap-2">
-              <span className="w-24 text-xs text-slate-500 dark:text-slate-400">
+              <span className="w-24 text-xs text-[var(--text-secondary)]">
                 SPN ID
               </span>
               <CopyText text={workspace.workspaceIdentity.servicePrincipalId} />
@@ -276,20 +276,20 @@ export function WorkspaceDetailPage() {
 
       {/* Type breakdown */}
       {typeCounts.length > 0 && (
-        <div className="rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
-          <h2 className="text-sm font-medium text-slate-900 dark:text-slate-100">
+        <div className="rounded-lg border border-[var(--border-default)] bg-[var(--surface-primary)] p-4">
+          <h2 className="text-sm font-medium text-[var(--text-primary)]">
             Items by Type
           </h2>
           <div className="mt-3 flex flex-wrap gap-3">
             {typeCounts.map(([type, count]) => (
               <div
                 key={type}
-                className="flex items-center gap-2 rounded-md border border-slate-200 px-3 py-1.5 dark:border-slate-700"
+                className="flex items-center gap-2 rounded-md border border-[var(--border-default)] px-3 py-1.5"
               >
-                <span className="text-sm text-slate-700 dark:text-slate-300">
+                <span className="text-sm text-[var(--text-secondary)]">
                   {type}
                 </span>
-                <span className="rounded-full bg-slate-100 px-1.5 py-0.5 text-xs font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-400">
+                <span className="rounded-full bg-[var(--surface-secondary)] px-1.5 py-0.5 text-xs font-medium text-[var(--text-secondary)]">
                   {count}
                 </span>
               </div>
@@ -300,7 +300,7 @@ export function WorkspaceDetailPage() {
 
       {/* Items table */}
       <div>
-        <h2 className="mb-3 text-sm font-medium text-slate-900 dark:text-slate-100">
+        <h2 className="mb-3 text-sm font-medium text-[var(--text-primary)]">
           Items ({items.length})
         </h2>
         <DataTable

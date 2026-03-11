@@ -20,7 +20,7 @@ export function HealthDetail({ score, defaultExpanded = false }: Props) {
   const barColor = gradeBarColors[score.grade];
 
   return (
-    <div className="rounded-lg border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
+    <div className="rounded-lg border border-[var(--border-default)] bg-[var(--surface-primary)]">
       {/* Header — always visible */}
       <button
         onClick={() => setExpanded(!expanded)}
@@ -28,14 +28,14 @@ export function HealthDetail({ score, defaultExpanded = false }: Props) {
       >
         <div className="flex items-center gap-3">
           {expanded ? (
-            <ChevronDown className="h-4 w-4 text-slate-400" />
+            <ChevronDown className="h-4 w-4 text-[var(--text-tertiary)]" />
           ) : (
-            <ChevronRight className="h-4 w-4 text-slate-400" />
+            <ChevronRight className="h-4 w-4 text-[var(--text-tertiary)]" />
           )}
-          <span className="text-sm font-medium text-slate-900 dark:text-slate-100">
+          <span className="text-sm font-medium text-[var(--text-primary)]">
             Health Score
           </span>
-          <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+          <span className="text-sm font-semibold text-[var(--text-secondary)]">
             {score.percentage}%
           </span>
           <span
@@ -54,14 +54,14 @@ export function HealthDetail({ score, defaultExpanded = false }: Props) {
             {score.grade}
           </span>
         </div>
-        <span className="text-xs text-slate-500 dark:text-slate-400">
+        <span className="text-xs text-[var(--text-secondary)]">
           {score.total} / {score.maxTotal} pts
         </span>
       </button>
 
       {/* Progress bar */}
       <div className="px-4 pb-3">
-        <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+        <div className="h-1.5 w-full overflow-hidden rounded-full bg-[var(--surface-secondary)]">
           <div
             className={`h-full rounded-full transition-all ${barColor}`}
             style={{ width: `${score.percentage}%` }}
@@ -71,8 +71,8 @@ export function HealthDetail({ score, defaultExpanded = false }: Props) {
 
       {/* Expandable checks list */}
       {expanded && (
-        <div className="border-t border-slate-200 dark:border-slate-800">
-          <ul className="divide-y divide-slate-100 dark:divide-slate-800">
+        <div className="border-t border-[var(--border-default)]">
+          <ul className="divide-y divide-[var(--border-default)]">
             {score.checks.map((check) => (
               <li
                 key={check.name}
@@ -85,14 +85,14 @@ export function HealthDetail({ score, defaultExpanded = false }: Props) {
                 )}
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                    <span className="text-sm font-medium text-[var(--text-primary)]">
                       {check.name}
                     </span>
-                    <span className="ml-2 text-xs text-slate-500 dark:text-slate-400">
+                    <span className="ml-2 text-xs text-[var(--text-secondary)]">
                       {check.points} / {check.maxPoints}
                     </span>
                   </div>
-                  <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+                  <p className="mt-0.5 text-xs text-[var(--text-secondary)]">
                     {check.detail}
                   </p>
                 </div>

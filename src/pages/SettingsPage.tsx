@@ -28,16 +28,16 @@ function AuthStatusSection() {
   const { user, isAuthenticated } = useAuth();
 
   return (
-    <div className="rounded-lg border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
-      <div className="flex items-center gap-2 border-b border-slate-200 px-5 py-3 dark:border-slate-800">
-        <User className="h-4 w-4 text-slate-500" />
-        <h2 className="text-sm font-medium text-slate-900 dark:text-slate-100">
+    <div className="rounded-lg border border-[var(--border-default)] bg-[var(--surface-primary)]">
+      <div className="flex items-center gap-2 border-b border-[var(--border-default)] px-5 py-3">
+        <User className="h-4 w-4 text-[var(--text-secondary)]" />
+        <h2 className="text-sm font-medium text-[var(--text-primary)]">
           Authentication Status
         </h2>
       </div>
-      <div className="divide-y divide-slate-100 dark:divide-slate-800">
+      <div className="divide-y divide-[var(--border-default)]">
         <div className="flex items-center justify-between px-5 py-3">
-          <span className="text-sm text-slate-500 dark:text-slate-400">
+          <span className="text-sm text-[var(--text-secondary)]">
             Status
           </span>
           {isDemoMode ? (
@@ -58,10 +58,10 @@ function AuthStatusSection() {
         </div>
 
         <div className="flex items-center justify-between px-5 py-3">
-          <span className="text-sm text-slate-500 dark:text-slate-400">
+          <span className="text-sm text-[var(--text-secondary)]">
             User
           </span>
-          <span className="text-sm text-slate-900 dark:text-slate-100">
+          <span className="text-sm text-[var(--text-primary)]">
             {isDemoMode
               ? 'Demo User'
               : user?.name || '—'}
@@ -69,10 +69,10 @@ function AuthStatusSection() {
         </div>
 
         <div className="flex items-center justify-between px-5 py-3">
-          <span className="text-sm text-slate-500 dark:text-slate-400">
+          <span className="text-sm text-[var(--text-secondary)]">
             Email
           </span>
-          <span className="text-sm text-slate-900 dark:text-slate-100">
+          <span className="text-sm text-[var(--text-primary)]">
             {isDemoMode
               ? 'demo@fabric-lens.local'
               : user?.email || '—'}
@@ -80,10 +80,10 @@ function AuthStatusSection() {
         </div>
 
         <div className="flex items-center justify-between px-5 py-3">
-          <span className="text-sm text-slate-500 dark:text-slate-400">
+          <span className="text-sm text-[var(--text-secondary)]">
             Tenant ID
           </span>
-          <span className="font-mono text-xs text-slate-900 dark:text-slate-100">
+          <span className="font-mono text-xs text-[var(--text-primary)]">
             {isDemoMode
               ? 'demo-tenant-00000'
               : user?.tenantId || '—'}
@@ -91,10 +91,10 @@ function AuthStatusSection() {
         </div>
 
         <div className="flex items-center justify-between px-5 py-3">
-          <span className="text-sm text-slate-500 dark:text-slate-400">
+          <span className="text-sm text-[var(--text-secondary)]">
             API Base
           </span>
-          <span className="font-mono text-xs text-slate-600 dark:text-slate-400">
+          <span className="font-mono text-xs text-[var(--text-secondary)]">
             {import.meta.env.VITE_FABRIC_API_BASE || DEFAULT_FABRIC_API_BASE}
           </span>
         </div>
@@ -110,31 +110,31 @@ function HealthConfigSection() {
   const [staleThreshold, setStaleThreshold] = useState(DEFAULT_STALE_THRESHOLD_DAYS);
 
   return (
-    <div className="rounded-lg border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
-      <div className="flex items-center gap-2 border-b border-slate-200 px-5 py-3 dark:border-slate-800">
-        <Heart className="h-4 w-4 text-slate-500" />
-        <h2 className="text-sm font-medium text-slate-900 dark:text-slate-100">
+    <div className="rounded-lg border border-[var(--border-default)] bg-[var(--surface-primary)]">
+      <div className="flex items-center gap-2 border-b border-[var(--border-default)] px-5 py-3">
+        <Heart className="h-4 w-4 text-[var(--text-secondary)]" />
+        <h2 className="text-sm font-medium text-[var(--text-primary)]">
           Health Score Configuration
         </h2>
       </div>
       <div className="space-y-4 px-5 py-4">
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
+          <label className="mb-1.5 block text-sm font-medium text-[var(--text-secondary)]">
             Naming Convention Pattern
           </label>
           <input
             type="text"
             value={namingPattern}
             onChange={(e) => setNamingPattern(e.target.value)}
-            className="w-full rounded-md border border-slate-200 bg-white px-3 py-2 font-mono text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+            className="w-full rounded-md border border-[var(--border-default)] bg-[var(--surface-primary)] px-3 py-2 font-mono text-sm text-[var(--text-primary)]"
           />
-          <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
+          <p className="mt-1 text-xs text-[var(--text-tertiary)]">
             Regex pattern for workspace naming compliance ({HEALTH_SCORE_WEIGHTS.naming} pts).
           </p>
         </div>
 
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
+          <label className="mb-1.5 block text-sm font-medium text-[var(--text-secondary)]">
             Stale Threshold (days)
           </label>
           <input
@@ -147,18 +147,18 @@ function HealthConfigSection() {
                 Math.min(365, Math.max(7, Number(e.target.value))),
               )
             }
-            className="w-32 rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+            className="w-32 rounded-md border border-[var(--border-default)] bg-[var(--surface-primary)] px-3 py-2 text-sm text-[var(--text-primary)]"
           />
-          <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
+          <p className="mt-1 text-xs text-[var(--text-tertiary)]">
             Items not modified within this period are considered stale ({HEALTH_SCORE_WEIGHTS.activeItems} pts).
           </p>
         </div>
 
-        <div className="rounded-md bg-slate-50 p-3 dark:bg-slate-800/50">
-          <h3 className="mb-2 text-xs font-medium uppercase text-slate-500 dark:text-slate-400">
+        <div className="rounded-md bg-[var(--surface-secondary)] p-3">
+          <h3 className="mb-2 text-xs font-medium uppercase text-[var(--text-secondary)]">
             Scoring Breakdown ({HEALTH_SCORE_MAX} pts)
           </h3>
-          <div className="grid grid-cols-2 gap-1.5 text-xs text-slate-600 dark:text-slate-400">
+          <div className="grid grid-cols-2 gap-1.5 text-xs text-[var(--text-secondary)]">
             {([
               ['Has description', HEALTH_SCORE_WEIGHTS.description],
               ['Assigned to capacity', HEALTH_SCORE_WEIGHTS.capacity],
@@ -195,10 +195,10 @@ function ThemeSection() {
     ];
 
   return (
-    <div className="rounded-lg border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
-      <div className="flex items-center gap-2 border-b border-slate-200 px-5 py-3 dark:border-slate-800">
-        <Monitor className="h-4 w-4 text-slate-500" />
-        <h2 className="text-sm font-medium text-slate-900 dark:text-slate-100">
+    <div className="rounded-lg border border-[var(--border-default)] bg-[var(--surface-primary)]">
+      <div className="flex items-center gap-2 border-b border-[var(--border-default)] px-5 py-3">
+        <Monitor className="h-4 w-4 text-[var(--text-secondary)]" />
+        <h2 className="text-sm font-medium text-[var(--text-primary)]">
           Appearance
         </h2>
       </div>
@@ -210,8 +210,8 @@ function ThemeSection() {
               onClick={() => setTheme(opt.value)}
               className={`flex items-center gap-2 rounded-lg border-2 px-4 py-3 text-sm font-medium transition-colors ${
                 theme === opt.value
-                  ? 'border-blue-500 bg-blue-50 text-blue-700 dark:border-blue-400 dark:bg-blue-950/30 dark:text-blue-400'
-                  : 'border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-400 dark:hover:border-slate-600 dark:hover:bg-slate-800'
+                  ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-subtle)] text-[var(--brand-primary)]'
+                  : 'border-[var(--border-default)] text-[var(--text-secondary)] hover:border-[var(--text-tertiary)] hover:bg-[var(--surface-tertiary)]'
               }`}
             >
               <opt.icon className="h-4 w-4" />
@@ -228,54 +228,54 @@ function ThemeSection() {
 
 function AboutSection() {
   return (
-    <div className="rounded-lg border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
-      <div className="flex items-center gap-2 border-b border-slate-200 px-5 py-3 dark:border-slate-800">
-        <Info className="h-4 w-4 text-slate-500" />
-        <h2 className="text-sm font-medium text-slate-900 dark:text-slate-100">
+    <div className="rounded-lg border border-[var(--border-default)] bg-[var(--surface-primary)]">
+      <div className="flex items-center gap-2 border-b border-[var(--border-default)] px-5 py-3">
+        <Info className="h-4 w-4 text-[var(--text-secondary)]" />
+        <h2 className="text-sm font-medium text-[var(--text-primary)]">
           About
         </h2>
       </div>
       <div className="space-y-3 px-5 py-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600 text-lg font-bold text-white">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--brand-primary)] text-lg font-bold text-white">
             F
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+            <h3 className="text-sm font-semibold text-[var(--text-primary)]">
               Fabric Lens
             </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <p className="text-xs text-[var(--text-secondary)]">
               v{APP_VERSION}
             </p>
           </div>
         </div>
 
-        <p className="text-sm text-slate-600 dark:text-slate-400">
+        <p className="text-sm text-[var(--text-secondary)]">
           Governance, health intelligence, and inventory management for
           Microsoft Fabric tenants. Authenticates via Azure AD and calls Fabric
           REST APIs directly from the browser.
         </p>
 
         <div className="flex flex-wrap gap-2">
-          <span className="inline-flex rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-400">
+          <span className="inline-flex rounded-md bg-[var(--surface-secondary)] px-2 py-0.5 text-[11px] font-medium text-[var(--text-secondary)]">
             React 18
           </span>
-          <span className="inline-flex rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-400">
+          <span className="inline-flex rounded-md bg-[var(--surface-secondary)] px-2 py-0.5 text-[11px] font-medium text-[var(--text-secondary)]">
             TypeScript
           </span>
-          <span className="inline-flex rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-400">
+          <span className="inline-flex rounded-md bg-[var(--surface-secondary)] px-2 py-0.5 text-[11px] font-medium text-[var(--text-secondary)]">
             Vite
           </span>
-          <span className="inline-flex rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-400">
+          <span className="inline-flex rounded-md bg-[var(--surface-secondary)] px-2 py-0.5 text-[11px] font-medium text-[var(--text-secondary)]">
             Tailwind CSS
           </span>
-          <span className="inline-flex rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-400">
+          <span className="inline-flex rounded-md bg-[var(--surface-secondary)] px-2 py-0.5 text-[11px] font-medium text-[var(--text-secondary)]">
             Zustand
           </span>
-          <span className="inline-flex rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-400">
+          <span className="inline-flex rounded-md bg-[var(--surface-secondary)] px-2 py-0.5 text-[11px] font-medium text-[var(--text-secondary)]">
             Recharts
           </span>
-          <span className="inline-flex rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-400">
+          <span className="inline-flex rounded-md bg-[var(--surface-secondary)] px-2 py-0.5 text-[11px] font-medium text-[var(--text-secondary)]">
             MSAL.js
           </span>
         </div>
@@ -285,7 +285,7 @@ function AboutSection() {
             href="https://github.com/fabric-lens/fabric-lens"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+            className="inline-flex items-center gap-1 text-sm text-[var(--brand-primary)]"
           >
             GitHub
             <ExternalLink className="h-3 w-3" />
@@ -294,14 +294,14 @@ function AboutSection() {
             href="https://learn.microsoft.com/en-us/rest/api/fabric/core"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+            className="inline-flex items-center gap-1 text-sm text-[var(--brand-primary)]"
           >
             Fabric REST API
             <ExternalLink className="h-3 w-3" />
           </a>
         </div>
 
-        <p className="text-[11px] text-slate-400 dark:text-slate-500">
+        <p className="text-[11px] text-[var(--text-tertiary)]">
           MIT License. Not affiliated with or endorsed by Microsoft.
         </p>
       </div>
@@ -315,10 +315,10 @@ export function SettingsPage() {
   return (
     <div className="space-y-6 p-6">
       <div>
-        <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-100">
+        <h1 className="text-2xl font-semibold tracking-[-0.02em] text-[var(--text-primary)]">
           Settings
         </h1>
-        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+        <p className="mt-1 text-sm text-[var(--text-secondary)]">
           Application configuration and preferences.
         </p>
       </div>

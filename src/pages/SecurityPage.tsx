@@ -53,19 +53,19 @@ const ALL_ROLES = ['Admin', 'Member', 'Contributor', 'Viewer'] as const;
 const ROLE_CHIP_STYLES: Record<string, { active: string; inactive: string }> = {
   Admin: {
     active: 'bg-red-100 text-red-700 ring-1 ring-red-300 dark:bg-red-900/40 dark:text-red-400 dark:ring-red-700',
-    inactive: 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400',
+    inactive: 'bg-[var(--surface-secondary)] text-[var(--text-secondary)]',
   },
   Member: {
     active: 'bg-blue-100 text-blue-700 ring-1 ring-blue-300 dark:bg-blue-900/40 dark:text-blue-400 dark:ring-blue-700',
-    inactive: 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400',
+    inactive: 'bg-[var(--surface-secondary)] text-[var(--text-secondary)]',
   },
   Contributor: {
     active: 'bg-amber-100 text-amber-700 ring-1 ring-amber-300 dark:bg-amber-900/40 dark:text-amber-400 dark:ring-amber-700',
-    inactive: 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400',
+    inactive: 'bg-[var(--surface-secondary)] text-[var(--text-secondary)]',
   },
   Viewer: {
     active: 'bg-emerald-100 text-emerald-700 ring-1 ring-emerald-300 dark:bg-emerald-900/40 dark:text-emerald-400 dark:ring-emerald-700',
-    inactive: 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400',
+    inactive: 'bg-[var(--surface-secondary)] text-[var(--text-secondary)]',
   },
 };
 
@@ -90,18 +90,18 @@ function AdminRequiredCard() {
       <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/30">
         <Shield className="h-8 w-8 text-amber-600 dark:text-amber-400" />
       </div>
-      <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+      <h2 className="text-lg font-semibold text-[var(--text-primary)]">
         Fabric Admin Role Required
       </h2>
-      <p className="text-sm text-slate-500 dark:text-slate-400">
+      <p className="text-sm text-[var(--text-secondary)]">
         The Security page uses Admin APIs that require the Fabric Admin role. Ask
         your Microsoft 365 or Fabric administrator to assign this role.
       </p>
-      <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-left dark:border-slate-800 dark:bg-slate-900">
-        <h3 className="text-xs font-medium uppercase text-slate-500 dark:text-slate-400">
+      <div className="rounded-lg border border-[var(--border-default)] bg-[var(--surface-secondary)] p-4 text-left">
+        <h3 className="text-xs font-medium uppercase text-[var(--text-secondary)]">
           Setup Steps
         </h3>
-        <ol className="mt-2 space-y-1.5 text-sm text-slate-700 dark:text-slate-300">
+        <ol className="mt-2 space-y-1.5 text-sm text-[var(--text-secondary)]">
           <li>1. Go to the Microsoft 365 Admin Center</li>
           <li>2. Navigate to Roles &rarr; Fabric Administrator</li>
           <li>3. Add your account to the role assignment</li>
@@ -113,7 +113,7 @@ function AdminRequiredCard() {
         href="https://learn.microsoft.com/en-us/fabric/admin/roles"
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+        className="inline-flex items-center gap-1 text-sm text-[var(--brand-primary)]"
       >
         Learn more about Fabric admin roles
         <ExternalLink className="h-3.5 w-3.5" />
@@ -317,19 +317,19 @@ export function SecurityPage() {
   }, [userSummaries]);
 
   function renderSortIcon(key: SortKey) {
-    if (sortKey !== key) return <ArrowUpDown className="h-3 w-3 text-slate-400" />;
+    if (sortKey !== key) return <ArrowUpDown className="h-3 w-3 text-[var(--text-tertiary)]" />;
     return sortDir === 'asc'
-      ? <ArrowUp className="h-3 w-3 text-blue-600 dark:text-blue-400" />
-      : <ArrowDown className="h-3 w-3 text-blue-600 dark:text-blue-400" />;
+      ? <ArrowUp className="h-3 w-3 text-[var(--brand-primary)]" />
+      : <ArrowDown className="h-3 w-3 text-[var(--brand-primary)]" />;
   }
 
   // Still checking admin status
   if (isAdmin === null || (loading && !scanProgress)) {
     return (
       <div className="space-y-4 p-6">
-        <div className="h-7 w-40 animate-pulse rounded bg-slate-200 dark:bg-slate-800" />
-        <div className="h-4 w-64 animate-pulse rounded bg-slate-200 dark:bg-slate-800" />
-        <div className="h-48 animate-pulse rounded-lg bg-slate-200 dark:bg-slate-800" />
+        <div className="h-7 w-40 animate-pulse rounded bg-[var(--surface-secondary)]" />
+        <div className="h-4 w-64 animate-pulse rounded bg-[var(--surface-secondary)]" />
+        <div className="h-48 animate-pulse rounded-lg bg-[var(--surface-secondary)]" />
       </div>
     );
   }
@@ -338,10 +338,10 @@ export function SecurityPage() {
   if (isAdmin === false) {
     return (
       <div className="p-6">
-        <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-100">
+        <h1 className="text-2xl font-semibold tracking-[-0.02em] text-[var(--text-primary)]">
           Security
         </h1>
-        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+        <p className="mt-1 text-sm text-[var(--text-secondary)]">
           Role assignments and access governance.
         </p>
         <AdminRequiredCard />
@@ -354,10 +354,10 @@ export function SecurityPage() {
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-100">
+          <h1 className="text-2xl font-semibold tracking-[-0.02em] text-[var(--text-primary)]">
             Security
           </h1>
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+          <p className="mt-1 text-sm text-[var(--text-secondary)]">
             Role assignments and access governance.
           </p>
         </div>
@@ -368,7 +368,7 @@ export function SecurityPage() {
           <button
             onClick={handleScanAll}
             disabled={loading || wsLoading}
-            className="inline-flex items-center gap-1.5 rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-blue-700 disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 rounded-md bg-[var(--brand-primary)] px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-[var(--brand-primary-hover)] disabled:opacity-50"
           >
             <ScanSearch className="h-3.5 w-3.5" />
             {hasScanned ? 'Re-scan All' : 'Scan All'}
@@ -379,18 +379,18 @@ export function SecurityPage() {
       {/* Scan progress */}
       {scanProgress && (
         <div className="space-y-2">
-          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+          <div className="flex items-center justify-between text-xs text-[var(--text-secondary)]">
             <span>
               Scanning workspace users... ({scanProgress.completed}/
               {scanProgress.total})
             </span>
-            <span className="text-[10px] text-slate-400">
+            <span className="text-[10px] text-[var(--text-tertiary)]">
               Rate limit: {ADMIN_RATE_LIMIT} req/hr
             </span>
           </div>
-          <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+          <div className="h-1.5 w-full overflow-hidden rounded-full bg-[var(--surface-secondary)]">
             <div
-              className="h-full rounded-full bg-blue-500 transition-all"
+              className="h-full rounded-full bg-[var(--brand-primary)] transition-all"
               style={{
                 width: `${(scanProgress.completed / scanProgress.total) * 100}%`,
               }}
@@ -418,13 +418,13 @@ export function SecurityPage() {
 
       {/* Pre-scan prompt */}
       {!hasScanned && !scanProgress && (
-        <div className="rounded-lg border border-slate-200 bg-white p-8 text-center dark:border-slate-800 dark:bg-slate-900">
-          <ScanSearch className="mx-auto h-10 w-10 text-slate-300 dark:text-slate-600" />
-          <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">
+        <div className="rounded-lg border border-[var(--border-default)] bg-[var(--surface-primary)] p-8 text-center">
+          <ScanSearch className="mx-auto h-10 w-10 text-[var(--text-tertiary)]" />
+          <p className="mt-3 text-sm text-[var(--text-secondary)]">
             Click <strong>Scan All</strong> to fetch user role assignments across
             all {workspaces.length} workspaces.
           </p>
-          <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
+          <p className="mt-1 text-xs text-[var(--text-tertiary)]">
             Admin APIs are rate-limited to {ADMIN_RATE_LIMIT} requests per hour.
           </p>
         </div>
@@ -470,8 +470,8 @@ export function SecurityPage() {
           {/* Role distribution chart + User access table */}
           <div className="grid gap-6 lg:grid-cols-5">
             {/* Role distribution chart */}
-            <div className="rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900 lg:col-span-2">
-              <h2 className="mb-2 text-sm font-medium text-slate-900 dark:text-slate-100">
+            <div className="rounded-lg border border-[var(--border-default)] bg-[var(--surface-primary)] p-4 lg:col-span-2">
+              <h2 className="mb-2 text-sm font-medium text-[var(--text-primary)]">
                 Role Distribution
               </h2>
               {roleDistribution.length > 0 ? (
@@ -500,41 +500,41 @@ export function SecurityPage() {
                   </BarChart>
                 </ResponsiveContainer>
               ) : (
-                <div className="flex h-[220px] items-center justify-center text-sm text-slate-400">
+                <div className="flex h-[220px] items-center justify-center text-sm text-[var(--text-tertiary)]">
                   No data
                 </div>
               )}
             </div>
 
             {/* User access summary table */}
-            <div className="rounded-lg border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900 lg:col-span-3">
+            <div className="rounded-lg border border-[var(--border-default)] bg-[var(--surface-primary)] lg:col-span-3">
               {/* Header */}
-              <h2 className="border-b border-slate-200 px-4 py-3 text-sm font-medium text-slate-900 dark:border-slate-800 dark:text-slate-100">
+              <h2 className="border-b border-[var(--border-default)] px-4 py-3 text-sm font-medium text-[var(--text-primary)]">
                 User Access Summary
               </h2>
 
               {/* Summary stats */}
-              <div className="grid grid-cols-3 gap-3 border-b border-slate-200 px-4 py-3 dark:border-slate-800">
+              <div className="grid grid-cols-3 gap-3 border-b border-[var(--border-default)] px-4 py-3">
                 <div className="flex items-center gap-2">
-                  <Users className="h-4 w-4 text-slate-400" />
+                  <Users className="h-4 w-4 text-[var(--text-tertiary)]" />
                   <div>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">Users</p>
-                    <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                    <p className="text-xs text-[var(--text-secondary)]">Users</p>
+                    <p className="text-sm font-semibold text-[var(--text-primary)]">
                       {summaryStats.totalUsers}
                     </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <KeyRound className="h-4 w-4 text-slate-400" />
+                  <KeyRound className="h-4 w-4 text-[var(--text-tertiary)]" />
                   <div>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">Assignments</p>
-                    <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                    <p className="text-xs text-[var(--text-secondary)]">Assignments</p>
+                    <p className="text-sm font-semibold text-[var(--text-primary)]">
                       {summaryStats.totalAssignments}
                     </p>
                   </div>
                 </div>
                 <div>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">By Role</p>
+                  <p className="text-xs text-[var(--text-secondary)]">By Role</p>
                   <div className="mt-0.5 flex flex-wrap gap-x-3 gap-y-0.5">
                     {ALL_ROLES.map((role) => (
                       <span key={role} className="flex items-center gap-1 text-xs">
@@ -542,7 +542,7 @@ export function SecurityPage() {
                           className="inline-block h-2 w-2 rounded-full"
                           style={{ backgroundColor: ROLE_COLORS[role] }}
                         />
-                        <span className="text-slate-600 dark:text-slate-300">
+                        <span className="text-[var(--text-secondary)]">
                           {summaryStats.roleCounts[role] ?? 0}
                         </span>
                       </span>
@@ -552,7 +552,7 @@ export function SecurityPage() {
               </div>
 
               {/* Toolbar: search + role filter chips */}
-              <div className="flex flex-wrap items-center gap-3 border-b border-slate-200 px-4 py-3 dark:border-slate-800">
+              <div className="flex flex-wrap items-center gap-3 border-b border-[var(--border-default)] px-4 py-3">
                 <div className="w-64">
                   <SearchBar
                     value={search}
@@ -577,7 +577,7 @@ export function SecurityPage() {
                   {activeRoles.size > 0 && (
                     <button
                       onClick={clearRoleFilter}
-                      className="ml-1 text-xs text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+                      className="ml-1 text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                     >
                       Clear
                     </button>
@@ -589,10 +589,10 @@ export function SecurityPage() {
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-900/50">
+                    <tr className="border-b border-[var(--border-default)] bg-[var(--surface-secondary)]">
                       <th
                         onClick={() => handleSort('displayName')}
-                        className="cursor-pointer select-none px-4 py-2 text-left text-xs font-medium uppercase text-slate-500 transition-colors hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+                        className="cursor-pointer select-none px-4 py-2 text-left text-xs font-medium uppercase text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)]"
                       >
                         <span className="flex items-center gap-1.5">
                           User {renderSortIcon('displayName')}
@@ -600,7 +600,7 @@ export function SecurityPage() {
                       </th>
                       <th
                         onClick={() => handleSort('email')}
-                        className="cursor-pointer select-none px-4 py-2 text-left text-xs font-medium uppercase text-slate-500 transition-colors hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+                        className="cursor-pointer select-none px-4 py-2 text-left text-xs font-medium uppercase text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)]"
                       >
                         <span className="flex items-center gap-1.5">
                           Email {renderSortIcon('email')}
@@ -608,7 +608,7 @@ export function SecurityPage() {
                       </th>
                       <th
                         onClick={() => handleSort('assignmentCount')}
-                        className="cursor-pointer select-none px-4 py-2 text-left text-xs font-medium uppercase text-slate-500 transition-colors hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+                        className="cursor-pointer select-none px-4 py-2 text-left text-xs font-medium uppercase text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)]"
                       >
                         <span className="flex items-center gap-1.5">
                           Workspaces &amp; Roles {renderSortIcon('assignmentCount')}
@@ -616,13 +616,13 @@ export function SecurityPage() {
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                  <tbody className="divide-y divide-[var(--border-default)]">
                     {paginatedUsers.map((u) => (
                       <tr key={u.email}>
-                        <td className="whitespace-nowrap px-4 py-2.5 font-medium text-slate-900 dark:text-slate-100">
+                        <td className="whitespace-nowrap px-4 py-2.5 font-medium text-[var(--text-primary)]">
                           {u.displayName}
                         </td>
-                        <td className="whitespace-nowrap px-4 py-2.5 text-slate-500 dark:text-slate-400">
+                        <td className="whitespace-nowrap px-4 py-2.5 text-[var(--text-secondary)]">
                           {u.email}
                         </td>
                         <td className="px-4 py-2.5">
@@ -657,7 +657,7 @@ export function SecurityPage() {
                       <tr>
                         <td
                           colSpan={3}
-                          className="px-4 py-12 text-center text-slate-500 dark:text-slate-400"
+                          className="px-4 py-12 text-center text-[var(--text-secondary)]"
                         >
                           No users match your filters.
                         </td>
@@ -668,8 +668,8 @@ export function SecurityPage() {
               </div>
 
               {/* Footer: pagination + count */}
-              <div className="flex items-center justify-between border-t border-slate-200 bg-slate-50 px-4 py-2 dark:border-slate-800 dark:bg-slate-900/50">
-                <span className="text-xs text-slate-500 dark:text-slate-400">
+              <div className="flex items-center justify-between border-t border-[var(--border-default)] bg-[var(--surface-secondary)] px-4 py-2">
+                <span className="text-xs text-[var(--text-secondary)]">
                   {sortedUsers.length > 0
                     ? `Showing ${(safePage - 1) * USERS_PER_PAGE + 1}\u2013${Math.min(safePage * USERS_PER_PAGE, sortedUsers.length)} of ${sortedUsers.length} users`
                     : '0 users'}
@@ -682,7 +682,7 @@ export function SecurityPage() {
                     <button
                       disabled={safePage <= 1}
                       onClick={() => setCurrentPage(safePage - 1)}
-                      className="rounded-md p-1 text-slate-500 transition-colors hover:bg-slate-200 disabled:opacity-40 disabled:hover:bg-transparent dark:text-slate-400 dark:hover:bg-slate-700"
+                      className="rounded-md p-1 text-[var(--text-secondary)] transition-colors hover:bg-[var(--surface-tertiary)] disabled:opacity-40 disabled:hover:bg-transparent"
                     >
                       <ChevronLeft className="h-4 w-4" />
                     </button>
@@ -690,7 +690,7 @@ export function SecurityPage() {
                       p === 'ellipsis' ? (
                         <span
                           key={`ellipsis-${i}`}
-                          className="px-1 text-xs text-slate-400"
+                          className="px-1 text-xs text-[var(--text-tertiary)]"
                         >
                           ...
                         </span>
@@ -700,8 +700,8 @@ export function SecurityPage() {
                           onClick={() => setCurrentPage(p)}
                           className={`h-7 w-7 rounded-md text-xs font-medium transition-colors ${
                             p === safePage
-                              ? 'bg-blue-600 text-white'
-                              : 'text-slate-600 hover:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-700'
+                              ? 'bg-[var(--brand-primary)] text-white'
+                              : 'text-[var(--text-secondary)] hover:bg-[var(--surface-tertiary)]'
                           }`}
                         >
                           {p}
@@ -711,7 +711,7 @@ export function SecurityPage() {
                     <button
                       disabled={safePage >= totalPages}
                       onClick={() => setCurrentPage(safePage + 1)}
-                      className="rounded-md p-1 text-slate-500 transition-colors hover:bg-slate-200 disabled:opacity-40 disabled:hover:bg-transparent dark:text-slate-400 dark:hover:bg-slate-700"
+                      className="rounded-md p-1 text-[var(--text-secondary)] transition-colors hover:bg-[var(--surface-tertiary)] disabled:opacity-40 disabled:hover:bg-transparent"
                     >
                       <ChevronRight className="h-4 w-4" />
                     </button>

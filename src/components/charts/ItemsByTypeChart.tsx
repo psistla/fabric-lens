@@ -14,7 +14,7 @@ interface Props {
 export function ItemsByTypeChart({ data }: Props) {
   if (data.length === 0) {
     return (
-      <div className="flex h-64 items-center justify-center text-sm text-slate-400">
+      <div className="flex h-64 items-center justify-center text-sm text-[var(--text-tertiary)]">
         No items to display
       </div>
     );
@@ -64,13 +64,13 @@ export function ItemsByTypeChart({ data }: Props) {
               className="h-2.5 w-2.5 shrink-0 rounded-full"
               style={{ backgroundColor: CHART_COLORS[index % CHART_COLORS.length] }}
             />
-            <span className="min-w-0 flex-1 truncate text-slate-600 dark:text-slate-400">
+            <span className="min-w-0 flex-1 truncate text-[var(--text-secondary)]">
               {entry.name}
             </span>
-            <span className="shrink-0 font-medium tabular-nums text-slate-900 dark:text-slate-100">
+            <span className="shrink-0 font-medium tabular-nums text-[var(--text-primary)]">
               {entry.value}
             </span>
-            <span className="w-9 shrink-0 text-right text-slate-400 dark:text-slate-500">
+            <span className="w-9 shrink-0 text-right text-[var(--text-tertiary)]">
               {total > 0 ? `${Math.round((entry.value / total) * 100)}%` : '—'}
             </span>
           </div>

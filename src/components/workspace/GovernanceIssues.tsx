@@ -62,22 +62,22 @@ export function GovernanceIssues({
   }
 
   return (
-    <div className="rounded-lg border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
-      <h2 className="border-b border-slate-200 px-4 py-3 text-sm font-medium text-slate-900 dark:border-slate-800 dark:text-slate-100">
+    <div className="rounded-lg border border-[var(--border-default)] bg-[var(--surface-primary)]">
+      <h2 className="border-b border-[var(--border-default)] px-4 py-3 text-sm font-medium text-[var(--text-primary)]">
         Governance Issues
       </h2>
-      <ul className="divide-y divide-slate-100 dark:divide-slate-800">
+      <ul className="divide-y divide-[var(--border-default)]">
         {activeIssues.map((issue) => (
           <li key={issue.filter}>
             <button
               onClick={() =>
                 void navigate(`/workspaces?filter=${issue.filter}`)
               }
-              className="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50"
+              className="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-[var(--surface-tertiary)]"
             >
               <issue.icon className="h-4 w-4 shrink-0 text-amber-500" />
-              <span className="text-sm text-slate-700 dark:text-slate-300">
-                <span className="font-semibold text-slate-900 dark:text-slate-100">
+              <span className="text-sm text-[var(--text-secondary)]">
+                <span className="font-semibold text-[var(--text-primary)]">
                   {issue.count}
                 </span>{' '}
                 {issue.label}

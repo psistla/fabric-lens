@@ -1,3 +1,137 @@
+@import '@fontsource/geist-sans/400.css';
+@import '@fontsource/geist-sans/500.css';
+@import '@fontsource/geist-sans/600.css';
+@import '@fontsource/geist-mono/400.css';
 @import 'tailwindcss';
 
-@custom-variant dark (.dark &);
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ── Design Tokens ── */
+
+:root {
+  /* Surface Hierarchy */
+  --surface-root:        #FAFBFC;
+  --surface-primary:     #FFFFFF;
+  --surface-secondary:   #F3F4F6;
+  --surface-tertiary:    #E8EAED;
+  --surface-inverse:     #111827;
+
+  /* Border */
+  --border-default:      #E2E4E9;
+  --border-strong:       #C9CCD1;
+  --border-focus:        #3B6CE7;
+
+  /* Text */
+  --text-primary:        #111827;
+  --text-secondary:      #4B5563;
+  --text-tertiary:       #9CA3AF;
+  --text-inverse:        #F9FAFB;
+  --text-link:           #3B6CE7;
+
+  /* Brand */
+  --brand-primary:       #3B6CE7;
+  --brand-primary-hover: #2F5AC4;
+  --brand-primary-subtle:#EBF0FD;
+
+  /* Health Scores */
+  --health-a:            #059669;
+  --health-a-bg:         #ECFDF5;
+  --health-b:            #3B6CE7;
+  --health-b-bg:         #EBF0FD;
+  --health-c:            #D97706;
+  --health-c-bg:         #FFFBEB;
+  --health-d:            #EA580C;
+  --health-d-bg:         #FFF7ED;
+  --health-f:            #DC2626;
+  --health-f-bg:         #FEF2F2;
+
+  /* Status */
+  --status-active:       #059669;
+  --status-active-bg:    #ECFDF5;
+  --status-inactive:     #9CA3AF;
+  --status-inactive-bg:  #F3F4F6;
+  --status-warning:      #D97706;
+  --status-warning-bg:   #FFFBEB;
+  --status-error:        #DC2626;
+  --status-error-bg:     #FEF2F2;
+
+  /* Radius */
+  --radius-sm:  4px;
+  --radius-md:  6px;
+  --radius-lg:  8px;
+  --radius-xl:  12px;
+
+  /* Shadow */
+  --shadow-sm:   0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md:   0 2px 4px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-lg:   0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+
+  /* Transitions */
+  --transition-fast:   120ms ease-out;
+  --transition-normal: 200ms ease-out;
+  --transition-slow:   300ms ease-out;
+}
+
+.dark {
+  --surface-root:        #0B1120;
+  --surface-primary:     #111827;
+  --surface-secondary:   #1A2332;
+  --surface-tertiary:    #243044;
+  --surface-inverse:     #F9FAFB;
+
+  --border-default:      #1E293B;
+  --border-strong:       #334155;
+  --border-focus:        #5B8DEF;
+
+  --text-primary:        #F1F5F9;
+  --text-secondary:      #94A3B8;
+  --text-tertiary:       #64748B;
+  --text-inverse:        #111827;
+  --text-link:           #5B8DEF;
+
+  --brand-primary:       #5B8DEF;
+  --brand-primary-hover: #7BA4F7;
+  --brand-primary-subtle:#1E2A4A;
+
+  --health-a-bg:         #062E1E;
+  --health-b-bg:         #1E2A4A;
+  --health-c-bg:         #2E2206;
+  --health-d-bg:         #2E1A06;
+  --health-f-bg:         #2E0A0A;
+
+  --status-active-bg:    #062E1E;
+  --status-inactive-bg:  #1A2332;
+  --status-warning-bg:   #2E2206;
+  --status-error-bg:     #2E0A0A;
+
+  --shadow-sm:   0 1px 2px rgba(0,0,0,0.3);
+  --shadow-md:   0 2px 4px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
+  --shadow-lg:   0 4px 12px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* ── Tailwind v4 Theme ── */
+
+@theme {
+  --font-sans: 'Geist Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, 'Cascadia Code', 'Fira Code', monospace;
+}
+
+/* ── Animations ── */
+
+@keyframes toast-slide-in {
+  from { opacity: 0; transform: translateX(100%); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.animate-toast-in {
+  animation: toast-slide-in 300ms ease-out forwards;
+}
+
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 0.4; }
+  50%      { opacity: 0.7; }
+}
+
+.animate-skeleton {
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}

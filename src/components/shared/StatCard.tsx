@@ -16,7 +16,7 @@ interface Props {
 const trendStyles = {
   up: 'text-emerald-600 dark:text-emerald-400',
   down: 'text-red-600 dark:text-red-400',
-  neutral: 'text-slate-500 dark:text-slate-400',
+  neutral: 'text-[var(--text-secondary)]',
 } as const;
 
 const trendIcons = {
@@ -27,16 +27,16 @@ const trendIcons = {
 
 export function StatCard({ label, value, icon: Icon, trend }: Props) {
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900">
+    <div className="rounded-lg border border-[var(--border-default)] bg-[var(--surface-primary)] p-5">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-sm text-slate-500 dark:text-slate-400">{label}</p>
-          <p className="mt-1 text-2xl font-semibold text-slate-900 dark:text-slate-100">
+          <p className="text-sm text-[var(--text-secondary)]">{label}</p>
+          <p className="mt-1 text-2xl font-semibold text-[var(--text-primary)]">
             {value}
           </p>
         </div>
-        <div className="rounded-md bg-slate-100 p-2 dark:bg-slate-800">
-          <Icon className="h-5 w-5 text-slate-600 dark:text-slate-400" />
+        <div className="rounded-md bg-[var(--surface-secondary)] p-2">
+          <Icon className="h-5 w-5 text-[var(--text-secondary)]" />
         </div>
       </div>
       {trend && (

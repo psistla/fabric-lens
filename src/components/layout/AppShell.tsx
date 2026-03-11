@@ -26,7 +26,7 @@ const mobileNavItems = [
 
 export function AppShell({ children }: Props) {
   return (
-    <div className="flex h-screen bg-slate-50 dark:bg-slate-950">
+    <div className="flex h-screen bg-[var(--surface-root)]">
       <Sidebar />
       <div className="flex flex-1 flex-col overflow-hidden">
         {isDemoMode && (
@@ -40,7 +40,7 @@ export function AppShell({ children }: Props) {
         </main>
 
         {/* Mobile bottom nav — visible below md */}
-        <nav className="fixed inset-x-0 bottom-0 z-50 flex items-center justify-around border-t border-slate-200 bg-white py-1.5 md:hidden dark:border-slate-800 dark:bg-slate-900">
+        <nav className="fixed inset-x-0 bottom-0 z-50 flex items-center justify-around border-t border-[var(--border-default)] bg-[var(--surface-primary)] py-1.5 md:hidden">
           {mobileNavItems.map((item) => (
             <NavLink
               key={item.path}
@@ -49,8 +49,8 @@ export function AppShell({ children }: Props) {
               className={({ isActive }) =>
                 `flex flex-col items-center gap-0.5 px-2 py-1 text-[10px] ${
                   isActive
-                    ? 'font-semibold text-blue-600 dark:text-blue-400'
-                    : 'text-slate-500 dark:text-slate-400'
+                    ? 'font-semibold text-[var(--brand-primary)]'
+                    : 'text-[var(--text-secondary)]'
                 }`
               }
             >
