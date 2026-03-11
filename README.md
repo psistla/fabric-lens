@@ -36,13 +36,14 @@ Fabric Lens is a standalone React SPA that connects directly to Microsoft Fabric
 
 | Feature | Description |
 |---------|-------------|
-| **Dashboard** | Tenant-wide overview with workspace/item/capacity stats, artifact distribution charts, governance issues, and average health score |
+| **Dashboard** | Tenant-wide overview with workspace/item/capacity stats, artifact distribution charts, governance issues, average health score, and the **Health Grid** — a dense color-coded tile map showing every workspace's health grade at a glance |
 | **Workspace Explorer** | Browse, search, and drill into every workspace. View items, health grades, capacity assignments, OneLake endpoints, and Git status |
 | **Health Scoring** | Automated 100-point governance assessment per workspace across 9 checks — description, capacity, domain, Git, naming, staleness, data layer, item count, and identity |
 | **Capacity Monitor** | Track SKUs, regions, and states with tier-based badges. Cost calculator with **live Azure pricing** from the Azure Retail Prices API |
 | **Security Audit** | Cross-workspace role mapping with search, role filter chips, sortable columns, and pagination. Flags over-permissioned users (Admin on 5+ workspaces) |
 | **CSV Export** | Export workspace inventories and security audit data for offline analysis |
-| **Dark Mode** | Full dark/light theme toggle |
+| **Dark Mode** | Blue-tinted dark theme (navy `#0B1120`, not pure black) with full semantic color token support |
+| **Design System** | CSS custom property tokens for surfaces, text, borders, and brand colors. Geist Sans + Geist Mono typography. See [DESIGN_GUIDE.md](DESIGN_GUIDE.md) |
 | **Demo Mode** | Realistic mock data — 3 capacities, 15 workspaces, 54+ items, 6 users — no Azure credentials needed |
 
 ---
@@ -70,7 +71,9 @@ Open [http://localhost:5173](http://localhost:5173). The app launches in **demo 
 1. Go to the [Azure Portal](https://portal.azure.com) > **Microsoft Entra ID** > **App registrations** > **New registration**
 2. Name: `Fabric Lens` (or any name)
 3. Supported account types: match your tenant strategy (single or multi-tenant)
-4. Redirect URI: select **Single-page application (SPA)** and enter `http://localhost:5173`
+4. Redirect URI: select **Single-page application (SPA)** and add **both** URIs:
+   - `http://localhost:5173` (local development)
+   - `https://lively-grass-0fa393e10.2.azurestaticapps.net` (live demo site)
 5. Click **Register**
 
 ### 2. Configure API Permissions
@@ -90,6 +93,8 @@ Click **Grant admin consent** (requires admin privileges).
 
 Create a `.env.local` file in the project root:
 
+**For local development:**
+
 ```env
 VITE_MSAL_CLIENT_ID=<your-client-id>
 VITE_MSAL_TENANT_ID=<your-tenant-id>
@@ -97,6 +102,18 @@ VITE_MSAL_REDIRECT_URI=http://localhost:5173
 VITE_FABRIC_API_BASE=https://api.fabric.microsoft.com/v1
 VITE_ARM_API_BASE=https://management.azure.com
 ```
+
+**For the live site** (Azure Static Web Apps or other hosted deployment):
+
+```env
+VITE_MSAL_CLIENT_ID=<your-client-id>
+VITE_MSAL_TENANT_ID=<your-tenant-id>
+VITE_MSAL_REDIRECT_URI=https://lively-grass-0fa393e10.2.azurestaticapps.net
+VITE_FABRIC_API_BASE=https://api.fabric.microsoft.com/v1
+VITE_ARM_API_BASE=https://management.azure.com
+```
+
+> **Note:** The `VITE_MSAL_REDIRECT_URI` must match one of the redirect URIs registered in your App Registration (Step 1). Use `http://localhost:5173` for local dev, or your deployed URL for production.
 
 ### 4. Run with Live Data
 
@@ -148,6 +165,7 @@ Sign in with an Azure AD account that has access to your Fabric tenant. Users wi
 - **No backend** — pure SPA with delegated permissions. Simplest deployment (static hosting), no server-side secrets
 - **MSAL popup auth** — preserves app state, falls back to redirect if popups blocked
 - **Live pricing** — Azure Retail Prices API (public, no auth) with 1-hour cache and graceful fallback
+- **Design system** — Semantic CSS tokens (not raw hex), Geist Sans/Mono typography, blue-tinted dark mode. See [DESIGN_GUIDE.md](DESIGN_GUIDE.md)
 
 ---
 
@@ -180,6 +198,7 @@ src/
   data/           SKU specifications and derived pricing (skuSpecs.ts)
   store/          Zustand stores (workspace, capacity, security, ui)
   components/
+    dashboard/    HealthGrid (tenant health tile map)
     layout/       AppShell, Sidebar, Header
     workspace/    GovernanceIssues, HealthBadge, HealthDetail
     shared/       DataTable, StatCard, SearchBar, EmptyState, ExportButton, ...
@@ -209,7 +228,8 @@ src/
 |--|-----------|
 | Framework | React 19 + TypeScript (strict) |
 | Build | Vite 7 |
-| Styling | Tailwind CSS v4 (`@tailwindcss/vite`) |
+| Styling | Tailwind CSS v4 (`@tailwindcss/vite`) + CSS design tokens |
+| Typography | Geist Sans + Geist Mono |
 | UI Primitives | Radix UI + class-variance-authority + tailwind-merge |
 | State | Zustand 5 |
 | Charts | Recharts 3 |
@@ -217,6 +237,19 @@ src/
 | Router | React Router v7 |
 | Icons | lucide-react |
 | Testing | Vitest + React Testing Library |
+
+---
+
+## Design System
+
+fabric-lens uses a custom design system built on semantic CSS tokens, not raw Tailwind colors. The full specification lives in [DESIGN_GUIDE.md](DESIGN_GUIDE.md).
+
+**Highlights:**
+- **Color tokens** — Semantic CSS custom properties (`--surface-primary`, `--text-secondary`, `--brand-primary`, etc.) for surfaces, text, borders, status, and health grades
+- **Typography** — Geist Sans for UI text, Geist Mono for IDs/endpoints/code. Tight letter-spacing optimized for data-dense interfaces
+- **Dark mode** — Blue-tinted navy base (`#0B1120`), not pure black. Creates depth and makes data visualization colors pop
+- **Health Grid** — Dense tile map on the Dashboard showing every workspace's health grade at a glance. Hover for details, click to drill in
+- **Design philosophy** — Precise. Dense. Trustworthy. Instrument panel aesthetic for enterprise Fabric admins
 
 ---
 
