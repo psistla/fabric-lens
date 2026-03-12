@@ -1,6 +1,7 @@
 import { useMsal, useIsAuthenticated } from '@azure/msal-react';
 import { InteractionStatus } from '@azure/msal-browser';
 import { fabricLoginRequest } from './msalConfig';
+import { GRAPH_SCOPES } from '@/utils/constants';
 
 interface AuthUser {
   name: string;
@@ -55,5 +56,26 @@ export function useAuth() {
     }
   }
 
-  return { isAuthenticated, user, login, logout, getToken, isLoading };
+  async function getGraphToken(): Promise<string | null> {
+    if (!account) return null;
+
+    try {
+      const result = await instance.acquireTokenSilent({
+        scopes: GRAPH_SCOPES,
+        account,
+      });
+      return result.accessToken;
+    } catch {
+      try {
+        const result = await instance.acquireTokenPopup({
+          scopes: GRAPH_SCOPES,
+        });
+        return result.accessToken;
+      } catch {
+        return null;
+      }
+    }
+  }
+
+  return { isAuthenticated, user, login, logout, getToken, getGraphToken, isLoading };
 }

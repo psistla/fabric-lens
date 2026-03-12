@@ -12,6 +12,14 @@ export const DEFAULT_FABRIC_API_BASE = 'https://api.fabric.microsoft.com/v1';
 /** OAuth scopes required for Fabric API calls. */
 export const FABRIC_SCOPES = ['https://api.fabric.microsoft.com/.default'];
 
+// -- Graph API --
+
+/** OAuth scopes required for Microsoft Graph API calls (group membership). */
+export const GRAPH_SCOPES = ['https://graph.microsoft.com/GroupMember.Read.All'];
+
+/** Default Microsoft Graph API base URL. */
+export const DEFAULT_GRAPH_API_BASE = 'https://graph.microsoft.com/v1.0';
+
 // -- Rate limiting --
 
 /** Admin API rate limit (requests per hour). */
@@ -111,6 +119,17 @@ export const GROUP_EXPAND_INITIAL_COUNT = 10;
 
 /** Base rate per Capacity Unit per hour (USD). All SKU rates derive from this. */
 export const CU_RATE_PER_HOUR = 0.18;
+
+
+// -- Principal types --
+
+/** Color map for principal types (used in Security page badges and charts). */
+export const PRINCIPAL_TYPE_COLORS: Record<string, string> = {
+  User: '#6B7280',
+  Group: '#3B82F6',
+  ServicePrincipal: '#8B5CF6',
+  ServicePrincipalProfile: '#8B5CF6',
+};
 
 // -- App metadata --
 

@@ -1,3 +1,7 @@
+import type { PrincipalType, GroupType } from './roleAssignment';
+
+export type WorkspaceRole = 'Admin' | 'Member' | 'Contributor' | 'Viewer';
+
 export interface AdminWorkspace {
   id: string;
   name: string;
@@ -16,12 +20,15 @@ export interface UserDetails {
 }
 
 export interface WorkspaceAccessDetails {
-  workspaceRole: string;
+  workspaceRole: WorkspaceRole;
 }
 
 export interface WorkspaceUser {
   userDetails: UserDetails;
   workspaceAccessDetails: WorkspaceAccessDetails;
+  principalType?: PrincipalType;
+  groupDetails?: { groupType: GroupType };
+  servicePrincipalDetails?: { aadAppId: string };
 }
 
 export interface GroupMember {
