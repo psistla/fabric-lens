@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   User,
   Sun,
@@ -9,10 +9,12 @@ import {
   ExternalLink,
   CheckCircle2,
   XCircle,
+  Network,
 } from 'lucide-react';
 import { useAuth } from '@/auth/useAuth';
 import { useUiStore } from '@/store/uiStore';
 import { isDemoMode } from '@/api/demo';
+import { msalInstance } from '@/auth/AuthProvider';
 import {
   DEFAULT_FABRIC_API_BASE,
   DEFAULT_NAMING_PATTERN_STRING,
@@ -20,6 +22,7 @@ import {
   HEALTH_SCORE_WEIGHTS,
   HEALTH_SCORE_MAX,
   APP_VERSION,
+  GRAPH_SCOPES,
 } from '@/utils/constants';
 
 // --- Auth Status Section ---
@@ -97,6 +100,101 @@ function AuthStatusSection() {
           <span className="font-mono text-xs text-[var(--text-secondary)]">
             {import.meta.env.VITE_FABRIC_API_BASE || DEFAULT_FABRIC_API_BASE}
           </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// --- Microsoft Graph Section ---
+
+function GraphStatusSection() {
+  const [graphConnected, setGraphConnected] = useState<boolean | null>(null);
+  const [granting, setGranting] = useState(false);
+
+  useEffect(() => {
+    if (isDemoMode) {
+      setGraphConnected(true);
+      return;
+    }
+    const account = msalInstance.getAllAccounts()[0];
+    if (!account) {
+      setGraphConnected(false);
+      return;
+    }
+    msalInstance
+      .acquireTokenSilent({ scopes: GRAPH_SCOPES, account })
+      .then(() => setGraphConnected(true))
+      .catch(() => setGraphConnected(false));
+  }, []);
+
+  const handleGrant = async () => {
+    setGranting(true);
+    try {
+      await msalInstance.acquireTokenPopup({ scopes: GRAPH_SCOPES });
+      setGraphConnected(true);
+    } catch {
+      // User cancelled or consent denied
+    } finally {
+      setGranting(false);
+    }
+  };
+
+  return (
+    <div className="rounded-lg border border-[var(--border-default)] bg-[var(--surface-primary)]">
+      <div className="flex items-center gap-2 border-b border-[var(--border-default)] px-5 py-3">
+        <Network className="h-4 w-4 text-[var(--text-secondary)]" />
+        <h2 className="text-sm font-medium text-[var(--text-primary)]">
+          Microsoft Graph
+        </h2>
+      </div>
+      <div className="divide-y divide-[var(--border-default)]">
+        <div className="flex items-center justify-between px-5 py-3">
+          <span className="text-sm text-[var(--text-secondary)]">
+            Status
+          </span>
+          {isDemoMode ? (
+            <span className="inline-flex items-center gap-1.5 rounded-md bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
+              Demo Mode
+            </span>
+          ) : graphConnected ? (
+            <span className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-600 dark:text-emerald-400">
+              <CheckCircle2 className="h-3.5 w-3.5" />
+              Connected
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1.5 text-sm font-medium text-amber-600 dark:text-amber-400">
+              <XCircle className="h-3.5 w-3.5" />
+              Not connected
+            </span>
+          )}
+        </div>
+
+        <div className="flex items-center justify-between px-5 py-3">
+          <span className="text-sm text-[var(--text-secondary)]">
+            Scope
+          </span>
+          <span className="font-mono text-xs text-[var(--text-primary)]">
+            {GRAPH_SCOPES[0]}
+          </span>
+        </div>
+
+        {!isDemoMode && !graphConnected && (
+          <div className="px-5 py-3">
+            <button
+              onClick={() => void handleGrant()}
+              disabled={granting}
+              className="inline-flex items-center gap-1.5 rounded-md bg-[var(--brand-primary)] px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-[var(--brand-primary-hover)] disabled:opacity-50"
+            >
+              {granting ? 'Granting...' : 'Grant Access'}
+            </button>
+          </div>
+        )}
+
+        <div className="px-5 py-3">
+          <p className="text-xs text-[var(--text-tertiary)]">
+            Required for expanding group membership in Security Audit.
+          </p>
         </div>
       </div>
     </div>
@@ -326,6 +424,7 @@ export function SettingsPage() {
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="space-y-6">
           <AuthStatusSection />
+          <GraphStatusSection />
           <ThemeSection />
         </div>
         <div className="space-y-6">

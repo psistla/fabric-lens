@@ -1,5 +1,7 @@
 import type { PrincipalType, GroupType } from './roleAssignment';
 
+export type { PrincipalType };
+
 export type WorkspaceRole = 'Admin' | 'Member' | 'Contributor' | 'Viewer';
 
 export interface AdminWorkspace {
@@ -10,8 +12,6 @@ export interface AdminWorkspace {
   capacityId?: string;
   domainId?: string;
 }
-
-export type PrincipalType = 'User' | 'Group' | 'ServicePrincipal';
 
 export interface UserDetails {
   userPrincipalName: string;

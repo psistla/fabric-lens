@@ -19,8 +19,9 @@ fabric-lens is a standalone React SPA providing governance, health intelligence,
 ```
 src/
   auth/         → MSAL config, AuthProvider, useAuth hook, ProtectedRoute
-  api/          → fabricClient (base HTTP), per-resource modules (admin, capacities,
-                  workspaces), azurePricing (live SKU rates), demo (mock data), types/
+  api/          → fabricClient (base HTTP), graphClient (MS Graph for group expansion),
+                  per-resource modules (admin, capacities, workspaces),
+                  azurePricing (live SKU rates), demo (mock data), types/
   data/         → Static data & derived constants (skuSpecs with tiers & rates)
   store/        → Zustand stores (workspace, capacity, security, ui)
   components/
@@ -41,6 +42,8 @@ src/
 - `noUnusedLocals` and `noUnusedParameters` enabled in tsconfig
 - Prefer `interface` over `type` for object shapes
 - All API responses fully typed in `src/api/types/`
+- `PrincipalType` (`'User' | 'Group'`) distinguishes individual users from security groups in admin types
+- `GroupMember` interface for expanded group membership data
 - Discriminated unions for error handling
 - Co-locate component-specific types (e.g. `SortKey`, `SortDir`) in the component file
 
@@ -88,7 +91,8 @@ All magic numbers, thresholds, colors, and config values live in `src/utils/cons
 | Charts | `CHART_COLORS` (12-color palette), `CHART_TOOLTIP_STYLE`, `CHART_FALLBACK_COLOR` |
 | Roles | `ROLE_COLORS` (Admin/Member/Contributor/Viewer color map) |
 | Health | `HEALTH_SCORE_WEIGHTS`, `GRADE_THRESHOLDS`, `MAX_REASONABLE_ITEM_COUNT` |
-| Security | `ADMIN_ROLE_WARNING_THRESHOLD` (5) |
+| Security | `ADMIN_ROLE_WARNING_THRESHOLD` (5), `GROUP_EXPAND_INITIAL_COUNT` (3) |
+| Graph | `GRAPH_SCOPES` (`GroupMember.Read.All`) |
 | Pricing | `CU_RATE_PER_HOUR` (0.18 USD) |
 
 When adding new values, add them to constants.ts and import — do not inline.
@@ -239,7 +243,8 @@ npm run test:watch   # Vitest (watch mode)
 
 ## Auth Notes
 - MSAL uses popup login (falls back to redirect if popups blocked)
-- Two token scopes: Fabric API (`api.fabric.microsoft.com/.default`) and ARM API
+- Three token scopes: Fabric API (`api.fabric.microsoft.com/.default`), ARM API, and Microsoft Graph (`GroupMember.Read.All` for group expansion)
+- Graph scope is opt-in — requested via incremental consent popup from Settings page
 - Admin APIs require Fabric Admin role — gracefully degrade for non-admins
 - App Registration: SPA type, redirect to localhost:5173 (dev)
 - In demo mode, auth is fully bypassed — no Azure AD required

@@ -40,7 +40,7 @@ Fabric Lens is a standalone React SPA that connects directly to Microsoft Fabric
 | **Workspace Explorer** | Browse, search, and drill into every workspace. View items, health grades, capacity assignments, OneLake endpoints, and Git status |
 | **Health Scoring** | Automated 100-point governance assessment per workspace across 9 checks — description, capacity, domain, Git, naming, staleness, data layer, item count, and identity |
 | **Capacity Monitor** | Track SKUs, regions, and states with tier-based badges. Cost calculator with **live Azure pricing** from the Azure Retail Prices API |
-| **Security Audit** | Cross-workspace role mapping with search, role filter chips, sortable columns, and pagination. Flags over-permissioned users (Admin on 5+ workspaces) |
+| **Security Audit** | Cross-workspace role mapping with search, role filter chips, sortable columns, and pagination. Flags over-permissioned users (Admin on 5+ workspaces). Expands Azure AD group memberships via Microsoft Graph (optional) |
 | **CSV Export** | Export workspace inventories and security audit data for offline analysis |
 | **Dark Mode** | Blue-tinted dark theme (navy `#0B1120`, not pure black) with full semantic color token support |
 | **Design System** | CSS custom property tokens for surfaces, text, borders, and brand colors. Geist Sans + Geist Mono typography. See [DESIGN_GUIDE.md](DESIGN_GUIDE.md) |
@@ -86,8 +86,11 @@ In your App Registration > **API permissions** > **Add a permission**:
 | Power BI Service | `Tenant.Read.All` | Delegated |
 | Power BI Service | `Capacity.Read.All` | Delegated |
 | Azure Service Management | `user_impersonation` | Delegated |
+| Microsoft Graph | `GroupMember.Read.All` | Delegated |
 
 Click **Grant admin consent** (requires admin privileges).
+
+> **Note:** Group membership expansion requires Microsoft Graph permissions. The app works without them but shows groups as unexpanded entries.
 
 ### 3. Configure Environment
 

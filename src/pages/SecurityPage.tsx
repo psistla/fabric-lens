@@ -81,12 +81,14 @@ const TYPE_ICONS: Record<PrincipalType, typeof Users> = {
   User: Users,
   Group: UsersRound,
   ServicePrincipal: Bot,
+  ServicePrincipalProfile: Bot,
 };
 
 const TYPE_LABELS: Record<PrincipalType, string> = {
   User: 'User',
   Group: 'Group',
   ServicePrincipal: 'SPN',
+  ServicePrincipalProfile: 'SPN Profile',
 };
 
 /** Returns page numbers to display, with ellipsis gaps for large ranges. */
