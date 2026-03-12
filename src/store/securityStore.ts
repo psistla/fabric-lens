@@ -1,6 +1,11 @@
 import { create } from 'zustand';
-import type { WorkspaceUser } from '@/api/types/admin';
-import { isDemoMode, getMockWorkspaceUsers } from '@/api/demo';
+import type { WorkspaceUser, ResolvedGroup } from '@/api/types/admin';
+import {
+  isDemoMode,
+  getMockWorkspaceUsers,
+  getMockGroupMemberCount,
+  getMockResolvedGroup,
+} from '@/api/demo';
 import { fabricClient } from '@/api/fabricClientInstance';
 import { createAdminApi } from '@/api/admin';
 import { ADMIN_RATE_LIMIT, DEMO_PROGRESS_DELAY_MS } from '@/utils/constants';
@@ -9,6 +14,7 @@ const api = createAdminApi(fabricClient);
 
 interface SecurityState {
   workspaceUsers: Record<string, WorkspaceUser[]>;
+  resolvedGroups: Record<string, ResolvedGroup>;
   isAdmin: boolean | null; // null = not yet checked
   loading: boolean;
   error: string | null;
@@ -17,10 +23,13 @@ interface SecurityState {
   checkAdminAccess: () => Promise<void>;
   fetchWorkspaceUsers: (workspaceId: string) => Promise<void>;
   fetchAllWorkspaceUsers: (workspaceIds: string[]) => Promise<void>;
+  resolveGroupCount: (groupUpn: string, displayName: string) => Promise<void>;
+  resolveGroupMembers: (groupUpn: string, displayName: string) => Promise<void>;
 }
 
 export const useSecurityStore = create<SecurityState>()((set, get) => ({
   workspaceUsers: {},
+  resolvedGroups: {},
   isAdmin: null,
   loading: false,
   error: null,
@@ -131,5 +140,93 @@ export const useSecurityStore = create<SecurityState>()((set, get) => ({
         error: `Rate limit: scanned ${toFetch.length} of ${workspaceIds.length} workspaces. ${workspaceIds.length - toFetch.length} skipped (${ADMIN_RATE_LIMIT} req/hr limit).`,
       });
     }
+  },
+
+  resolveGroupCount: async (groupUpn: string, displayName: string) => {
+    const existing = get().resolvedGroups[groupUpn];
+    if (existing?.memberCount !== null && existing?.memberCount !== undefined) return;
+
+    if (isDemoMode) {
+      const count = getMockGroupMemberCount(groupUpn);
+      set((state) => ({
+        resolvedGroups: {
+          ...state.resolvedGroups,
+          [groupUpn]: {
+            groupId: groupUpn,
+            displayName,
+            memberCount: count,
+            members: state.resolvedGroups[groupUpn]?.members ?? [],
+            loading: false,
+            error: null,
+          },
+        },
+      }));
+      return;
+    }
+
+    // Live mode: would call Microsoft Graph API GET /groups/{id}/members/$count
+    // For now, set as unknown until resolveGroupMembers is called
+    set((state) => ({
+      resolvedGroups: {
+        ...state.resolvedGroups,
+        [groupUpn]: {
+          groupId: groupUpn,
+          displayName,
+          memberCount: null,
+          members: [],
+          loading: false,
+          error: null,
+        },
+      },
+    }));
+  },
+
+  resolveGroupMembers: async (groupUpn: string, displayName: string) => {
+    const existing = get().resolvedGroups[groupUpn];
+    if (existing?.members && existing.members.length > 0) return;
+
+    set((state) => ({
+      resolvedGroups: {
+        ...state.resolvedGroups,
+        [groupUpn]: {
+          groupId: groupUpn,
+          displayName,
+          memberCount: existing?.memberCount ?? null,
+          members: [],
+          loading: true,
+          error: null,
+        },
+      },
+    }));
+
+    if (isDemoMode) {
+      // Simulate brief loading delay
+      await new Promise((r) => setTimeout(r, 400));
+      const resolved = getMockResolvedGroup(groupUpn, displayName);
+      set((state) => ({
+        resolvedGroups: {
+          ...state.resolvedGroups,
+          [groupUpn]: resolved,
+        },
+      }));
+      return;
+    }
+
+    // Live mode: would call Microsoft Graph API GET /groups/{id}/members
+    // This requires User.Read.All or GroupMember.Read.All consent
+    // For now, set consent_required error as placeholder
+    set((state) => ({
+      resolvedGroups: {
+        ...state.resolvedGroups,
+        [groupUpn]: {
+          groupId: groupUpn,
+          displayName,
+          memberCount: existing?.memberCount ?? null,
+          members: [],
+          loading: false,
+          error: 'consent_required',
+        },
+      },
+    }));
   },
 }));

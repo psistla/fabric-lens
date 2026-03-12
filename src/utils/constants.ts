@@ -104,6 +104,9 @@ export const DEFAULT_STALE_THRESHOLD_DAYS = 90;
 /** Number of Admin-role assignments before flagging a user as over-permissioned. */
 export const ADMIN_ROLE_WARNING_THRESHOLD = 5;
 
+/** Number of group members to show before "Show all" link. */
+export const GROUP_EXPAND_INITIAL_COUNT = 10;
+
 // -- Capacity pricing --
 
 /** Base rate per Capacity Unit per hour (USD). All SKU rates derive from this. */

@@ -7,9 +7,12 @@ export interface AdminWorkspace {
   domainId?: string;
 }
 
+export type PrincipalType = 'User' | 'Group' | 'ServicePrincipal';
+
 export interface UserDetails {
   userPrincipalName: string;
   displayName: string;
+  principalType?: PrincipalType;
 }
 
 export interface WorkspaceAccessDetails {
@@ -19,6 +22,31 @@ export interface WorkspaceAccessDetails {
 export interface WorkspaceUser {
   userDetails: UserDetails;
   workspaceAccessDetails: WorkspaceAccessDetails;
+}
+
+export interface GroupMember {
+  displayName: string;
+  userPrincipalName: string;
+  jobTitle?: string;
+}
+
+export interface ResolvedGroup {
+  groupId: string;
+  displayName: string;
+  memberCount: number | null;
+  members: GroupMember[];
+  loading: boolean;
+  error: string | null;
+}
+
+export interface EffectiveAccessSummary {
+  directUsers: number;
+  groups: number;
+  transitiveUsers: number;
+  servicePrincipals: number;
+  uniqueUsers: number;
+  duplicates: number;
+  groupsWithAdminRole: string[];
 }
 
 export type AdminResult<T> =

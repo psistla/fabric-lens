@@ -13,6 +13,9 @@ import {
   ArrowDown,
   ChevronLeft,
   ChevronRight,
+  UsersRound,
+  Bot,
+  Download,
 } from 'lucide-react';
 import {
   BarChart,
@@ -27,7 +30,11 @@ import { useSecurityStore } from '@/store/securityStore';
 import { useWorkspaceStore } from '@/store/workspaceStore';
 import { ExportButton } from '@/components/shared/ExportButton';
 import { SearchBar } from '@/components/shared/SearchBar';
+import { GroupBadge, GroupExpansionRow } from '@/components/security/GroupExpansionRow';
+import { EffectiveAccessCard } from '@/components/security/EffectiveAccessCard';
 import { exportToCSV } from '@/utils/export';
+import { isDemoMode } from '@/api/demo';
+import type { PrincipalType, EffectiveAccessSummary } from '@/api/types/admin';
 import {
   ROLE_COLORS,
   CHART_FALLBACK_COLOR,
@@ -41,6 +48,7 @@ import {
 interface UserSummary {
   displayName: string;
   email: string;
+  principalType: PrincipalType;
   assignments: { workspaceId: string; workspaceName: string; role: string }[];
 }
 
@@ -67,6 +75,18 @@ const ROLE_CHIP_STYLES: Record<string, { active: string; inactive: string }> = {
     active: 'bg-emerald-100 text-emerald-700 ring-1 ring-emerald-300 dark:bg-emerald-900/40 dark:text-emerald-400 dark:ring-emerald-700',
     inactive: 'bg-[var(--surface-secondary)] text-[var(--text-secondary)]',
   },
+};
+
+const TYPE_ICONS: Record<PrincipalType, typeof Users> = {
+  User: Users,
+  Group: UsersRound,
+  ServicePrincipal: Bot,
+};
+
+const TYPE_LABELS: Record<PrincipalType, string> = {
+  User: 'User',
+  Group: 'Group',
+  ServicePrincipal: 'SPN',
 };
 
 /** Returns page numbers to display, with ellipsis gaps for large ranges. */
@@ -128,12 +148,15 @@ export function SecurityPage() {
   const navigate = useNavigate();
   const {
     workspaceUsers,
+    resolvedGroups,
     isAdmin,
     loading,
     error,
     scanProgress,
     checkAdminAccess,
     fetchAllWorkspaceUsers,
+    resolveGroupCount,
+    resolveGroupMembers,
   } = useSecurityStore();
   const {
     workspaces,
@@ -153,7 +176,7 @@ export function SecurityPage() {
 
   const hasScanned = Object.keys(workspaceUsers).length > 0;
 
-  // Aggregate user summaries
+  // Aggregate user summaries (now includes principalType)
   const userSummaries = useMemo((): UserSummary[] => {
     const map = new Map<string, UserSummary>();
     for (const [wsId, users] of Object.entries(workspaceUsers)) {
@@ -161,11 +184,13 @@ export function SecurityPage() {
         workspaces.find((w) => w.id === wsId)?.displayName ?? wsId;
       for (const u of users) {
         const email = u.userDetails.userPrincipalName;
+        const pType = u.userDetails.principalType ?? 'User';
         let summary = map.get(email);
         if (!summary) {
           summary = {
             displayName: u.userDetails.displayName,
             email,
+            principalType: pType,
             assignments: [],
           };
           map.set(email, summary);
@@ -182,21 +207,108 @@ export function SecurityPage() {
     );
   }, [workspaceUsers, workspaces]);
 
+  // Pre-fetch group member counts once scan is done
+  useEffect(() => {
+    if (!hasScanned) return;
+    const groups = userSummaries.filter((u) => u.principalType === 'Group');
+    for (const g of groups) {
+      void resolveGroupCount(g.email, g.displayName);
+    }
+
+    // In demo mode, auto-resolve all group members immediately
+    if (isDemoMode) {
+      for (const g of groups) {
+        void resolveGroupMembers(g.email, g.displayName);
+      }
+    }
+  }, [hasScanned, userSummaries, resolveGroupCount, resolveGroupMembers]);
+
+  // Effective access summary
+  const effectiveAccessSummary = useMemo((): EffectiveAccessSummary | null => {
+    if (!hasScanned) return null;
+
+    const directUsers = userSummaries.filter((u) => u.principalType === 'User');
+    const groups = userSummaries.filter((u) => u.principalType === 'Group');
+    const spns = userSummaries.filter((u) => u.principalType === 'ServicePrincipal');
+
+    // Collect all transitive user UPNs from resolved groups
+    const allTransitiveUpns = new Set<string>();
+    let totalTransitive = 0;
+    for (const g of groups) {
+      const resolved = resolvedGroups[g.email];
+      if (resolved?.members) {
+        for (const m of resolved.members) {
+          allTransitiveUpns.add(m.userPrincipalName);
+        }
+        totalTransitive += resolved.members.length;
+      }
+    }
+
+    // Unique users = direct users + transitive users (deduplicated)
+    const allUniqueUpns = new Set<string>();
+    for (const u of directUsers) allUniqueUpns.add(u.email);
+    for (const upn of allTransitiveUpns) allUniqueUpns.add(upn);
+
+    const duplicates = directUsers.length + totalTransitive - allUniqueUpns.size;
+
+    // Groups with Admin role
+    const groupsWithAdmin = groups
+      .filter((g) => g.assignments.some((a) => a.role === 'Admin'))
+      .map((g) => g.displayName);
+
+    return {
+      directUsers: directUsers.length,
+      groups: groups.length,
+      transitiveUsers: totalTransitive,
+      servicePrincipals: spns.length,
+      uniqueUsers: allUniqueUpns.size,
+      duplicates: Math.max(0, duplicates),
+      groupsWithAdminRole: groupsWithAdmin,
+    };
+  }, [hasScanned, userSummaries, resolvedGroups]);
+
   // Over-permissioned users (Admin on 5+ workspaces)
   const overPermissioned = useMemo(
     () =>
       userSummaries.filter(
-        (u) => u.assignments.filter((a) => a.role === 'Admin').length >= ADMIN_ROLE_WARNING_THRESHOLD,
+        (u) => u.principalType === 'User' && u.assignments.filter((a) => a.role === 'Admin').length >= ADMIN_ROLE_WARNING_THRESHOLD,
       ),
     [userSummaries],
   );
 
+  // --- Expanded groups state ---
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
+
+  const toggleGroupExpansion = useCallback(
+    (groupUpn: string, displayName: string) => {
+      setExpandedGroups((prev) => {
+        const next = new Set(prev);
+        if (next.has(groupUpn)) {
+          next.delete(groupUpn);
+        } else {
+          next.add(groupUpn);
+          // Resolve members on first expand
+          void resolveGroupMembers(groupUpn, displayName);
+        }
+        return next;
+      });
+    },
+    [resolveGroupMembers],
+  );
+
+  // --- Export handlers ---
   const handleExport = useCallback(() => {
     const rows: Record<string, unknown>[] = [];
     for (const u of userSummaries) {
+      const memberCount = u.principalType === 'Group'
+        ? resolvedGroups[u.email]?.memberCount
+        : undefined;
       for (const a of u.assignments) {
         rows.push({
-          User: u.displayName,
+          Type: TYPE_LABELS[u.principalType],
+          User: u.principalType === 'Group' && memberCount != null
+            ? `${u.displayName} (${memberCount} members)`
+            : u.displayName,
           Email: u.email,
           Workspace: a.workspaceName,
           Role: a.role,
@@ -204,7 +316,42 @@ export function SecurityPage() {
       }
     }
     exportToCSV(rows, 'fabric-lens-security.csv');
-  }, [userSummaries]);
+  }, [userSummaries, resolvedGroups]);
+
+  const handleExportEffectiveAccess = useCallback(() => {
+    const rows: Record<string, unknown>[] = [];
+    // Direct users
+    for (const u of userSummaries) {
+      if (u.principalType !== 'User') continue;
+      for (const a of u.assignments) {
+        rows.push({
+          User: u.displayName,
+          Email: u.email,
+          Workspace: a.workspaceName,
+          Role: a.role,
+          AccessPath: 'Direct',
+        });
+      }
+    }
+    // Transitive via groups
+    for (const u of userSummaries) {
+      if (u.principalType !== 'Group') continue;
+      const resolved = resolvedGroups[u.email];
+      if (!resolved?.members) continue;
+      for (const a of u.assignments) {
+        for (const m of resolved.members) {
+          rows.push({
+            User: m.displayName,
+            Email: m.userPrincipalName,
+            Workspace: a.workspaceName,
+            Role: a.role,
+            AccessPath: `Via ${u.displayName}`,
+          });
+        }
+      }
+    }
+    exportToCSV(rows, 'fabric-lens-effective-access.csv');
+  }, [userSummaries, resolvedGroups]);
 
   // Role distribution data
   const roleDistribution = useMemo(() => {
@@ -363,7 +510,17 @@ export function SecurityPage() {
         </div>
         <div className="flex items-center gap-2">
           {hasScanned && (
-            <ExportButton onClick={handleExport} label="Export CSV" />
+            <>
+              <button
+                onClick={handleExportEffectiveAccess}
+                className="inline-flex items-center gap-1.5 rounded-md border border-[var(--border-default)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:bg-[var(--surface-secondary)]"
+                title="Export effective access (includes group members)"
+              >
+                <Download className="h-3.5 w-3.5" />
+                Effective Access
+              </button>
+              <ExportButton onClick={handleExport} label="Export CSV" />
+            </>
           )}
           <button
             onClick={handleScanAll}
@@ -433,6 +590,11 @@ export function SecurityPage() {
       {/* Results */}
       {hasScanned && (
         <>
+          {/* Effective Access Card */}
+          {effectiveAccessSummary && (
+            <EffectiveAccessCard summary={effectiveAccessSummary} />
+          )}
+
           {/* Over-permissioned alert */}
           {overPermissioned.length > 0 && (
             <div className="rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-900/50 dark:bg-red-950/20">
@@ -518,7 +680,7 @@ export function SecurityPage() {
                 <div className="flex items-center gap-2">
                   <Users className="h-4 w-4 text-[var(--text-tertiary)]" />
                   <div>
-                    <p className="text-xs text-[var(--text-secondary)]">Users</p>
+                    <p className="text-xs text-[var(--text-secondary)]">Principals</p>
                     <p className="text-sm font-semibold text-[var(--text-primary)]">
                       {summaryStats.totalUsers}
                     </p>
@@ -590,12 +752,15 @@ export function SecurityPage() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-[var(--border-default)] bg-[var(--surface-secondary)]">
+                      <th className="w-16 px-4 py-2 text-left text-xs font-medium uppercase text-[var(--text-secondary)]">
+                        Type
+                      </th>
                       <th
                         onClick={() => handleSort('displayName')}
                         className="cursor-pointer select-none px-4 py-2 text-left text-xs font-medium uppercase text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)]"
                       >
                         <span className="flex items-center gap-1.5">
-                          User {renderSortIcon('displayName')}
+                          Name {renderSortIcon('displayName')}
                         </span>
                       </th>
                       <th
@@ -617,46 +782,82 @@ export function SecurityPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[var(--border-default)]">
-                    {paginatedUsers.map((u) => (
-                      <tr key={u.email}>
-                        <td className="whitespace-nowrap px-4 py-2.5 font-medium text-[var(--text-primary)]">
-                          {u.displayName}
-                        </td>
-                        <td className="whitespace-nowrap px-4 py-2.5 text-[var(--text-secondary)]">
-                          {u.email}
-                        </td>
-                        <td className="px-4 py-2.5">
-                          <div className="flex flex-wrap gap-1.5">
-                            {u.assignments.map((a) => (
-                              <button
-                                key={`${a.workspaceId}-${a.role}`}
-                                onClick={() =>
-                                  void navigate(
-                                    `/workspaces/${a.workspaceId}`,
-                                  )
-                                }
-                                className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[11px] font-medium transition-colors hover:ring-1 ${
-                                  a.role === 'Admin'
-                                    ? 'bg-red-100 text-red-700 hover:ring-red-300 dark:bg-red-900/30 dark:text-red-400'
-                                    : a.role === 'Member'
-                                      ? 'bg-blue-100 text-blue-700 hover:ring-blue-300 dark:bg-blue-900/30 dark:text-blue-400'
-                                      : a.role === 'Contributor'
-                                        ? 'bg-amber-100 text-amber-700 hover:ring-amber-300 dark:bg-amber-900/30 dark:text-amber-400'
-                                        : 'bg-emerald-100 text-emerald-700 hover:ring-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400'
-                                }`}
-                              >
-                                {a.workspaceName}
-                                <span className="opacity-60">{a.role}</span>
-                              </button>
-                            ))}
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
+                    {paginatedUsers.map((u) => {
+                      const TypeIcon = TYPE_ICONS[u.principalType];
+                      const isGroup = u.principalType === 'Group';
+                      const isExpanded = expandedGroups.has(u.email);
+                      const resolved = isGroup ? resolvedGroups[u.email] : undefined;
+
+                      return (
+                        <GroupWrapper key={u.email}>
+                          <tr
+                            className={isGroup ? 'cursor-pointer transition-colors hover:bg-[var(--surface-tertiary)]' : ''}
+                            onClick={isGroup ? () => toggleGroupExpansion(u.email, u.displayName) : undefined}
+                          >
+                            <td className="whitespace-nowrap px-4 py-2.5">
+                              <div className="flex items-center gap-1" title={TYPE_LABELS[u.principalType]}>
+                                <TypeIcon className="h-3.5 w-3.5 text-[var(--text-tertiary)]" />
+                                <span className="text-[10px] text-[var(--text-tertiary)]">
+                                  {TYPE_LABELS[u.principalType]}
+                                </span>
+                              </div>
+                            </td>
+                            <td className="whitespace-nowrap px-4 py-2.5 font-medium text-[var(--text-primary)]">
+                              <div className="flex items-center gap-2">
+                                {u.displayName}
+                                {isGroup && resolved && (
+                                  <GroupBadge
+                                    group={resolved}
+                                    expanded={isExpanded}
+                                    onToggle={() => toggleGroupExpansion(u.email, u.displayName)}
+                                  />
+                                )}
+                              </div>
+                            </td>
+                            <td className="whitespace-nowrap px-4 py-2.5 text-[var(--text-secondary)]">
+                              {u.email}
+                            </td>
+                            <td className="px-4 py-2.5">
+                              <div className="flex flex-wrap gap-1.5">
+                                {u.assignments.map((a) => (
+                                  <button
+                                    key={`${a.workspaceId}-${a.role}`}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      void navigate(
+                                        `/workspaces/${a.workspaceId}`,
+                                      );
+                                    }}
+                                    className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[11px] font-medium transition-colors hover:ring-1 ${
+                                      a.role === 'Admin'
+                                        ? 'bg-red-100 text-red-700 hover:ring-red-300 dark:bg-red-900/30 dark:text-red-400'
+                                        : a.role === 'Member'
+                                          ? 'bg-blue-100 text-blue-700 hover:ring-blue-300 dark:bg-blue-900/30 dark:text-blue-400'
+                                          : a.role === 'Contributor'
+                                            ? 'bg-amber-100 text-amber-700 hover:ring-amber-300 dark:bg-amber-900/30 dark:text-amber-400'
+                                            : 'bg-emerald-100 text-emerald-700 hover:ring-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400'
+                                    }`}
+                                  >
+                                    {a.workspaceName}
+                                    <span className="opacity-60">{a.role}</span>
+                                  </button>
+                                ))}
+                              </div>
+                            </td>
+                          </tr>
+                          {isGroup && isExpanded && resolved && (
+                            <GroupExpansionRow
+                              group={resolved}
+                              onRetry={() => resolveGroupMembers(u.email, u.displayName)}
+                            />
+                          )}
+                        </GroupWrapper>
+                      );
+                    })}
                     {sortedUsers.length === 0 && (
                       <tr>
                         <td
-                          colSpan={3}
+                          colSpan={4}
                           className="px-4 py-12 text-center text-[var(--text-secondary)]"
                         >
                           No users match your filters.
@@ -671,8 +872,8 @@ export function SecurityPage() {
               <div className="flex items-center justify-between border-t border-[var(--border-default)] bg-[var(--surface-secondary)] px-4 py-2">
                 <span className="text-xs text-[var(--text-secondary)]">
                   {sortedUsers.length > 0
-                    ? `Showing ${(safePage - 1) * USERS_PER_PAGE + 1}\u2013${Math.min(safePage * USERS_PER_PAGE, sortedUsers.length)} of ${sortedUsers.length} users`
-                    : '0 users'}
+                    ? `Showing ${(safePage - 1) * USERS_PER_PAGE + 1}\u2013${Math.min(safePage * USERS_PER_PAGE, sortedUsers.length)} of ${sortedUsers.length} principals`
+                    : '0 principals'}
                   {sortedUsers.length !== userSummaries.length &&
                     ` (filtered from ${userSummaries.length})`}
                 </span>
@@ -724,4 +925,9 @@ export function SecurityPage() {
       )}
     </div>
   );
+}
+
+/** Wrapper to allow multiple <tr> elements per logical row (for group expansion). */
+function GroupWrapper({ children }: { children: React.ReactNode }) {
+  return <>{children}</>;
 }
