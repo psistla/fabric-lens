@@ -42,35 +42,44 @@ type PricingStatus = 'idle' | 'loading' | 'live' | 'error';
 function useLivePricing(region: string) {
   const [specs, setSpecs] = useState<Record<string, SkuSpec>>(SKU_SPECS);
   const [status, setStatus] = useState<PricingStatus>('idle');
-
-  const loadPricing = useCallback(async (armRegion: string) => {
-    if (isDemoMode) {
-      setSpecs(SKU_SPECS);
-      setStatus('live');
-      return;
-    }
-
-    setStatus('loading');
-    try {
-      const rates = await fetchSkuRates(armRegion);
-      if (rates.length > 0) {
-        setSpecs(buildSkuSpecsWithRates(rates));
-        setStatus('live');
-      } else {
-        setSpecs(SKU_SPECS);
-        setStatus('error');
-      }
-    } catch {
-      setSpecs(SKU_SPECS);
-      setStatus('error');
-    }
-  }, []);
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
-    void loadPricing(region);
-  }, [region, loadPricing]);
+    let cancelled = false;
 
-  return { specs, status, retry: () => void loadPricing(region) };
+    async function load() {
+      if (isDemoMode) {
+        if (!cancelled) {
+          setSpecs(SKU_SPECS);
+          setStatus('live');
+        }
+        return;
+      }
+
+      if (!cancelled) setStatus('loading');
+      try {
+        const rates = await fetchSkuRates(region);
+        if (cancelled) return;
+        if (rates.length > 0) {
+          setSpecs(buildSkuSpecsWithRates(rates));
+          setStatus('live');
+        } else {
+          setSpecs(SKU_SPECS);
+          setStatus('error');
+        }
+      } catch {
+        if (!cancelled) {
+          setSpecs(SKU_SPECS);
+          setStatus('error');
+        }
+      }
+    }
+
+    void load();
+    return () => { cancelled = true; };
+  }, [region, retryCount]);
+
+  return { specs, status, retry: () => setRetryCount((c) => c + 1) };
 }
 
 function CostCalculator() {

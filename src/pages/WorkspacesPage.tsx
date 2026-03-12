@@ -13,7 +13,7 @@ import type { Workspace } from '@/api/types/workspace';
 export function WorkspacesPage() {
   const navigate = useNavigate();
   const { workspaces, loading, error, fetchWorkspaces } = useWorkspaceStore();
-  const { capacities, fetchCapacities, getCapacityById } = useCapacityStore();
+  const { fetchCapacities, getCapacityById } = useCapacityStore();
   const [search, setSearch] = useState('');
 
   useEffect(() => {
@@ -106,7 +106,7 @@ export function WorkspacesPage() {
         render: (_val, row) => <StateBadge state={row.state} />,
       },
     ],
-    [capacities, getCapacityById],
+    [getCapacityById],
   );
 
   return (
