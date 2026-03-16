@@ -1,4 +1,13 @@
 {
+  "_securityNotes": "CSP, clickjacking prevention, MIME sniffing protection. See SECURITY.md for details.",
+  "globalHeaders": {
+    "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://api.fabric.microsoft.com https://management.azure.com https://graph.microsoft.com https://login.microsoftonline.com https://*.msauth.net https://*.msftauth.net https://prices.azure.com; frame-src https://login.microsoftonline.com https://*.msauth.net; frame-ancestors 'none'; base-uri 'self'; form-action 'self'",
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "DENY",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+    "Permissions-Policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()",
+    "X-DNS-Prefetch-Control": "off"
+  },
   "navigationFallback": {
     "rewrite": "/index.html",
     "exclude": ["/assets/*", "*.svg", "*.png", "*.ico"]
