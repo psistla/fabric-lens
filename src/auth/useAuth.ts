@@ -1,7 +1,16 @@
 import { useMsal, useIsAuthenticated } from '@azure/msal-react';
-import { InteractionStatus } from '@azure/msal-browser';
+import { InteractionStatus, InteractionRequiredAuthError } from '@azure/msal-browser';
 import { fabricLoginRequest } from './msalConfig';
-import { GRAPH_SCOPES } from '@/utils/constants';
+import { GRAPH_SCOPES, SESSION_IDLE_TIMEOUT_MS } from '@/utils/constants';
+import { useToastStore } from '@/components/shared/Toast';
+
+// Module-level timestamp shared across all useAuth instances.
+let lastActivityAt = Date.now();
+
+/** Reset the idle timeout clock. Pages should call this on meaningful user interactions. */
+export function resetActivityTimer(): void {
+  lastActivityAt = Date.now();
+}
 
 interface AuthUser {
   name: string;
@@ -44,6 +53,18 @@ export function useAuth() {
       throw new Error('No active account. Please sign in first.');
     }
 
+    if (Date.now() - lastActivityAt > SESSION_IDLE_TIMEOUT_MS) {
+      try {
+        await logout();
+      } catch {
+        // Ignore logout errors — session is expired regardless.
+      }
+      useToastStore
+        .getState()
+        .addToast('error', 'Session expired due to inactivity. Please sign in again.');
+      throw new Error('Session expired due to inactivity.');
+    }
+
     try {
       const result = await instance.acquireTokenSilent({
         scopes,
@@ -65,15 +86,20 @@ export function useAuth() {
         account,
       });
       return result.accessToken;
-    } catch {
-      try {
-        const result = await instance.acquireTokenPopup({
-          scopes: GRAPH_SCOPES,
-        });
-        return result.accessToken;
-      } catch {
-        return null;
+    } catch (err) {
+      // Only prompt via popup when interaction is explicitly required
+      // (e.g. consent needed, MFA challenge). Silent-fail all other errors.
+      if (err instanceof InteractionRequiredAuthError) {
+        try {
+          const result = await instance.acquireTokenPopup({
+            scopes: GRAPH_SCOPES,
+          });
+          return result.accessToken;
+        } catch {
+          return null;
+        }
       }
+      return null;
     }
   }
 

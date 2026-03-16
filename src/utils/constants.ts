@@ -131,6 +131,14 @@ export const PRINCIPAL_TYPE_COLORS: Record<string, string> = {
   ServicePrincipalProfile: '#8B5CF6',
 };
 
+// -- Session management --
+
+/** Idle timeout (ms) before the session is expired and the user is logged out. */
+export const SESSION_IDLE_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
+
+/** Warning threshold (ms) before idle timeout to optionally notify the user. */
+export const SESSION_WARNING_MS = 5 * 60 * 1000; // 5 minutes
+
 // -- App metadata --
 
 /** Application version (mirrors package.json). */
