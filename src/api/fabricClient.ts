@@ -7,6 +7,7 @@ import {
   FABRIC_SCOPES,
   DEFAULT_RETRY_AFTER_MS,
 } from '@/utils/constants';
+import { isDemoMode } from '@/api/demo';
 
 const FABRIC_API_BASE =
   (import.meta.env.VITE_FABRIC_API_BASE as string) || DEFAULT_FABRIC_API_BASE;
@@ -110,10 +111,22 @@ export class FabricClient {
   }
 
   async get<T>(path: string): Promise<T> {
+    if (isDemoMode) {
+      throw new Error(
+        'fabricClient: API call attempted in demo mode. ' +
+        'This is a bug — demo mode should use mock data exclusively.',
+      );
+    }
     return this.request<T>('GET', path);
   }
 
   async post<T>(path: string, body?: unknown): Promise<T> {
+    if (isDemoMode) {
+      throw new Error(
+        'fabricClient: API call attempted in demo mode. ' +
+        'This is a bug — demo mode should use mock data exclusively.',
+      );
+    }
     return this.request<T>('POST', path, body);
   }
 

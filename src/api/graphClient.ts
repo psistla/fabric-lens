@@ -1,6 +1,7 @@
 import type { AccountInfo } from '@azure/msal-browser';
 import { msalInstance } from '@/auth/AuthProvider';
 import { GRAPH_SCOPES, DEFAULT_GRAPH_API_BASE } from '@/utils/constants';
+import { isDemoMode } from '@/api/demo';
 import type {
   ODataPagedResponse,
   GraphUser,
@@ -35,6 +36,7 @@ export type GraphResult<T> = GraphSuccess<T> | GraphAuthError | GraphApiError;
 // ---------------------------------------------------------------------------
 
 async function getGraphToken(): Promise<string | null> {
+  if (!msalInstance) return null;
   const accounts = msalInstance.getAllAccounts();
   const account: AccountInfo | undefined = accounts[0];
   if (!account) return null;
@@ -84,6 +86,12 @@ function isConsentError(status: number, body: string): boolean {
 export async function getGroupMemberCount(
   groupId: string,
 ): Promise<GraphResult<number>> {
+  if (isDemoMode) {
+    throw new Error(
+      'graphClient: API call attempted in demo mode. ' +
+      'This is a bug — demo mode should use mock data exclusively.',
+    );
+  }
   const token = await getGraphToken();
   if (!token) {
     return {
@@ -151,6 +159,12 @@ export async function getGroupMemberCount(
 export async function getGroupMembers(
   groupId: string,
 ): Promise<GraphResult<GroupMember[]>> {
+  if (isDemoMode) {
+    throw new Error(
+      'graphClient: API call attempted in demo mode. ' +
+      'This is a bug — demo mode should use mock data exclusively.',
+    );
+  }
   const token = await getGraphToken();
   if (!token) {
     return {

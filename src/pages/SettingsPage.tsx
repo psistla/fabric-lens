@@ -117,12 +117,12 @@ function GraphStatusSection() {
       setGraphConnected(true);
       return;
     }
-    const account = msalInstance.getAllAccounts()[0];
+    const account = msalInstance!.getAllAccounts()[0];
     if (!account) {
       setGraphConnected(false);
       return;
     }
-    msalInstance
+    msalInstance!
       .acquireTokenSilent({ scopes: GRAPH_SCOPES, account })
       .then(() => setGraphConnected(true))
       .catch(() => setGraphConnected(false));
@@ -131,7 +131,7 @@ function GraphStatusSection() {
   const handleGrant = async () => {
     setGranting(true);
     try {
-      await msalInstance.acquireTokenPopup({ scopes: GRAPH_SCOPES });
+      await msalInstance!.acquireTokenPopup({ scopes: GRAPH_SCOPES });
       setGraphConnected(true);
     } catch {
       // User cancelled or consent denied

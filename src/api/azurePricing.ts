@@ -10,6 +10,7 @@ import type {
   SkuRate,
 } from '@/api/types/pricing';
 import { SKU_NAMES } from '@/data/skuSpecs';
+import { isDemoMode } from '@/api/demo';
 
 const PRICING_API_BASE = 'https://prices.azure.com/api/retail/prices';
 
@@ -98,7 +99,10 @@ const cache = new Map<string, CacheEntry>();
  */
 export async function fetchSkuRates(
   armRegionName: string,
-): Promise<SkuRate[]> {
+): Promise<SkuRate[] | null> {
+  if (isDemoMode) {
+    return null; // fall back to hardcoded rates
+  }
   const cached = cache.get(armRegionName);
   if (cached && Date.now() - cached.fetchedAt < CACHE_TTL_MS) {
     return cached.rates;

@@ -60,7 +60,7 @@ function useLivePricing(region: string) {
       try {
         const rates = await fetchSkuRates(region);
         if (cancelled) return;
-        if (rates.length > 0) {
+        if (rates && rates.length > 0) {
           setSpecs(buildSkuSpecsWithRates(rates));
           setStatus('live');
         } else {
