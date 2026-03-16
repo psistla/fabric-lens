@@ -6,8 +6,28 @@ import {
   DEFAULT_FABRIC_API_BASE,
   FABRIC_SCOPES,
   DEFAULT_RETRY_AFTER_MS,
+  MAX_RETRY_COUNT,
+  BASE_RETRY_DELAY_MS,
+  MAX_RETRY_DELAY_MS,
 } from '@/utils/constants';
 import { isDemoMode } from '@/api/demo';
+
+// Module-level request counter — tracks all fabricClient requests, resets hourly.
+const HOUR_MS = 60 * 60 * 1000;
+let _reqCount = 0;
+let _reqWindowStart = Date.now();
+
+function trackClientRequest(): void {
+  if (Date.now() - _reqWindowStart >= HOUR_MS) {
+    _reqCount = 0;
+    _reqWindowStart = Date.now();
+  }
+  _reqCount++;
+}
+
+export function getClientRequestCount(): number {
+  return _reqCount;
+}
 
 const FABRIC_API_BASE =
   (import.meta.env.VITE_FABRIC_API_BASE as string) || DEFAULT_FABRIC_API_BASE;
@@ -50,6 +70,7 @@ export class FabricClient {
     method: 'GET' | 'POST',
     path: string,
     body?: unknown,
+    retryCount = 0,
   ): Promise<T> {
     const token = await this.getToken(FABRIC_SCOPES);
     const url = path.startsWith('http') ? path : `${FABRIC_API_BASE}${path}`;
@@ -59,6 +80,7 @@ export class FabricClient {
       'Content-Type': 'application/json',
     };
 
+    trackClientRequest();
     const response = await fetch(url, {
       method,
       headers,
@@ -79,10 +101,22 @@ export class FabricClient {
     }
 
     if (response.status === 429) {
+      if (retryCount >= MAX_RETRY_COUNT) {
+        throw new FabricApiError(
+          429,
+          `Rate limited by Fabric API. Exceeded ${MAX_RETRY_COUNT} retry attempts. Please wait before retrying.`,
+        );
+      }
       const retryAfter = response.headers.get('Retry-After');
-      const waitMs = retryAfter ? parseInt(retryAfter, 10) * 1000 : DEFAULT_RETRY_AFTER_MS;
-      await sleep(waitMs);
-      return this.request(method, path, body);
+      const serverWaitMs = retryAfter
+        ? parseInt(retryAfter, 10) * 1000
+        : DEFAULT_RETRY_AFTER_MS;
+      const backoffMs = Math.min(
+        BASE_RETRY_DELAY_MS * Math.pow(2, retryCount) + Math.random() * 1000,
+        MAX_RETRY_DELAY_MS,
+      );
+      await sleep(Math.max(serverWaitMs, backoffMs));
+      return this.request(method, path, body, retryCount + 1);
     }
 
     if (!response.ok) {

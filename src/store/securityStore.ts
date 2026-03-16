@@ -9,8 +9,22 @@ import {
 import { fabricClient } from '@/api/fabricClientInstance';
 import { createAdminApi } from '@/api/admin';
 import { ADMIN_RATE_LIMIT, DEMO_PROGRESS_DELAY_MS } from '@/utils/constants';
+import { adminRateLimiter, type RateLimitUsage } from '@/utils/rateLimiter';
+import { useToastStore } from '@/components/shared/Toast';
 
 const api = createAdminApi(fabricClient);
+
+function trackAdminRequest(set: (partial: Partial<SecurityState>) => void): void {
+  adminRateLimiter.trackRequest();
+  const usage = adminRateLimiter.getUsage();
+  set({ rateLimitUsage: usage });
+  if (adminRateLimiter.isApproachingLimit()) {
+    useToastStore.getState().addToast(
+      'info',
+      `Approaching Fabric Admin API rate limit (${usage.count}/${usage.limit} requests this hour). Data may be incomplete.`,
+    );
+  }
+}
 
 interface SecurityState {
   workspaceUsers: Record<string, WorkspaceUser[]>;
@@ -19,7 +33,7 @@ interface SecurityState {
   loading: boolean;
   error: string | null;
   scanProgress: { completed: number; total: number } | null;
-  requestCount: number;
+  rateLimitUsage: RateLimitUsage | null;
   checkAdminAccess: () => Promise<void>;
   fetchWorkspaceUsers: (workspaceId: string) => Promise<void>;
   fetchAllWorkspaceUsers: (workspaceIds: string[]) => Promise<void>;
@@ -34,7 +48,7 @@ export const useSecurityStore = create<SecurityState>()((set, get) => ({
   loading: false,
   error: null,
   scanProgress: null,
-  requestCount: 0,
+  rateLimitUsage: null,
 
   checkAdminAccess: async () => {
     if (isDemoMode) {
@@ -69,14 +83,18 @@ export const useSecurityStore = create<SecurityState>()((set, get) => ({
         }));
         return;
       }
+      if (!adminRateLimiter.canMakeRequest()) {
+        set({ error: `Admin API rate limit reached (${ADMIN_RATE_LIMIT} req/hr). Try again later.` });
+        return;
+      }
       const result = await api.getWorkspaceUsers(workspaceId);
       if (result.success) {
+        trackAdminRequest(set);
         set((state) => ({
           workspaceUsers: {
             ...state.workspaceUsers,
             [workspaceId]: result.data,
           },
-          requestCount: state.requestCount + 1,
         }));
       }
     } catch (e) {
@@ -87,8 +105,7 @@ export const useSecurityStore = create<SecurityState>()((set, get) => ({
   },
 
   fetchAllWorkspaceUsers: async (workspaceIds: string[]) => {
-    const { requestCount } = get();
-    const remaining = ADMIN_RATE_LIMIT - requestCount;
+    const remaining = adminRateLimiter.getRemainingRequests();
     const toFetch = workspaceIds.slice(0, remaining);
 
     set({
@@ -123,9 +140,9 @@ export const useSecurityStore = create<SecurityState>()((set, get) => ({
       if (result.success) {
         allUsers[wsId] = result.data;
       }
+      trackAdminRequest(set);
       set({
         scanProgress: { completed: i + 1, total: toFetch.length },
-        requestCount: get().requestCount + 1,
       });
     }
 

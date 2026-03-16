@@ -28,6 +28,18 @@ export const ADMIN_RATE_LIMIT = 200;
 /** Default wait time (ms) when a 429 response has no Retry-After header. */
 export const DEFAULT_RETRY_AFTER_MS = 5000;
 
+/** Request count threshold at which to warn about approaching the admin rate limit (90% of 200). */
+export const ADMIN_RATE_WARNING_THRESHOLD = 180;
+
+/** Maximum number of retry attempts on a 429 response before throwing. */
+export const MAX_RETRY_COUNT = 3;
+
+/** Base delay (ms) for exponential backoff on 429 retries. */
+export const BASE_RETRY_DELAY_MS = 1000;
+
+/** Maximum delay (ms) cap for exponential backoff on 429 retries. */
+export const MAX_RETRY_DELAY_MS = 30000;
+
 /** Delay (ms) between mock progress updates in demo mode. */
 export const DEMO_PROGRESS_DELAY_MS = 80;
 
