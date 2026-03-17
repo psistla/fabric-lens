@@ -2,14 +2,39 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [master]
   pull_request:
-    branches: [main]
+    branches: [master]
 
 jobs:
   ci:
-    name: Lint, Type Check, Test & Build
+    name: Security, Lint, Build & Test
     runs-on: ubuntu-latest
+
+    # ─── Security rationale ──────────────────────────────────────────────────
+    # This job enforces a layered security posture on every push and PR:
+    #
+    #  npm ci          — Deterministic install from package-lock.json. Prevents
+    #                    "works on my machine" drift and ensures the exact
+    #                    dependency tree is reproducible in CI.
+    #
+    #  npm audit       — Scans installed packages against the npm advisory DB.
+    #                    Fails the build on HIGH or CRITICAL severity CVEs,
+    #                    catching known vulnerabilities before they ship.
+    #
+    #  npm run lint    — ESLint with security-aware rules catches dangerous
+    #                    patterns (eval, innerHTML, dangerouslySetInnerHTML,
+    #                    prototype pollution) at the source level.
+    #
+    #  npm run build   — Runs tsc -b (strict TypeScript compilation). Strict
+    #                    mode eliminates implicit `any`, unchecked null access,
+    #                    and type coercions that can become security bugs at
+    #                    runtime (e.g. bypassing input validation).
+    #
+    #  npm run test    — Unit/integration tests verify security-critical paths
+    #                    (auth guards, input sanitisation, rate-limit helpers)
+    #                    behave correctly under regression.
+    # ─────────────────────────────────────────────────────────────────────────
 
     strategy:
       matrix:
@@ -25,21 +50,24 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: npm
 
+      # Deterministic install — respects package-lock.json exactly,
+      # fails if it is out of sync with package.json.
       - name: Install dependencies
         run: npm ci
 
+      # Fail fast on HIGH/CRITICAL CVEs in the dependency tree.
       - name: Audit dependencies
         run: npm audit --audit-level=high
-        continue-on-error: false
 
+      # Static analysis — catches lint errors and dangerous code patterns.
       - name: Lint
         run: npm run lint
 
-      - name: Type check
-        run: npm run type-check
-
-      - name: Test
-        run: npm run test -- --run
-
+      # Strict TypeScript build (tsc -b) — stricter than type-check alone;
+      # catches unused locals/params and type-safety gaps that can become bugs.
       - name: Build
         run: npm run build
+
+      # Run the full test suite to guard security-critical logic paths.
+      - name: Test
+        run: npm run test -- --run
