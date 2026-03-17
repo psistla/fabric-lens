@@ -34,7 +34,7 @@ export function WorkspacesByCapacityChart({ data }: Props) {
         />
         <Tooltip
           contentStyle={CHART_TOOLTIP_STYLE}
-          formatter={(value?: number) => [value ?? 0, 'Workspaces']}
+          formatter={(value?: number | string | (string | number)[]) => [typeof value === 'number' ? value : 0, 'Workspaces']}
         />
         <Bar dataKey="count" radius={[0, 4, 4, 0]} barSize={24}>
           {data.map((_entry, index) => (
