@@ -8,6 +8,7 @@ Fabric Lens is a standalone React SPA that connects directly to Microsoft Fabric
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-blue.svg)](tsconfig.app.json)
 [![React](https://img.shields.io/badge/React-19-61dafb.svg)](package.json)
 [![Live Demo](https://img.shields.io/badge/demo-live-brightgreen.svg)](https://lively-grass-0fa393e10.2.azurestaticapps.net)
+[![Security Policy](https://img.shields.io/badge/security-policy-orange.svg)](SECURITY.md)
 
 > **[Live Demo](https://lively-grass-0fa393e10.2.azurestaticapps.net)** — Try it instantly in your browser with sample data, no setup required.
 
@@ -253,6 +254,12 @@ fabric-lens uses a custom design system built on semantic CSS tokens, not raw Ta
 - **Dark mode** — Blue-tinted navy base (`#0B1120`), not pure black. Creates depth and makes data visualization colors pop
 - **Health Grid** — Dense tile map on the Dashboard showing every workspace's health grade at a glance. Hover for details, click to drill in
 - **Design philosophy** — Precise. Dense. Trustworthy. Instrument panel aesthetic for enterprise Fabric admins
+
+---
+
+## Security
+
+See [SECURITY.md](SECURITY.md) for the vulnerability reporting process, response timelines, and security architecture details.
 
 ---
 

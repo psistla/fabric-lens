@@ -1,44 +1,56 @@
 # Security Policy
 
-## Reporting a Vulnerability
-
-If you discover a security vulnerability in fabric-lens, please **do not open a public GitHub issue**. Instead, report it privately via GitHub's [Security Advisories](../../security/advisories/new) feature.
-
-Please include:
-- A description of the vulnerability
-- Steps to reproduce
-- Potential impact
-- Any suggested mitigations (optional)
-
-You can expect an acknowledgement within 72 hours and a resolution timeline within 14 days for confirmed issues.
-
-## Security Headers
-
-The app is served with the following HTTP security headers (configured in `staticwebapp.config.json`):
-
-| Header | Value |
-|--------|-------|
-| `Content-Security-Policy` | Restricts resource loading to trusted origins; blocks inline scripts; limits framing to MSAL auth endpoints only |
-| `X-Frame-Options` | `DENY` — prevents clickjacking |
-| `X-Content-Type-Options` | `nosniff` — prevents MIME-type sniffing |
-| `Referrer-Policy` | `strict-origin-when-cross-origin` |
-| `Permissions-Policy` | Disables camera, microphone, geolocation, payment, USB, and sensor APIs |
-| `X-DNS-Prefetch-Control` | `off` |
-
-## Authentication & Token Storage
-
-- Authentication is handled via MSAL.js (Azure AD) using popup login with silent token refresh via hidden iframes.
-- Access tokens are stored in `localStorage`. This is a known trade-off — tokens survive tab close for UX continuity. Mitigated by short token lifetimes enforced by Azure AD and the restrictive CSP blocking unauthorized script execution.
-- No secrets, credentials, or tokens are ever committed to the repository. All configuration is provided via environment variables (`VITE_MSAL_*`).
-
-## Demo Mode
-
-When `VITE_MSAL_CLIENT_ID` is unset or set to `'demo'`, the app runs entirely on local mock data with no Azure AD authentication and no real API calls. Demo mode is safe to use publicly.
-
-## Dependency Management
-
-Dependencies should be audited regularly with `npm audit`. Consider enabling [Dependabot](https://docs.github.com/en/code-security/dependabot) for automated dependency update PRs.
-
 ## Supported Versions
 
-This project is under active development. Only the latest version on the `master` branch receives security updates.
+| Version | Supported |
+|---------|-----------|
+| latest on `master` | ✅ |
+| older commits | ❌ |
+
+## Reporting a Vulnerability
+
+**Do not open a public GitHub issue for security vulnerabilities.**
+
+Email security reports to: [TBD — author's security contact email]
+
+Include:
+- Description of the vulnerability
+- Steps to reproduce
+- Potential impact
+- Suggested fix (if any)
+
+## Response Timeline
+
+- Acknowledgment: within 48 hours
+- Assessment: within 7 days
+- Fix (if confirmed): within 30 days for non-critical, 7 days for critical
+
+## Scope
+
+In scope:
+- XSS vulnerabilities in the React SPA
+- Authentication/authorization bypass
+- Sensitive data exposure (tokens, tenant data)
+- MSAL misconfiguration
+- CSP bypass
+
+Out of scope:
+- Vulnerabilities in Microsoft Fabric REST APIs
+- Vulnerabilities in Azure Static Web Apps platform
+- Issues requiring physical access to the user's machine
+- Social engineering attacks
+
+## Security Architecture
+
+fabric-lens is a client-side SPA with no backend. Key security properties:
+
+- **Authentication:** MSAL.js v5 with PKCE (authorization code flow)
+- **Token storage:** Browser sessionStorage (cleared on tab close)
+- **API access:** Delegated permissions only — the app can never access
+  more than the signed-in user can access directly
+- **No secrets:** No client secrets, no API keys, no backend credentials.
+  The app registration uses SPA redirect (public client).
+- **CSP:** Strict Content Security Policy limiting script, style, and
+  connect sources
+- **Demo mode:** When no Azure credentials are configured, the app uses
+  mock data with no network requests to Microsoft APIs
