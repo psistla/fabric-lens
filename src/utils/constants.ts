@@ -151,6 +151,13 @@ export const SESSION_IDLE_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
 /** Warning threshold (ms) before idle timeout to optionally notify the user. */
 export const SESSION_WARNING_MS = 5 * 60 * 1000; // 5 minutes
 
+// -- Input validation --
+
+/** GUID validation regex (RFC 4122, case-insensitive). Used to validate API
+ *  path parameters before interpolation to prevent path traversal attacks. */
+export const GUID_REGEX =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 // -- App metadata --
 
 /** Application version (mirrors package.json). */

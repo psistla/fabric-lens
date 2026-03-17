@@ -9,7 +9,15 @@ import {
   MAX_RETRY_COUNT,
   BASE_RETRY_DELAY_MS,
   MAX_RETRY_DELAY_MS,
+  GUID_REGEX,
 } from '@/utils/constants';
+
+/** Returns true if value is a valid RFC 4122 GUID. Use this before
+ *  interpolating user-supplied IDs into API URL paths to prevent
+ *  path traversal (e.g. "../admin" injected as a workspace ID). */
+export function isValidGuid(value: string): boolean {
+  return GUID_REGEX.test(value);
+}
 import { isDemoMode } from '@/api/demo';
 
 // Module-level request counter — tracks all fabricClient requests, resets hourly.

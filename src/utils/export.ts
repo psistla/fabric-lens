@@ -10,12 +10,23 @@ function downloadFile(content: string, filename: string, mimeType: string) {
   URL.revokeObjectURL(url);
 }
 
+// Security: prevent CSV formula injection. Spreadsheet apps (Excel, Sheets)
+// execute cell values beginning with =, +, -, @, tab, or CR as formulas.
+// Prefixing with a single quote renders the value as literal text.
+function sanitizeCsvValue(value: string): string {
+  if (/^[=+\-@\t\r]/.test(value)) {
+    return "'" + value;
+  }
+  return value;
+}
+
 function escapeCSVField(value: unknown): string {
   const str = value === null || value === undefined ? '' : String(value);
-  if (str.includes(',') || str.includes('"') || str.includes('\n')) {
-    return `"${str.replace(/"/g, '""')}"`;
+  const sanitized = sanitizeCsvValue(str);
+  if (sanitized.includes(',') || sanitized.includes('"') || sanitized.includes('\n')) {
+    return `"${sanitized.replace(/"/g, '""')}"`;
   }
-  return str;
+  return sanitized;
 }
 
 export function exportToCSV(

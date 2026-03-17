@@ -1,4 +1,5 @@
 import type { FabricClient } from './fabricClient';
+import { isValidGuid } from './fabricClient';
 import type { PaginatedResponse } from './types/common';
 import { FabricApiError } from './types/common';
 import type {
@@ -34,6 +35,14 @@ export function createAdminApi(client: FabricClient) {
   async function getWorkspaceUsers(
     workspaceId: string,
   ): Promise<AdminResult<WorkspaceUser[]>> {
+    // Security: validate GUID before path interpolation to prevent path traversal.
+    if (!isValidGuid(workspaceId)) {
+      return {
+        success: false,
+        reason: 'error',
+        message: `Invalid workspace ID: "${workspaceId}"`,
+      };
+    }
     try {
       const response = await client.get<PaginatedResponse<WorkspaceUser>>(
         `/admin/workspaces/${workspaceId}/users`,
