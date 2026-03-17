@@ -648,7 +648,7 @@ export function SecurityPage() {
                     <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
                     <Tooltip
                       contentStyle={CHART_TOOLTIP_STYLE}
-                      formatter={(value?: number | string | (string | number)[]) => [
+                      formatter={(value: number | string | readonly (string | number)[] | undefined) => [
                         typeof value === 'number' ? value : 0,
                         'Assignments',
                       ]}

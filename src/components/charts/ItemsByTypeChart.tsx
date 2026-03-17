@@ -45,11 +45,11 @@ export function ItemsByTypeChart({ data }: Props) {
             <Tooltip
               contentStyle={CHART_TOOLTIP_STYLE}
               itemStyle={{ color: '#e2e8f0' }}
-              formatter={(value?: number | string | (string | number)[], name?: string) => {
+              formatter={(value: number | string | readonly (string | number)[] | undefined, name: string | number | undefined) => {
                 const v = typeof value === 'number' ? value : 0;
                 return [
                   `${v} (${total > 0 ? Math.round((v / total) * 100) : 0}%)`,
-                  name ?? '',
+                  name != null ? String(name) : '',
                 ];
               }}
             />
