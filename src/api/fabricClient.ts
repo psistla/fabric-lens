@@ -10,6 +10,8 @@ import {
   BASE_RETRY_DELAY_MS,
   MAX_RETRY_DELAY_MS,
   GUID_REGEX,
+  HTTP_ERROR_MESSAGES,
+  HTTP_ERROR_MESSAGE_SERVER,
 } from '@/utils/constants';
 
 /** Returns true if value is a valid RFC 4122 GUID. Use this before
@@ -112,7 +114,7 @@ export class FabricClient {
       if (retryCount >= MAX_RETRY_COUNT) {
         throw new FabricApiError(
           429,
-          `Rate limited by Fabric API. Exceeded ${MAX_RETRY_COUNT} retry attempts. Please wait before retrying.`,
+          HTTP_ERROR_MESSAGES[429] ?? HTTP_ERROR_MESSAGE_SERVER,
         );
       }
       const retryAfter = response.headers.get('Retry-After');
@@ -139,17 +141,24 @@ export class FabricClient {
   }
 
   private async buildError(response: Response): Promise<FabricApiError> {
+    const userMessage =
+      HTTP_ERROR_MESSAGES[response.status] ?? HTTP_ERROR_MESSAGE_SERVER;
+
+    let errorCode: string | undefined;
     try {
       const body = (await response.json()) as Record<string, unknown>;
       const error = (body.error ?? body) as Record<string, unknown>;
-      return new FabricApiError(
-        response.status,
-        (error.message as string) ?? response.statusText,
-        error.code as string | undefined,
-      );
+      errorCode = error.code as string | undefined;
+      if (import.meta.env.DEV) {
+        console.warn('[FabricClient] API error', response.status, body);
+      }
     } catch {
-      return new FabricApiError(response.status, response.statusText);
+      if (import.meta.env.DEV) {
+        console.warn('[FabricClient] API error', response.status, response.statusText);
+      }
     }
+
+    return new FabricApiError(response.status, userMessage, errorCode);
   }
 
   async get<T>(path: string): Promise<T> {

@@ -1,4 +1,4 @@
-import { Component, type ReactNode } from 'react';
+import { Component, type ReactNode, type ErrorInfo } from 'react';
 import { AlertTriangle } from 'lucide-react';
 
 interface Props {
@@ -21,6 +21,12 @@ export class ErrorBoundary extends Component<Props, State> {
     return { hasError: true, error };
   }
 
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    if (import.meta.env.DEV) {
+      console.error('[ErrorBoundary] Unhandled error:', error, info.componentStack);
+    }
+  }
+
   handleRetry = () => {
     this.setState({ hasError: false, error: null });
   };
@@ -37,7 +43,9 @@ export class ErrorBoundary extends Component<Props, State> {
               {this.props.fallbackTitle ?? 'Something went wrong'}
             </h2>
             <p className="text-sm text-slate-500 dark:text-slate-400">
-              {this.state.error?.message ?? 'An unexpected error occurred.'}
+              {import.meta.env.DEV && this.state.error?.message
+                ? this.state.error.message
+                : 'An unexpected error occurred. Please try again.'}
             </p>
             <button
               onClick={this.handleRetry}

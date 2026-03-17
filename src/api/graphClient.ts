@@ -132,10 +132,13 @@ export async function getGroupMemberCount(
 
     const count = parseInt(body, 10);
     if (isNaN(count)) {
+      if (import.meta.env.DEV) {
+        console.warn('[GraphClient] Unexpected $count response:', body);
+      }
       return {
         success: false,
         reason: 'error',
-        message: `Unexpected response from Graph API: ${body}`,
+        message: 'Unexpected response from the Graph API.',
       };
     }
 
@@ -222,10 +225,13 @@ export async function getGroupMembers(
 
     return { success: true, data: members };
   } catch (e) {
+    if (import.meta.env.DEV) {
+      console.warn('[GraphClient] getGroupMembers error:', e);
+    }
     return {
       success: false,
       reason: 'error',
-      message: e instanceof Error ? e.message : 'Failed to get group members',
+      message: 'Unable to load group members. Please try again.',
     };
   }
 }

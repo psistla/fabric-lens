@@ -158,6 +158,21 @@ export const SESSION_WARNING_MS = 5 * 60 * 1000; // 5 minutes
 export const GUID_REGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
+// -- API error messages --
+
+/** Sanitized user-facing messages keyed by HTTP status code. */
+export const HTTP_ERROR_MESSAGES: Readonly<Partial<Record<number, string>>> = {
+  400: 'Invalid request. Please try refreshing the page.',
+  401: 'Authentication expired. Please sign in again.',
+  403: "You don't have permission for this operation. Fabric Admin role may be required.",
+  404: 'Resource not found. It may have been deleted or moved.',
+  429: 'API rate limit reached. Please wait a moment and try again.',
+};
+
+/** Fallback message for 5xx and any unmapped status codes. */
+export const HTTP_ERROR_MESSAGE_SERVER =
+  'Microsoft Fabric API is experiencing issues. Try again later.';
+
 // -- App metadata --
 
 /** Application version (mirrors package.json). */
