@@ -18,6 +18,8 @@ dist-ssr
 
 # Claude Code
 .claude/
+CLAUDE.md
+DESIGN_GUIDE.md
 
 # OS
 .DS_Store

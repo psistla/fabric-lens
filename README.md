@@ -44,7 +44,7 @@ Fabric Lens is a standalone React SPA that connects directly to Microsoft Fabric
 | **Security Audit** | Cross-workspace role mapping with search, role filter chips, sortable columns, and pagination. Flags over-permissioned users (Admin on 5+ workspaces). Expands Azure AD group memberships via Microsoft Graph (optional) |
 | **CSV Export** | Export workspace inventories and security audit data for offline analysis |
 | **Dark Mode** | Blue-tinted dark theme (navy `#0B1120`, not pure black) with full semantic color token support |
-| **Design System** | CSS custom property tokens for surfaces, text, borders, and brand colors. Geist Sans + Geist Mono typography. See [DESIGN_GUIDE.md](DESIGN_GUIDE.md) |
+| **Design System** | CSS custom property tokens for surfaces, text, borders, and brand colors. Geist Sans + Geist Mono typography |
 | **Demo Mode** | Realistic mock data — 3 capacities, 15 workspaces, 54+ items, 6 users — no Azure credentials needed |
 
 ---
@@ -169,7 +169,7 @@ Sign in with an Azure AD account that has access to your Fabric tenant. Users wi
 - **No backend** — pure SPA with delegated permissions. Simplest deployment (static hosting), no server-side secrets
 - **MSAL popup auth** — preserves app state, falls back to redirect if popups blocked
 - **Live pricing** — Azure Retail Prices API (public, no auth) with 1-hour cache and graceful fallback
-- **Design system** — Semantic CSS tokens (not raw hex), Geist Sans/Mono typography, blue-tinted dark mode. See [DESIGN_GUIDE.md](DESIGN_GUIDE.md)
+- **Design system** — Semantic CSS tokens (not raw hex), Geist Sans/Mono typography, blue-tinted dark mode
 
 ---
 
@@ -246,7 +246,7 @@ src/
 
 ## Design System
 
-fabric-lens uses a custom design system built on semantic CSS tokens, not raw Tailwind colors. The full specification lives in [DESIGN_GUIDE.md](DESIGN_GUIDE.md).
+fabric-lens uses a custom design system built on semantic CSS tokens, not raw Tailwind colors.
 
 **Highlights:**
 - **Color tokens** — Semantic CSS custom properties (`--surface-primary`, `--text-secondary`, `--brand-primary`, etc.) for surfaces, text, borders, status, and health grades
