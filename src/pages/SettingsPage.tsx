@@ -356,7 +356,7 @@ function AboutSection() {
 
         <div className="flex flex-wrap gap-2">
           <span className="inline-flex rounded-md bg-[var(--surface-secondary)] px-2 py-0.5 text-[11px] font-medium text-[var(--text-secondary)]">
-            React 18
+            React 19
           </span>
           <span className="inline-flex rounded-md bg-[var(--surface-secondary)] px-2 py-0.5 text-[11px] font-medium text-[var(--text-secondary)]">
             TypeScript
@@ -380,7 +380,7 @@ function AboutSection() {
 
         <div className="flex gap-4 pt-1">
           <a
-            href="https://github.com/fabric-lens/fabric-lens"
+            href="https://github.com/psistla/fabric-lens"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1 text-sm text-[var(--brand-primary)]"
@@ -389,7 +389,7 @@ function AboutSection() {
             <ExternalLink className="h-3 w-3" />
           </a>
           <a
-            href="https://learn.microsoft.com/en-us/rest/api/fabric/core"
+            href="https://learn.microsoft.com/en-us/rest/api/fabric/articles/"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1 text-sm text-[var(--brand-primary)]"
