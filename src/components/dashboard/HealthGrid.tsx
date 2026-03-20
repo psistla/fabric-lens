@@ -30,16 +30,18 @@ export function HealthGrid({ workspaces, allItemsByWorkspace }: Props) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
   const tiles = useMemo((): TileData[] => {
-    return workspaces.map((ws) => {
-      const items = allItemsByWorkspace[ws.id] ?? [];
-      const health = calculateWorkspaceHealth(ws, items);
-      return {
-        id: ws.id,
-        name: ws.displayName,
-        grade: health.grade,
-        percentage: health.percentage,
-      };
-    });
+    return workspaces
+      .map((ws) => {
+        const items = allItemsByWorkspace[ws.id] ?? [];
+        const health = calculateWorkspaceHealth(ws, items);
+        return {
+          id: ws.id,
+          name: ws.displayName,
+          grade: health.grade,
+          percentage: health.percentage,
+        };
+      })
+      .sort((a, b) => b.percentage - a.percentage);
   }, [workspaces, allItemsByWorkspace]);
 
   if (tiles.length === 0) return null;
