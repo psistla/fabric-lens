@@ -77,7 +77,7 @@ function AuthStatusSection() {
           </span>
           <span className="text-sm text-[var(--text-primary)]">
             {isDemoMode
-              ? 'demo@fabric-lens.local'
+              ? 'demo@fabric-lens.com'
               : user?.email || '—'}
           </span>
         </div>

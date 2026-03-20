@@ -8,7 +8,7 @@ Thank you for your interest in contributing to Fabric Lens. This guide covers de
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/your-org/fabric-lens.git
+git clone https://github.com/psistla/fabric-lens.git
 cd fabric-lens
 
 # 2. Install dependencies
@@ -312,9 +312,9 @@ export const useExampleStore = create<ExampleStore>((set) => ({
 
 ```bash
 # Fork the repository on GitHub, then:
-git clone https://github.com/your-username/fabric-lens.git
+git clone https://github.com/psistla/fabric-lens.git
 cd fabric-lens
-git checkout -b feat/your-feature-name
+git checkout -b feat/your-feature-name  # branch off master
 ```
 
 ### 2. Implement Your Changes
@@ -365,7 +365,7 @@ chore: update Tailwind CSS to v3.4
 ### 5. Submit a Pull Request
 
 1. Push your branch to your fork.
-2. Open a pull request against the `main` branch of the upstream repository.
+2. Open a pull request against the `master` branch of the upstream repository.
 3. Fill in the PR template with a description of your changes and any relevant context.
 4. Ensure all CI checks pass.
 5. A maintainer will review your PR and may request changes.

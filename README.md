@@ -74,7 +74,7 @@ Open [http://localhost:5173](http://localhost:5173). The app launches in **demo 
 3. Supported account types: match your tenant strategy (single or multi-tenant)
 4. Redirect URI: select **Single-page application (SPA)** and add **both** URIs:
    - `http://localhost:5173` (local development)
-   - `https://lively-grass-0fa393e10.2.azurestaticapps.net` (live demo site)
+   - `https://fabric-lens.com` (production)
 5. Click **Register**
 
 ### 2. Configure API Permissions
@@ -107,12 +107,12 @@ VITE_FABRIC_API_BASE=https://api.fabric.microsoft.com/v1
 VITE_ARM_API_BASE=https://management.azure.com
 ```
 
-**For the live site** (Azure Static Web Apps or other hosted deployment):
+**For the live site** (`https://fabric-lens.com`):
 
 ```env
 VITE_MSAL_CLIENT_ID=<your-client-id>
 VITE_MSAL_TENANT_ID=<your-tenant-id>
-VITE_MSAL_REDIRECT_URI=https://lively-grass-0fa393e10.2.azurestaticapps.net
+VITE_MSAL_REDIRECT_URI=https://fabric-lens.com
 VITE_FABRIC_API_BASE=https://api.fabric.microsoft.com/v1
 VITE_ARM_API_BASE=https://management.azure.com
 ```
