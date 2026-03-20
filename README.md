@@ -95,9 +95,7 @@ Click **Grant admin consent** (requires admin privileges).
 
 ### 3. Configure Environment
 
-Create a `.env.local` file in the project root:
-
-**For local development:**
+**For local development**, create a `.env.local` file in the project root:
 
 ```env
 VITE_MSAL_CLIENT_ID=<your-client-id>
@@ -107,17 +105,17 @@ VITE_FABRIC_API_BASE=https://api.fabric.microsoft.com/v1
 VITE_ARM_API_BASE=https://management.azure.com
 ```
 
-**For the live site** (`https://fabric-lens.com`):
+**For the live site** (`https://fabric-lens.com`), set these as Application Settings in the [Azure Static Web Apps portal](https://portal.azure.com) (Configuration → Application settings) — do not use a `.env.local` file for deployed environments:
 
-```env
-VITE_MSAL_CLIENT_ID=<your-client-id>
-VITE_MSAL_TENANT_ID=<your-tenant-id>
-VITE_MSAL_REDIRECT_URI=https://fabric-lens.com
-VITE_FABRIC_API_BASE=https://api.fabric.microsoft.com/v1
-VITE_ARM_API_BASE=https://management.azure.com
-```
+| Name | Value |
+|------|-------|
+| `VITE_MSAL_CLIENT_ID` | `<your-client-id>` |
+| `VITE_MSAL_TENANT_ID` | `<your-tenant-id>` |
+| `VITE_MSAL_REDIRECT_URI` | `https://fabric-lens.com` |
+| `VITE_FABRIC_API_BASE` | `https://api.fabric.microsoft.com/v1` |
+| `VITE_ARM_API_BASE` | `https://management.azure.com` |
 
-> **Note:** The `VITE_MSAL_REDIRECT_URI` must match one of the redirect URIs registered in your App Registration (Step 1). Use `http://localhost:5173` for local dev, or your deployed URL for production.
+> **Note:** The `VITE_MSAL_REDIRECT_URI` must match one of the redirect URIs registered in your App Registration (Step 1). Use `http://localhost:5173` for local dev, or `https://fabric-lens.com` for production.
 
 ### 4. Run with Live Data
 
