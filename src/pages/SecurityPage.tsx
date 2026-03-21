@@ -43,15 +43,7 @@ import {
   ADMIN_RATE_LIMIT,
   ADMIN_ROLE_WARNING_THRESHOLD,
 } from '@/utils/constants';
-
-// --- Types for aggregated view ---
-
-interface UserSummary {
-  displayName: string;
-  email: string;
-  principalType: PrincipalType;
-  assignments: { workspaceId: string; workspaceName: string; role: string }[];
-}
+import { computeEffectiveAccess, type UserSummary } from '@/utils/effectiveAccess';
 
 type SortKey = 'displayName' | 'email' | 'assignmentCount';
 type SortDir = 'asc' | 'desc';
@@ -298,45 +290,7 @@ export function SecurityPage() {
   // Effective access summary
   const effectiveAccessSummary = useMemo((): EffectiveAccessSummary | null => {
     if (!hasScanned) return null;
-
-    const directUsers = userSummaries.filter((u) => u.principalType === 'User');
-    const groups = userSummaries.filter((u) => u.principalType === 'Group');
-    const spns = userSummaries.filter((u) => u.principalType === 'ServicePrincipal');
-
-    // Collect all transitive user UPNs from resolved groups
-    const allTransitiveUpns = new Set<string>();
-    let totalTransitive = 0;
-    for (const g of groups) {
-      const resolved = resolvedGroups[g.email];
-      if (resolved?.members) {
-        for (const m of resolved.members) {
-          allTransitiveUpns.add(m.userPrincipalName);
-        }
-        totalTransitive += resolved.members.length;
-      }
-    }
-
-    // Unique users = direct users + transitive users (deduplicated)
-    const allUniqueUpns = new Set<string>();
-    for (const u of directUsers) allUniqueUpns.add(u.email);
-    for (const upn of allTransitiveUpns) allUniqueUpns.add(upn);
-
-    const duplicates = directUsers.length + totalTransitive - allUniqueUpns.size;
-
-    // Groups with Admin role
-    const groupsWithAdmin = groups
-      .filter((g) => g.assignments.some((a) => a.role === 'Admin'))
-      .map((g) => g.displayName);
-
-    return {
-      directUsers: directUsers.length,
-      groups: groups.length,
-      transitiveUsers: totalTransitive,
-      servicePrincipals: spns.length,
-      uniqueUsers: allUniqueUpns.size,
-      duplicates: Math.max(0, duplicates),
-      groupsWithAdminRole: groupsWithAdmin,
-    };
+    return computeEffectiveAccess(userSummaries, resolvedGroups);
   }, [hasScanned, userSummaries, resolvedGroups]);
 
   // Over-permissioned users (Admin on 5+ workspaces)
