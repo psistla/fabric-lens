@@ -255,7 +255,7 @@ const StatCard: React.FC<Props> = ({ title, count }) => { ... };
 ### Styling
 
 - Use **Tailwind CSS utility classes**. Avoid writing custom CSS unless absolutely necessary.
-- Use **shadcn/ui** for all interactive elements (buttons, dialogs, dropdowns, etc.).
+- Use **Radix UI primitives** with **class-variance-authority** and **tailwind-merge** for all interactive elements (buttons, dialogs, dropdowns, etc.).
 - Support dark mode with Tailwind `dark:` prefix variants on every visual element.
 
 ```tsx
