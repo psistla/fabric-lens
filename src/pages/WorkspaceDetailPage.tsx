@@ -23,7 +23,7 @@ import type { Item } from '@/api/types/item';
 function CopyText({ text }: { text: string }) {
   return (
     <span className="group inline-flex items-center gap-1.5">
-      <code className="rounded bg-[var(--surface-secondary)] px-2 py-0.5 text-xs text-[var(--text-secondary)]">
+      <code className="rounded bg-[var(--surface-secondary)] px-2 py-0.5 text-xs text-[var(--m-text-secondary)]">
         {text}
       </code>
       <button
@@ -31,7 +31,7 @@ function CopyText({ text }: { text: string }) {
         title="Copy"
         className="opacity-0 transition-opacity group-hover:opacity-100"
       >
-        <Copy className="h-3 w-3 text-[var(--text-tertiary)] hover:text-[var(--text-primary)]" />
+        <Copy className="h-3 w-3 text-[var(--m-text-tertiary)] hover:text-[var(--m-text)]" />
       </button>
     </span>
   );
@@ -89,7 +89,7 @@ export function WorkspaceDetailPage() {
       header: 'Name',
       sortable: true,
       render: (_val, row) => (
-        <span className="font-medium text-[var(--text-primary)]">
+        <span className="font-medium text-[var(--m-text)]">
           {row.displayName}
         </span>
       ),
@@ -105,7 +105,7 @@ export function WorkspaceDetailPage() {
       header: 'Description',
       sortable: false,
       render: (_val, row) => (
-        <span className="text-[var(--text-secondary)]">
+        <span className="text-[var(--m-text-secondary)]">
           {row.description || '—'}
         </span>
       ),
@@ -117,12 +117,12 @@ export function WorkspaceDetailPage() {
       <div className="p-6">
         <button
           onClick={() => void navigate('/workspaces')}
-          className="mb-4 flex items-center gap-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+          className="mb-4 flex items-center gap-1 text-sm text-[var(--m-text-secondary)] hover:text-[var(--m-text)]"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Workspaces
         </button>
-        <div className="flex items-center gap-2 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/30 dark:text-red-400">
+        <div className="flex items-center gap-2 rounded-xl border border-[var(--m-error)] bg-[var(--m-error-bg)] px-4 py-3 text-sm text-[var(--m-error-text)]">
           <AlertCircle className="h-4 w-4 shrink-0" />
           Unable to load workspace. Please try again.
         </div>
@@ -133,13 +133,13 @@ export function WorkspaceDetailPage() {
   if (loading || !workspace) {
     return (
       <div className="space-y-4 p-6">
-        <div className="h-6 w-48 animate-pulse rounded bg-[var(--surface-secondary)]" />
-        <div className="h-4 w-96 animate-pulse rounded bg-[var(--surface-secondary)]" />
+        <div className="h-6 w-48 m-skeleton" />
+        <div className="h-4 w-96 m-skeleton" />
         <div className="grid grid-cols-3 gap-4">
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="h-24 animate-pulse rounded-lg bg-[var(--surface-secondary)]"
+              className="m-skeleton h-24 rounded-xl"
             />
           ))}
         </div>
@@ -152,7 +152,7 @@ export function WorkspaceDetailPage() {
       {/* Back button */}
       <button
         onClick={() => void navigate('/workspaces')}
-        className="flex items-center gap-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+        className="flex items-center gap-1 text-sm text-[var(--m-text-secondary)] hover:text-[var(--m-text)]"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to Workspaces
@@ -161,7 +161,7 @@ export function WorkspaceDetailPage() {
       {/* Header */}
       <div>
         <div className="flex items-center gap-2">
-          <h1 className="text-2xl font-semibold tracking-[-0.02em] text-[var(--text-primary)]">
+          <h1 className="text-2xl font-semibold tracking-[-0.02em] text-[var(--m-text)]">
             {workspace.displayName}
           </h1>
           {healthScore && (
@@ -169,22 +169,22 @@ export function WorkspaceDetailPage() {
           )}
         </div>
         {workspace.description && (
-          <p className="mt-1 text-sm text-[var(--text-secondary)]">
+          <p className="mt-1 text-sm text-[var(--m-text-secondary)]">
             {workspace.description}
           </p>
         )}
         <div className="mt-3 flex flex-wrap items-center gap-2">
-          <span className="inline-flex rounded-md bg-[var(--surface-secondary)] px-2 py-0.5 text-xs font-medium text-[var(--text-secondary)]">
+          <span className="inline-flex rounded-lg bg-[var(--m-surface)] px-2 py-0.5 text-xs font-medium text-[var(--m-text-secondary)]">
             {workspace.type}
           </span>
           <StateBadge state={workspace.state} />
           {capacity && (
-            <span className="inline-flex rounded-md bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700 dark:bg-blue-900/40 dark:text-blue-300">
+            <span className="inline-flex rounded-full bg-[#EEF2FF] px-2.5 py-0.5 text-[11px] font-semibold text-[#4F46E5] dark:bg-[#312E81]/40 dark:text-[#818CF8]">
               {capacity.displayName} ({capacity.sku})
             </span>
           )}
           {workspace.capacityRegion && (
-            <span className="text-xs text-[var(--text-secondary)]">
+            <span className="text-xs text-[var(--m-text-secondary)]">
               {workspace.capacityRegion}
             </span>
           )}
@@ -225,19 +225,19 @@ export function WorkspaceDetailPage() {
 
       {/* OneLake Endpoints */}
       {workspace.oneLakeEndpoints && (
-        <div className="rounded-lg border border-[var(--border-default)] bg-[var(--surface-primary)] p-4">
-          <h2 className="text-sm font-medium text-[var(--text-primary)]">
+        <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)] p-4">
+          <h2 className="text-sm font-medium text-[var(--m-text)]">
             OneLake Endpoints
           </h2>
           <div className="mt-3 space-y-2">
             <div className="flex items-center gap-2">
-              <span className="w-10 text-xs text-[var(--text-secondary)]">
+              <span className="w-10 text-xs text-[var(--m-text-secondary)]">
                 Blob
               </span>
               <CopyText text={workspace.oneLakeEndpoints.blobEndpoint} />
             </div>
             <div className="flex items-center gap-2">
-              <span className="w-10 text-xs text-[var(--text-secondary)]">
+              <span className="w-10 text-xs text-[var(--m-text-secondary)]">
                 DFS
               </span>
               <CopyText text={workspace.oneLakeEndpoints.dfsEndpoint} />
@@ -248,19 +248,19 @@ export function WorkspaceDetailPage() {
 
       {/* Workspace Identity */}
       {workspace.workspaceIdentity ? (
-        <div className="rounded-lg border border-[var(--border-default)] bg-[var(--surface-primary)] p-4">
-          <h2 className="text-sm font-medium text-[var(--text-primary)]">
+        <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)] p-4">
+          <h2 className="text-sm font-medium text-[var(--m-text)]">
             Workspace Identity
           </h2>
           <div className="mt-3 space-y-2">
             <div className="flex items-center gap-2">
-              <span className="w-24 text-xs text-[var(--text-secondary)]">
+              <span className="w-24 text-xs text-[var(--m-text-secondary)]">
                 App ID
               </span>
               <CopyText text={workspace.workspaceIdentity.applicationId} />
             </div>
             <div className="flex items-center gap-2">
-              <span className="w-24 text-xs text-[var(--text-secondary)]">
+              <span className="w-24 text-xs text-[var(--m-text-secondary)]">
                 SPN ID
               </span>
               <CopyText text={workspace.workspaceIdentity.servicePrincipalId} />
@@ -268,7 +268,7 @@ export function WorkspaceDetailPage() {
           </div>
         </div>
       ) : (
-        <div className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700 dark:border-amber-900/50 dark:bg-amber-950/20 dark:text-amber-400">
+        <div className="flex items-center gap-2 rounded-xl border border-[var(--m-warning)] bg-[var(--m-warning-bg)] px-4 py-3 text-sm text-[var(--m-warning-text)]">
           <AlertCircle className="h-4 w-4 shrink-0" />
           Workspace identity (SPN) is not configured.
         </div>
@@ -276,20 +276,20 @@ export function WorkspaceDetailPage() {
 
       {/* Type breakdown */}
       {typeCounts.length > 0 && (
-        <div className="rounded-lg border border-[var(--border-default)] bg-[var(--surface-primary)] p-4">
-          <h2 className="text-sm font-medium text-[var(--text-primary)]">
+        <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)] p-4">
+          <h2 className="text-sm font-medium text-[var(--m-text)]">
             Items by Type
           </h2>
           <div className="mt-3 flex flex-wrap gap-3">
             {typeCounts.map(([type, count]) => (
               <div
                 key={type}
-                className="flex items-center gap-2 rounded-md border border-[var(--border-default)] px-3 py-1.5"
+                className="flex items-center gap-2 rounded-lg border border-[var(--m-border)] px-3 py-1.5"
               >
-                <span className="text-sm text-[var(--text-secondary)]">
+                <span className="text-sm text-[var(--m-text-secondary)]">
                   {type}
                 </span>
-                <span className="rounded-full bg-[var(--surface-secondary)] px-1.5 py-0.5 text-xs font-medium text-[var(--text-secondary)]">
+                <span className="rounded-full bg-[var(--surface-secondary)] px-1.5 py-0.5 text-xs font-medium text-[var(--m-text-secondary)]">
                   {count}
                 </span>
               </div>
@@ -300,7 +300,7 @@ export function WorkspaceDetailPage() {
 
       {/* Items table */}
       <div>
-        <h2 className="mb-3 text-sm font-medium text-[var(--text-primary)]">
+        <h2 className="mb-3 text-sm font-medium text-[var(--m-text)]">
           Items ({items.length})
         </h2>
         <DataTable

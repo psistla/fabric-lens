@@ -26,11 +26,12 @@ const mobileNavItems = [
 
 export function AppShell({ children }: Props) {
   return (
-    <div className="flex h-screen bg-[var(--surface-root)]">
+    <div className="flex h-screen bg-[var(--m-bg)]">
       <Sidebar />
       <div className="flex flex-1 flex-col overflow-hidden">
         {isDemoMode && (
-          <div className="flex items-center justify-center gap-2 bg-amber-500 px-4 py-1 text-xs font-semibold text-white">
+          // #FBBF24 bg (accent-vivid, decorative) with #78350F text (accent-900, 6.6:1 contrast ✓ AA)
+          <div className="flex items-center justify-center gap-2 bg-[#FBBF24] px-4 py-1 text-xs font-semibold text-[#78350F]">
             DEMO MODE — Exploring with sample data. Sign in to connect your Fabric tenant.
           </div>
         )}
@@ -40,7 +41,7 @@ export function AppShell({ children }: Props) {
         </main>
 
         {/* Mobile bottom nav — visible below md */}
-        <nav className="fixed inset-x-0 bottom-0 z-50 flex items-center justify-around border-t border-[var(--border-default)] bg-[var(--surface-primary)] py-1.5 md:hidden">
+        <nav className="fixed inset-x-0 bottom-0 z-50 flex items-center justify-around border-t border-[var(--m-border)] bg-[var(--m-bg)] py-1.5 md:hidden">
           {mobileNavItems.map((item) => (
             <NavLink
               key={item.path}
@@ -49,8 +50,8 @@ export function AppShell({ children }: Props) {
               className={({ isActive }) =>
                 `flex flex-col items-center gap-0.5 px-2 py-1 text-[10px] ${
                   isActive
-                    ? 'font-semibold text-[var(--brand-primary)]'
-                    : 'text-[var(--text-secondary)]'
+                    ? 'font-semibold text-[var(--m-primary)]'
+                    : 'text-[var(--m-text-secondary)]'
                 }`
               }
             >

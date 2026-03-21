@@ -60,20 +60,20 @@ const ALL_ROLES = ['Admin', 'Member', 'Contributor', 'Viewer'] as const;
 
 const ROLE_CHIP_STYLES: Record<string, { active: string; inactive: string }> = {
   Admin: {
-    active: 'bg-red-100 text-red-700 ring-1 ring-red-300 dark:bg-red-900/40 dark:text-red-400 dark:ring-red-700',
-    inactive: 'bg-[var(--surface-secondary)] text-[var(--text-secondary)]',
+    active: 'bg-[var(--m-error-bg)] text-[var(--m-error-text)] ring-1 ring-[var(--m-error)]/40',
+    inactive: 'bg-[var(--m-surface)] text-[var(--m-text-secondary)]',
   },
   Member: {
-    active: 'bg-blue-100 text-blue-700 ring-1 ring-blue-300 dark:bg-blue-900/40 dark:text-blue-400 dark:ring-blue-700',
-    inactive: 'bg-[var(--surface-secondary)] text-[var(--text-secondary)]',
+    active: 'bg-[var(--m-primary-subtle)] text-[var(--m-primary)] ring-1 ring-[var(--m-primary)]/40',
+    inactive: 'bg-[var(--m-surface)] text-[var(--m-text-secondary)]',
   },
   Contributor: {
-    active: 'bg-amber-100 text-amber-700 ring-1 ring-amber-300 dark:bg-amber-900/40 dark:text-amber-400 dark:ring-amber-700',
-    inactive: 'bg-[var(--surface-secondary)] text-[var(--text-secondary)]',
+    active: 'bg-[var(--m-accent-subtle)] text-[var(--m-accent)] ring-1 ring-[var(--m-accent)]/40',
+    inactive: 'bg-[var(--m-surface)] text-[var(--m-text-secondary)]',
   },
   Viewer: {
-    active: 'bg-emerald-100 text-emerald-700 ring-1 ring-emerald-300 dark:bg-emerald-900/40 dark:text-emerald-400 dark:ring-emerald-700',
-    inactive: 'bg-[var(--surface-secondary)] text-[var(--text-secondary)]',
+    active: 'bg-[var(--m-success-bg)] text-[var(--m-success)] ring-1 ring-[var(--m-success)]/40',
+    inactive: 'bg-[var(--m-surface)] text-[var(--m-text-secondary)]',
   },
 };
 
@@ -109,21 +109,21 @@ function getPageNumbers(current: number, total: number): (number | 'ellipsis')[]
 function AdminRequiredCard() {
   return (
     <div className="mx-auto max-w-lg space-y-4 py-16 text-center">
-      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/30">
-        <Shield className="h-8 w-8 text-amber-600 dark:text-amber-400" />
+      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[var(--m-warning-bg)]">
+        <Shield className="h-8 w-8 text-[var(--m-warning)]" />
       </div>
-      <h2 className="text-lg font-semibold text-[var(--text-primary)]">
+      <h2 className="text-lg font-semibold text-[var(--m-text)]">
         Fabric Admin Role Required
       </h2>
-      <p className="text-sm text-[var(--text-secondary)]">
+      <p className="text-sm text-[var(--m-text-secondary)]">
         The Security page uses Admin APIs that require the Fabric Admin role. Ask
         your Microsoft 365 or Fabric administrator to assign this role.
       </p>
-      <div className="rounded-lg border border-[var(--border-default)] bg-[var(--surface-secondary)] p-4 text-left">
-        <h3 className="text-xs font-medium uppercase text-[var(--text-secondary)]">
+      <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-surface)] p-4 text-left">
+        <h3 className="text-[11px] font-semibold uppercase tracking-[0.04em] text-[var(--m-text-secondary)]">
           Setup Steps
         </h3>
-        <ol className="mt-2 space-y-1.5 text-sm text-[var(--text-secondary)]">
+        <ol className="mt-2 space-y-1.5 text-sm text-[var(--m-text-secondary)]">
           <li>1. Go to the Microsoft 365 Admin Center</li>
           <li>2. Navigate to Roles &rarr; Fabric Administrator</li>
           <li>3. Add your account to the role assignment</li>
@@ -135,7 +135,7 @@ function AdminRequiredCard() {
         href="https://learn.microsoft.com/en-us/fabric/admin/roles"
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center gap-1 text-sm text-[var(--brand-primary)]"
+        className="inline-flex items-center gap-1 text-sm text-[var(--m-primary)]"
       >
         Learn more about Fabric admin roles
         <ExternalLink className="h-3.5 w-3.5" />
@@ -466,19 +466,19 @@ export function SecurityPage() {
   }, [userSummaries]);
 
   function renderSortIcon(key: SortKey) {
-    if (sortKey !== key) return <ArrowUpDown className="h-3 w-3 text-[var(--text-tertiary)]" />;
+    if (sortKey !== key) return <ArrowUpDown className="h-3 w-3 text-[var(--m-text-tertiary)]" />;
     return sortDir === 'asc'
-      ? <ArrowUp className="h-3 w-3 text-[var(--brand-primary)]" />
-      : <ArrowDown className="h-3 w-3 text-[var(--brand-primary)]" />;
+      ? <ArrowUp className="h-3 w-3 text-[var(--m-primary)]" />
+      : <ArrowDown className="h-3 w-3 text-[var(--m-primary)]" />;
   }
 
   // Still checking admin status
   if (isAdmin === null || (loading && !scanProgress)) {
     return (
       <div className="space-y-4 p-6">
-        <div className="h-7 w-40 animate-pulse rounded bg-[var(--surface-secondary)]" />
-        <div className="h-4 w-64 animate-pulse rounded bg-[var(--surface-secondary)]" />
-        <div className="h-48 animate-pulse rounded-lg bg-[var(--surface-secondary)]" />
+        <div className="m-skeleton h-7 w-40" />
+        <div className="m-skeleton h-4 w-64" />
+        <div className="m-skeleton h-48 rounded-xl" />
       </div>
     );
   }
@@ -487,10 +487,10 @@ export function SecurityPage() {
   if (isAdmin === false) {
     return (
       <div className="p-6">
-        <h1 className="text-2xl font-semibold tracking-[-0.02em] text-[var(--text-primary)]">
+        <h1 className="text-2xl font-semibold tracking-[-0.02em] text-[var(--m-text)]">
           Security
         </h1>
-        <p className="mt-1 text-sm text-[var(--text-secondary)]">
+        <p className="mt-1 text-sm text-[var(--m-text-secondary)]">
           Role assignments and access governance.
         </p>
         <AdminRequiredCard />
@@ -503,10 +503,10 @@ export function SecurityPage() {
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-[-0.02em] text-[var(--text-primary)]">
+          <h1 className="text-2xl font-semibold tracking-[-0.02em] text-[var(--m-text)]">
             Security
           </h1>
-          <p className="mt-1 text-sm text-[var(--text-secondary)]">
+          <p className="mt-1 text-sm text-[var(--m-text-secondary)]">
             Role assignments and access governance.
           </p>
         </div>
@@ -515,7 +515,7 @@ export function SecurityPage() {
             <>
               <button
                 onClick={handleExportEffectiveAccess}
-                className="inline-flex items-center gap-1.5 rounded-md border border-[var(--border-default)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:bg-[var(--surface-secondary)]"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--m-border)] px-3 py-1.5 text-xs font-semibold text-[var(--m-text-secondary)] transition-colors hover:bg-[var(--m-surface)]"
                 title="Export effective access (includes group members)"
               >
                 <Download className="h-3.5 w-3.5" />
@@ -527,7 +527,7 @@ export function SecurityPage() {
           <button
             onClick={handleScanAll}
             disabled={loading || wsLoading}
-            className="inline-flex items-center gap-1.5 rounded-md bg-[var(--brand-primary)] px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-[var(--brand-primary-hover)] disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--m-primary)] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[var(--m-primary-hover)] disabled:opacity-50"
           >
             <ScanSearch className="h-3.5 w-3.5" />
             {hasScanned ? 'Re-scan All' : 'Scan All'}
@@ -538,18 +538,18 @@ export function SecurityPage() {
       {/* Scan progress */}
       {scanProgress && (
         <div className="space-y-2">
-          <div className="flex items-center justify-between text-xs text-[var(--text-secondary)]">
+          <div className="flex items-center justify-between text-xs text-[var(--m-text-secondary)]">
             <span>
               Scanning workspace users... ({scanProgress.completed}/
               {scanProgress.total})
             </span>
-            <span className="text-[10px] text-[var(--text-tertiary)]">
+            <span className="text-[10px] text-[var(--m-text-tertiary)]">
               Rate limit: {ADMIN_RATE_LIMIT} req/hr
             </span>
           </div>
-          <div className="h-1.5 w-full overflow-hidden rounded-full bg-[var(--surface-secondary)]">
+          <div className="h-1.5 w-full overflow-hidden rounded-full bg-[var(--m-surface)]">
             <div
-              className="h-full rounded-full bg-[var(--brand-primary)] transition-all"
+              className="h-full rounded-full bg-[var(--m-primary)] transition-all"
               style={{
                 width: `${(scanProgress.completed / scanProgress.total) * 100}%`,
               }}
@@ -560,15 +560,15 @@ export function SecurityPage() {
 
       {/* Error */}
       {error && (
-        <div className="flex items-center justify-between rounded-md border border-amber-200 bg-amber-50 px-4 py-3 dark:border-amber-900/50 dark:bg-amber-950/20">
-          <div className="flex items-center gap-2 text-sm text-amber-700 dark:text-amber-400">
-            <AlertTriangle className="h-4 w-4 shrink-0" />
+        <div className="flex items-center justify-between rounded-xl border border-[var(--m-warning)] bg-[var(--m-warning-bg)] px-4 py-3">
+          <div className="flex items-center gap-2 text-sm text-[var(--m-warning-text)]">
+            <AlertTriangle className="h-4 w-4 shrink-0 text-[var(--m-warning)]" />
             Unable to complete security scan. Some workspaces may have been
             skipped.
           </div>
           <button
             onClick={handleScanAll}
-            className="shrink-0 rounded-md bg-amber-100 px-3 py-1 text-xs font-medium text-amber-700 transition-colors hover:bg-amber-200 dark:bg-amber-900/40 dark:text-amber-400 dark:hover:bg-amber-900/60"
+            className="shrink-0 rounded-lg bg-[var(--m-warning-bg)] px-3 py-1 text-xs font-semibold text-[var(--m-warning-text)] ring-1 ring-[var(--m-warning)] transition-colors hover:opacity-80"
           >
             Retry
           </button>
@@ -577,13 +577,13 @@ export function SecurityPage() {
 
       {/* Pre-scan prompt */}
       {!hasScanned && !scanProgress && (
-        <div className="rounded-lg border border-[var(--border-default)] bg-[var(--surface-primary)] p-8 text-center">
-          <ScanSearch className="mx-auto h-10 w-10 text-[var(--text-tertiary)]" />
-          <p className="mt-3 text-sm text-[var(--text-secondary)]">
+        <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)] p-8 text-center">
+          <ScanSearch className="mx-auto h-10 w-10 text-[var(--m-text-tertiary)]" />
+          <p className="mt-3 text-sm text-[var(--m-text-secondary)]">
             Click <strong>Scan All</strong> to fetch user role assignments across
             all {workspaces.length} workspaces.
           </p>
-          <p className="mt-1 text-xs text-[var(--text-tertiary)]">
+          <p className="mt-1 text-xs text-[var(--m-text-tertiary)]">
             Admin APIs are rate-limited to {ADMIN_RATE_LIMIT} requests per hour.
           </p>
         </div>
@@ -599,14 +599,14 @@ export function SecurityPage() {
 
           {/* Over-permissioned alert */}
           {overPermissioned.length > 0 && (
-            <div className="rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-900/50 dark:bg-red-950/20">
+            <div className="rounded-xl border border-[var(--m-error)] bg-[var(--m-error-bg)] p-4">
               <div className="flex items-center gap-2">
-                <ShieldAlert className="h-4 w-4 text-red-500" />
-                <h3 className="text-sm font-medium text-red-800 dark:text-red-400">
+                <ShieldAlert className="h-4 w-4 text-[var(--m-error)]" />
+                <h3 className="text-sm font-semibold text-[var(--m-error-text)]">
                   Over-Permissioned Users
                 </h3>
               </div>
-              <p className="mt-1 text-xs text-red-600 dark:text-red-400/80">
+              <p className="mt-1 text-xs text-[var(--m-error-text)]">
                 {overPermissioned.length} user
                 {overPermissioned.length > 1 ? 's' : ''} with Admin role on {ADMIN_ROLE_WARNING_THRESHOLD}+
                 workspaces.
@@ -619,7 +619,7 @@ export function SecurityPage() {
                   return (
                     <li
                       key={u.email}
-                      className="text-xs text-red-700 dark:text-red-400"
+                      className="text-xs text-[var(--m-error-text)]"
                     >
                       <span className="font-medium">{u.displayName}</span>
                       {' — Admin on '}
@@ -634,8 +634,8 @@ export function SecurityPage() {
           {/* Role distribution chart + User access table */}
           <div className="grid gap-6 lg:grid-cols-5">
             {/* Role distribution chart */}
-            <div className="rounded-lg border border-[var(--border-default)] bg-[var(--surface-primary)] p-4 lg:col-span-2">
-              <h2 className="mb-2 text-sm font-medium text-[var(--text-primary)]">
+            <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)] p-4 lg:col-span-2">
+              <h2 className="mb-2 text-sm font-medium text-[var(--m-text)]">
                 Role Distribution
               </h2>
               {roleDistribution.length > 0 ? (
@@ -664,41 +664,41 @@ export function SecurityPage() {
                   </BarChart>
                 </ResponsiveContainer>
               ) : (
-                <div className="flex h-[220px] items-center justify-center text-sm text-[var(--text-tertiary)]">
+                <div className="flex h-[220px] items-center justify-center text-sm text-[var(--m-text-tertiary)]">
                   No data
                 </div>
               )}
             </div>
 
             {/* User access summary table */}
-            <div className="rounded-lg border border-[var(--border-default)] bg-[var(--surface-primary)] lg:col-span-3">
+            <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)] lg:col-span-3">
               {/* Header */}
-              <h2 className="border-b border-[var(--border-default)] px-4 py-3 text-sm font-medium text-[var(--text-primary)]">
+              <h2 className="border-b border-[var(--m-border)] px-4 py-3 text-sm font-medium text-[var(--m-text)]">
                 User Access Summary
               </h2>
 
               {/* Summary stats */}
-              <div className="grid grid-cols-3 gap-3 border-b border-[var(--border-default)] px-4 py-3">
+              <div className="grid grid-cols-3 gap-3 border-b border-[var(--m-border)] px-4 py-3">
                 <div className="flex items-center gap-2">
-                  <Users className="h-4 w-4 text-[var(--text-tertiary)]" />
+                  <Users className="h-4 w-4 text-[var(--m-text-tertiary)]" />
                   <div>
-                    <p className="text-xs text-[var(--text-secondary)]">Principals</p>
-                    <p className="text-sm font-semibold text-[var(--text-primary)]">
+                    <p className="text-xs text-[var(--m-text-secondary)]">Principals</p>
+                    <p className="text-sm font-semibold text-[var(--m-text)]">
                       {summaryStats.totalUsers}
                     </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <KeyRound className="h-4 w-4 text-[var(--text-tertiary)]" />
+                  <KeyRound className="h-4 w-4 text-[var(--m-text-tertiary)]" />
                   <div>
-                    <p className="text-xs text-[var(--text-secondary)]">Assignments</p>
-                    <p className="text-sm font-semibold text-[var(--text-primary)]">
+                    <p className="text-xs text-[var(--m-text-secondary)]">Assignments</p>
+                    <p className="text-sm font-semibold text-[var(--m-text)]">
                       {summaryStats.totalAssignments}
                     </p>
                   </div>
                 </div>
                 <div>
-                  <p className="text-xs text-[var(--text-secondary)]">By Role</p>
+                  <p className="text-xs text-[var(--m-text-secondary)]">By Role</p>
                   <div className="mt-0.5 flex flex-wrap gap-x-3 gap-y-0.5">
                     {ALL_ROLES.map((role) => (
                       <span key={role} className="flex items-center gap-1 text-xs">
@@ -706,7 +706,7 @@ export function SecurityPage() {
                           className="inline-block h-2 w-2 rounded-full"
                           style={{ backgroundColor: ROLE_COLORS[role] }}
                         />
-                        <span className="text-[var(--text-secondary)]">
+                        <span className="text-[var(--m-text-secondary)]">
                           {summaryStats.roleCounts[role] ?? 0}
                         </span>
                       </span>
@@ -716,7 +716,7 @@ export function SecurityPage() {
               </div>
 
               {/* Toolbar: search + role filter chips */}
-              <div className="flex flex-wrap items-center gap-3 border-b border-[var(--border-default)] px-4 py-3">
+              <div className="flex flex-wrap items-center gap-3 border-b border-[var(--m-border)] px-4 py-3">
                 <div className="w-64">
                   <SearchBar
                     value={search}
@@ -729,7 +729,7 @@ export function SecurityPage() {
                     <button
                       key={role}
                       onClick={() => toggleRole(role)}
-                      className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
+                      className={`rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide transition-colors ${
                         activeRoles.has(role)
                           ? ROLE_CHIP_STYLES[role].active
                           : ROLE_CHIP_STYLES[role].inactive
@@ -741,7 +741,7 @@ export function SecurityPage() {
                   {activeRoles.size > 0 && (
                     <button
                       onClick={clearRoleFilter}
-                      className="ml-1 text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                      className="ml-1 text-xs text-[var(--m-text-secondary)] hover:text-[var(--m-text)]"
                     >
                       Clear
                     </button>
@@ -753,13 +753,13 @@ export function SecurityPage() {
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-[var(--border-default)] bg-[var(--surface-secondary)]">
-                      <th className="w-16 px-4 py-2 text-left text-xs font-medium uppercase text-[var(--text-secondary)]">
+                    <tr className="border-b border-[var(--m-border)] bg-[var(--m-surface)]">
+                      <th className="w-16 px-4 py-2 text-left text-[11px] font-semibold uppercase tracking-[0.04em] text-[var(--m-text-secondary)]">
                         Type
                       </th>
                       <th
                         onClick={() => handleSort('displayName')}
-                        className="cursor-pointer select-none px-4 py-2 text-left text-xs font-medium uppercase text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)]"
+                        className="cursor-pointer select-none px-4 py-2 text-left text-[11px] font-semibold uppercase tracking-[0.04em] text-[var(--m-text-secondary)] transition-colors hover:text-[var(--m-text)]"
                       >
                         <span className="flex items-center gap-1.5">
                           Name {renderSortIcon('displayName')}
@@ -767,7 +767,7 @@ export function SecurityPage() {
                       </th>
                       <th
                         onClick={() => handleSort('email')}
-                        className="cursor-pointer select-none px-4 py-2 text-left text-xs font-medium uppercase text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)]"
+                        className="cursor-pointer select-none px-4 py-2 text-left text-[11px] font-semibold uppercase tracking-[0.04em] text-[var(--m-text-secondary)] transition-colors hover:text-[var(--m-text)]"
                       >
                         <span className="flex items-center gap-1.5">
                           Email {renderSortIcon('email')}
@@ -775,7 +775,7 @@ export function SecurityPage() {
                       </th>
                       <th
                         onClick={() => handleSort('assignmentCount')}
-                        className="cursor-pointer select-none px-4 py-2 text-left text-xs font-medium uppercase text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)]"
+                        className="cursor-pointer select-none px-4 py-2 text-left text-[11px] font-semibold uppercase tracking-[0.04em] text-[var(--m-text-secondary)] transition-colors hover:text-[var(--m-text)]"
                       >
                         <span className="flex items-center gap-1.5">
                           Workspaces &amp; Roles {renderSortIcon('assignmentCount')}
@@ -783,7 +783,7 @@ export function SecurityPage() {
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[var(--border-default)]">
+                  <tbody className="divide-y divide-[var(--m-border)]">
                     {paginatedUsers.map((u) => {
                       const TypeIcon = TYPE_ICONS[u.principalType];
                       const isGroup = u.principalType === 'Group';
@@ -793,18 +793,18 @@ export function SecurityPage() {
                       return (
                         <GroupWrapper key={u.email}>
                           <tr
-                            className={isGroup ? 'cursor-pointer transition-colors hover:bg-[var(--surface-tertiary)]' : ''}
+                            className={isGroup ? 'cursor-pointer transition-colors hover:bg-[var(--m-surface-hover)]' : ''}
                             onClick={isGroup ? () => toggleGroupExpansion(u.email, u.displayName) : undefined}
                           >
                             <td className="whitespace-nowrap px-4 py-2.5">
                               <div className="flex items-center gap-1" title={TYPE_LABELS[u.principalType]}>
-                                <TypeIcon className="h-3.5 w-3.5 text-[var(--text-tertiary)]" />
-                                <span className="text-[10px] text-[var(--text-tertiary)]">
+                                <TypeIcon className="h-3.5 w-3.5 text-[var(--m-text-tertiary)]" />
+                                <span className="text-[10px] text-[var(--m-text-tertiary)]">
                                   {TYPE_LABELS[u.principalType]}
                                 </span>
                               </div>
                             </td>
-                            <td className="whitespace-nowrap px-4 py-2.5 font-medium text-[var(--text-primary)]">
+                            <td className="whitespace-nowrap px-4 py-2.5 font-medium text-[var(--m-text)]">
                               <div className="flex items-center gap-2">
                                 {u.displayName}
                                 {isGroup && resolved && (
@@ -816,7 +816,7 @@ export function SecurityPage() {
                                 )}
                               </div>
                             </td>
-                            <td className="whitespace-nowrap px-4 py-2.5 text-[var(--text-secondary)]">
+                            <td className="whitespace-nowrap px-4 py-2.5 text-[var(--m-text-secondary)]">
                               {u.email}
                             </td>
                             <td className="px-4 py-2.5">
@@ -830,14 +830,14 @@ export function SecurityPage() {
                                         `/workspaces/${a.workspaceId}`,
                                       );
                                     }}
-                                    className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[11px] font-medium transition-colors hover:ring-1 ${
+                                    className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide transition-colors hover:ring-1 ${
                                       a.role === 'Admin'
-                                        ? 'bg-red-100 text-red-700 hover:ring-red-300 dark:bg-red-900/30 dark:text-red-400'
+                                        ? 'bg-[var(--m-error-bg)] text-[var(--m-error-text)] hover:ring-[var(--m-error)]/40'
                                         : a.role === 'Member'
-                                          ? 'bg-blue-100 text-blue-700 hover:ring-blue-300 dark:bg-blue-900/30 dark:text-blue-400'
+                                          ? 'bg-[var(--m-primary-subtle)] text-[var(--m-primary)] hover:ring-[var(--m-primary)]/40'
                                           : a.role === 'Contributor'
-                                            ? 'bg-amber-100 text-amber-700 hover:ring-amber-300 dark:bg-amber-900/30 dark:text-amber-400'
-                                            : 'bg-emerald-100 text-emerald-700 hover:ring-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400'
+                                            ? 'bg-[var(--m-accent-subtle)] text-[var(--m-accent)] hover:ring-[var(--m-accent)]/40'
+                                            : 'bg-[var(--m-success-bg)] text-[var(--m-success)] hover:ring-[var(--m-success)]/40'
                                     }`}
                                   >
                                     {a.workspaceName}
@@ -860,7 +860,7 @@ export function SecurityPage() {
                       <tr>
                         <td
                           colSpan={4}
-                          className="px-4 py-12 text-center text-[var(--text-secondary)]"
+                          className="px-4 py-12 text-center text-[var(--m-text-secondary)]"
                         >
                           No users match your filters.
                         </td>
@@ -871,8 +871,8 @@ export function SecurityPage() {
               </div>
 
               {/* Footer: pagination + count */}
-              <div className="flex items-center justify-between border-t border-[var(--border-default)] bg-[var(--surface-secondary)] px-4 py-2">
-                <span className="text-xs text-[var(--text-secondary)]">
+              <div className="flex items-center justify-between border-t border-[var(--m-border)] bg-[var(--m-surface)] px-4 py-2">
+                <span className="text-xs text-[var(--m-text-secondary)]">
                   {sortedUsers.length > 0
                     ? `Showing ${(safePage - 1) * USERS_PER_PAGE + 1}\u2013${Math.min(safePage * USERS_PER_PAGE, sortedUsers.length)} of ${sortedUsers.length} principals`
                     : '0 principals'}
@@ -885,7 +885,7 @@ export function SecurityPage() {
                     <button
                       disabled={safePage <= 1}
                       onClick={() => setCurrentPage(safePage - 1)}
-                      className="rounded-md p-1 text-[var(--text-secondary)] transition-colors hover:bg-[var(--surface-tertiary)] disabled:opacity-40 disabled:hover:bg-transparent"
+                      className="rounded-lg p-1 text-[var(--m-text-secondary)] transition-colors hover:bg-[var(--m-surface-hover)] disabled:opacity-40 disabled:hover:bg-transparent"
                     >
                       <ChevronLeft className="h-4 w-4" />
                     </button>
@@ -893,7 +893,7 @@ export function SecurityPage() {
                       p === 'ellipsis' ? (
                         <span
                           key={`ellipsis-${i}`}
-                          className="px-1 text-xs text-[var(--text-tertiary)]"
+                          className="px-1 text-xs text-[var(--m-text-tertiary)]"
                         >
                           ...
                         </span>
@@ -901,10 +901,10 @@ export function SecurityPage() {
                         <button
                           key={p}
                           onClick={() => setCurrentPage(p)}
-                          className={`h-7 w-7 rounded-md text-xs font-medium transition-colors ${
+                          className={`h-7 w-7 rounded-lg text-xs font-semibold transition-colors ${
                             p === safePage
-                              ? 'bg-[var(--brand-primary)] text-white'
-                              : 'text-[var(--text-secondary)] hover:bg-[var(--surface-tertiary)]'
+                              ? 'bg-[var(--m-primary)] text-white'
+                              : 'text-[var(--m-text-secondary)] hover:bg-[var(--m-surface-hover)]'
                           }`}
                         >
                           {p}
@@ -914,7 +914,7 @@ export function SecurityPage() {
                     <button
                       disabled={safePage >= totalPages}
                       onClick={() => setCurrentPage(safePage + 1)}
-                      className="rounded-md p-1 text-[var(--text-secondary)] transition-colors hover:bg-[var(--surface-tertiary)] disabled:opacity-40 disabled:hover:bg-transparent"
+                      className="rounded-lg p-1 text-[var(--m-text-secondary)] transition-colors hover:bg-[var(--m-surface-hover)] disabled:opacity-40 disabled:hover:bg-transparent"
                     >
                       <ChevronRight className="h-4 w-4" />
                     </button>

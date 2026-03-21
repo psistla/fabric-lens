@@ -32,18 +32,18 @@ export function SearchBar({
 
   return (
     <div className="relative">
-      <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-tertiary)]" />
+      <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--m-text-tertiary)]" />
       <input
         type="text"
         value={local}
         onChange={(e) => handleChange(e.target.value)}
         placeholder={placeholder}
-        className="h-9 w-full rounded-md border border-[var(--border-default)] bg-[var(--surface-primary)] pl-9 pr-8 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-focus)] focus:outline-none focus:ring-1 focus:ring-[var(--border-focus)]"
+        className="h-9 w-full rounded-lg border border-[var(--m-border)] bg-[var(--m-bg)] pl-9 pr-8 text-sm text-[var(--m-text)] placeholder:text-[var(--m-text-tertiary)] focus:border-[var(--m-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--m-primary)] focus:ring-offset-2"
       />
       {local && (
         <button
           onClick={() => handleChange('')}
-          className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-0.5 text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
+          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-0.5 text-[var(--m-text-tertiary)] hover:text-[var(--m-text-secondary)]"
         >
           <X className="h-3.5 w-3.5" />
         </button>

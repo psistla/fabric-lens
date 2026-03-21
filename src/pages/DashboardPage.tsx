@@ -173,15 +173,15 @@ export function DashboardPage() {
       <div className="space-y-6 p-6">
         <div className="flex items-center justify-between">
           <div>
-            <div className="h-7 w-40 animate-pulse rounded bg-[var(--surface-secondary)]" />
-            <div className="mt-2 h-4 w-64 animate-pulse rounded bg-[var(--surface-secondary)]" />
+            <div className="m-skeleton h-7 w-40" />
+            <div className="m-skeleton mt-2 h-4 w-64" />
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           {[1, 2, 3, 4].map((i) => (
             <div
               key={i}
-              className="h-[104px] animate-pulse rounded-lg bg-[var(--surface-secondary)]"
+              className="m-skeleton h-[104px] rounded-xl"
             />
           ))}
         </div>
@@ -189,7 +189,7 @@ export function DashboardPage() {
           {[1, 2].map((i) => (
             <div
               key={i}
-              className="h-80 animate-pulse rounded-lg bg-[var(--surface-secondary)]"
+              className="m-skeleton h-80 rounded-xl"
             />
           ))}
         </div>
@@ -202,16 +202,16 @@ export function DashboardPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-[-0.02em] text-[var(--text-primary)]">
+          <h1 className="text-2xl font-semibold tracking-[-0.02em] text-[var(--m-text)]">
             Dashboard
           </h1>
-          <p className="mt-1 text-sm text-[var(--text-secondary)]">
+          <p className="mt-1 text-sm text-[var(--m-text-secondary)]">
             Tenant overview and health summary.
           </p>
         </div>
         <div className="flex items-center gap-3">
           {refreshLabel && (
-            <span className="text-xs text-[var(--text-tertiary)]">
+            <span className="text-xs text-[var(--m-text-tertiary)]">
               {refreshLabel}
             </span>
           )}
@@ -221,7 +221,7 @@ export function DashboardPage() {
           <button
             onClick={() => void loadData()}
             disabled={loading}
-            className="inline-flex items-center gap-1.5 rounded-md border border-[var(--border-default)] bg-[var(--surface-primary)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:bg-[var(--surface-tertiary)] disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--m-border)] bg-[var(--m-bg)] px-3 py-1.5 text-xs font-semibold text-[var(--m-text-secondary)] transition-colors hover:bg-[var(--m-surface)] disabled:opacity-50"
           >
             <RefreshCw
               className={`h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`}
@@ -257,14 +257,14 @@ export function DashboardPage() {
 
       {/* Charts row */}
       <div className="grid gap-6 lg:grid-cols-2">
-        <div className="rounded-lg border border-[var(--border-default)] bg-[var(--surface-primary)] p-4">
-          <h2 className="mb-2 text-sm font-medium text-[var(--text-primary)]">
+        <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)] p-4">
+          <h2 className="mb-2 text-sm font-medium text-[var(--m-text)]">
             Items by Type
           </h2>
           <ItemsByTypeChart data={itemsByType} />
         </div>
-        <div className="rounded-lg border border-[var(--border-default)] bg-[var(--surface-primary)] p-4">
-          <h2 className="mb-2 text-sm font-medium text-[var(--text-primary)]">
+        <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)] p-4">
+          <h2 className="mb-2 text-sm font-medium text-[var(--m-text)]">
             Workspaces by Capacity
           </h2>
           <WorkspacesByCapacityChart data={workspacesByCapacity} />

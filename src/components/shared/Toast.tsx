@@ -42,12 +42,14 @@ const icons = {
   info: Info,
 } as const;
 
+// Semantic token colors — icon/border uses vivid, text uses -text variant for AA contrast
 const styles = {
   success:
-    'border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/30 dark:text-emerald-300',
+    'border-[var(--m-success)] bg-[var(--m-success-bg)] text-[var(--m-success-text)] dark:border-green-800 dark:bg-[#052E16] dark:text-green-300',
   error:
-    'border-red-200 bg-red-50 text-red-800 dark:border-red-800 dark:bg-red-950/30 dark:text-red-300',
-  info: 'border-blue-200 bg-blue-50 text-blue-800 dark:border-blue-800 dark:bg-blue-950/30 dark:text-blue-300',
+    'border-[var(--m-error)] bg-[var(--m-error-bg)] text-[var(--m-error-text)] dark:border-red-800 dark:bg-[#450A0A] dark:text-red-300',
+  info:
+    'border-[var(--m-info)] bg-[var(--m-info-bg)] text-[var(--m-info-text)] dark:border-blue-800 dark:bg-blue-950/30 dark:text-blue-300',
 } as const;
 
 function ToastItemCard({ toast }: { toast: ToastItem }) {
@@ -62,13 +64,13 @@ function ToastItemCard({ toast }: { toast: ToastItem }) {
   return (
     <div
       role="alert"
-      className={`flex items-start gap-2 rounded-lg border px-4 py-3 shadow-[var(--shadow-lg)] transition-all animate-toast-in ${styles[toast.type]}`}
+      className={`flex items-start gap-2 rounded-xl border px-4 py-3 shadow-[var(--m-shadow-lg)] animate-toast-in ${styles[toast.type]}`}
     >
       <Icon className="mt-0.5 h-4 w-4 shrink-0" />
       <p className="flex-1 text-sm">{toast.message}</p>
       <button
         onClick={() => removeToast(toast.id)}
-        className="shrink-0 rounded p-0.5 opacity-60 transition-opacity hover:opacity-100"
+        className="shrink-0 rounded-full p-0.5 opacity-60 transition-opacity hover:opacity-100"
         aria-label="Dismiss"
       >
         <X className="h-3.5 w-3.5" />
@@ -83,7 +85,7 @@ export function ToastContainer() {
   if (toasts.length === 0) return null;
 
   return (
-    <div className="fixed right-4 top-4 z-[100] flex w-80 flex-col gap-2">
+    <div className="fixed right-4 top-4 z-[var(--m-z-toast)] flex max-w-[420px] flex-col gap-2">
       {toasts.map((toast) => (
         <ToastItemCard key={toast.id} toast={toast} />
       ))}

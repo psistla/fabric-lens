@@ -31,29 +31,29 @@ function AuthStatusSection() {
   const { user, isAuthenticated } = useAuth();
 
   return (
-    <div className="rounded-lg border border-[var(--border-default)] bg-[var(--surface-primary)]">
-      <div className="flex items-center gap-2 border-b border-[var(--border-default)] px-5 py-3">
-        <User className="h-4 w-4 text-[var(--text-secondary)]" />
-        <h2 className="text-sm font-medium text-[var(--text-primary)]">
+    <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)]">
+      <div className="flex items-center gap-2 border-b border-[var(--m-border)] px-5 py-3">
+        <User className="h-4 w-4 text-[var(--m-text-secondary)]" />
+        <h2 className="text-sm font-medium text-[var(--m-text)]">
           Authentication Status
         </h2>
       </div>
       <div className="divide-y divide-[var(--border-default)]">
         <div className="flex items-center justify-between px-5 py-3">
-          <span className="text-sm text-[var(--text-secondary)]">
+          <span className="text-sm text-[var(--m-text-secondary)]">
             Status
           </span>
           {isDemoMode ? (
-            <span className="inline-flex items-center gap-1.5 rounded-md bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FBBF24] px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-[#78350F]">
               Demo Mode
             </span>
           ) : isAuthenticated ? (
-            <span className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-600 dark:text-emerald-400">
+            <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--m-success)]">
               <CheckCircle2 className="h-3.5 w-3.5" />
               Authenticated
             </span>
           ) : (
-            <span className="inline-flex items-center gap-1.5 text-sm font-medium text-red-600 dark:text-red-400">
+            <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--m-error)]">
               <XCircle className="h-3.5 w-3.5" />
               Not Authenticated
             </span>
@@ -61,10 +61,10 @@ function AuthStatusSection() {
         </div>
 
         <div className="flex items-center justify-between px-5 py-3">
-          <span className="text-sm text-[var(--text-secondary)]">
+          <span className="text-sm text-[var(--m-text-secondary)]">
             User
           </span>
-          <span className="text-sm text-[var(--text-primary)]">
+          <span className="text-sm text-[var(--m-text)]">
             {isDemoMode
               ? 'Demo User'
               : user?.name || '—'}
@@ -72,10 +72,10 @@ function AuthStatusSection() {
         </div>
 
         <div className="flex items-center justify-between px-5 py-3">
-          <span className="text-sm text-[var(--text-secondary)]">
+          <span className="text-sm text-[var(--m-text-secondary)]">
             Email
           </span>
-          <span className="text-sm text-[var(--text-primary)]">
+          <span className="text-sm text-[var(--m-text)]">
             {isDemoMode
               ? 'demo@fabric-lens.com'
               : user?.email || '—'}
@@ -83,10 +83,10 @@ function AuthStatusSection() {
         </div>
 
         <div className="flex items-center justify-between px-5 py-3">
-          <span className="text-sm text-[var(--text-secondary)]">
+          <span className="text-sm text-[var(--m-text-secondary)]">
             Tenant ID
           </span>
-          <span className="font-mono text-xs text-[var(--text-primary)]">
+          <span className="font-mono text-xs text-[var(--m-text)]">
             {isDemoMode
               ? 'demo-tenant-00000'
               : user?.tenantId || '—'}
@@ -94,10 +94,10 @@ function AuthStatusSection() {
         </div>
 
         <div className="flex items-center justify-between px-5 py-3">
-          <span className="text-sm text-[var(--text-secondary)]">
+          <span className="text-sm text-[var(--m-text-secondary)]">
             API Base
           </span>
-          <span className="font-mono text-xs text-[var(--text-secondary)]">
+          <span className="font-mono text-xs text-[var(--m-text-secondary)]">
             {import.meta.env.VITE_FABRIC_API_BASE || DEFAULT_FABRIC_API_BASE}
           </span>
         </div>
@@ -141,29 +141,29 @@ function GraphStatusSection() {
   };
 
   return (
-    <div className="rounded-lg border border-[var(--border-default)] bg-[var(--surface-primary)]">
-      <div className="flex items-center gap-2 border-b border-[var(--border-default)] px-5 py-3">
-        <Network className="h-4 w-4 text-[var(--text-secondary)]" />
-        <h2 className="text-sm font-medium text-[var(--text-primary)]">
+    <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)]">
+      <div className="flex items-center gap-2 border-b border-[var(--m-border)] px-5 py-3">
+        <Network className="h-4 w-4 text-[var(--m-text-secondary)]" />
+        <h2 className="text-sm font-medium text-[var(--m-text)]">
           Microsoft Graph
         </h2>
       </div>
       <div className="divide-y divide-[var(--border-default)]">
         <div className="flex items-center justify-between px-5 py-3">
-          <span className="text-sm text-[var(--text-secondary)]">
+          <span className="text-sm text-[var(--m-text-secondary)]">
             Status
           </span>
           {isDemoMode ? (
-            <span className="inline-flex items-center gap-1.5 rounded-md bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FBBF24] px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-[#78350F]">
               Demo Mode
             </span>
           ) : graphConnected ? (
-            <span className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-600 dark:text-emerald-400">
+            <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--m-success)]">
               <CheckCircle2 className="h-3.5 w-3.5" />
               Connected
             </span>
           ) : (
-            <span className="inline-flex items-center gap-1.5 text-sm font-medium text-amber-600 dark:text-amber-400">
+            <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--m-warning)]">
               <XCircle className="h-3.5 w-3.5" />
               Not connected
             </span>
@@ -171,10 +171,10 @@ function GraphStatusSection() {
         </div>
 
         <div className="flex items-center justify-between px-5 py-3">
-          <span className="text-sm text-[var(--text-secondary)]">
+          <span className="text-sm text-[var(--m-text-secondary)]">
             Scope
           </span>
-          <span className="font-mono text-xs text-[var(--text-primary)]">
+          <span className="font-mono text-xs text-[var(--m-text)]">
             {GRAPH_SCOPES[0]}
           </span>
         </div>
@@ -184,7 +184,7 @@ function GraphStatusSection() {
             <button
               onClick={() => void handleGrant()}
               disabled={granting}
-              className="inline-flex items-center gap-1.5 rounded-md bg-[var(--brand-primary)] px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-[var(--brand-primary-hover)] disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 rounded-md bg-[var(--m-primary)] px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-[var(--m-primary-hover)] disabled:opacity-50"
             >
               {granting ? 'Granting...' : 'Grant Access'}
             </button>
@@ -192,7 +192,7 @@ function GraphStatusSection() {
         )}
 
         <div className="px-5 py-3">
-          <p className="text-xs text-[var(--text-tertiary)]">
+          <p className="text-xs text-[var(--m-text-tertiary)]">
             Required for expanding group membership in Security Audit.
           </p>
         </div>
@@ -208,31 +208,31 @@ function HealthConfigSection() {
   const [staleThreshold, setStaleThreshold] = useState(DEFAULT_STALE_THRESHOLD_DAYS);
 
   return (
-    <div className="rounded-lg border border-[var(--border-default)] bg-[var(--surface-primary)]">
-      <div className="flex items-center gap-2 border-b border-[var(--border-default)] px-5 py-3">
-        <Heart className="h-4 w-4 text-[var(--text-secondary)]" />
-        <h2 className="text-sm font-medium text-[var(--text-primary)]">
+    <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)]">
+      <div className="flex items-center gap-2 border-b border-[var(--m-border)] px-5 py-3">
+        <Heart className="h-4 w-4 text-[var(--m-text-secondary)]" />
+        <h2 className="text-sm font-medium text-[var(--m-text)]">
           Health Score Configuration
         </h2>
       </div>
       <div className="space-y-4 px-5 py-4">
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-[var(--text-secondary)]">
+          <label className="mb-1.5 block text-sm font-medium text-[var(--m-text-secondary)]">
             Naming Convention Pattern
           </label>
           <input
             type="text"
             value={namingPattern}
             onChange={(e) => setNamingPattern(e.target.value)}
-            className="w-full rounded-md border border-[var(--border-default)] bg-[var(--surface-primary)] px-3 py-2 font-mono text-sm text-[var(--text-primary)]"
+            className="w-full rounded-lg border border-[var(--m-border)] bg-[var(--m-bg)] px-3 py-2 font-mono text-sm text-[var(--m-text)]"
           />
-          <p className="mt-1 text-xs text-[var(--text-tertiary)]">
+          <p className="mt-1 text-xs text-[var(--m-text-tertiary)]">
             Regex pattern for workspace naming compliance ({HEALTH_SCORE_WEIGHTS.naming} pts).
           </p>
         </div>
 
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-[var(--text-secondary)]">
+          <label className="mb-1.5 block text-sm font-medium text-[var(--m-text-secondary)]">
             Stale Threshold (days)
           </label>
           <input
@@ -245,18 +245,18 @@ function HealthConfigSection() {
                 Math.min(365, Math.max(7, Number(e.target.value))),
               )
             }
-            className="w-32 rounded-md border border-[var(--border-default)] bg-[var(--surface-primary)] px-3 py-2 text-sm text-[var(--text-primary)]"
+            className="w-32 rounded-lg border border-[var(--m-border)] bg-[var(--m-bg)] px-3 py-2 text-sm text-[var(--m-text)]"
           />
-          <p className="mt-1 text-xs text-[var(--text-tertiary)]">
+          <p className="mt-1 text-xs text-[var(--m-text-tertiary)]">
             Items not modified within this period are considered stale ({HEALTH_SCORE_WEIGHTS.activeItems} pts).
           </p>
         </div>
 
-        <div className="rounded-md bg-[var(--surface-secondary)] p-3">
-          <h3 className="mb-2 text-xs font-medium uppercase text-[var(--text-secondary)]">
+        <div className="rounded-md bg-[var(--m-surface)] p-3">
+          <h3 className="mb-2 text-xs font-medium uppercase text-[var(--m-text-secondary)]">
             Scoring Breakdown ({HEALTH_SCORE_MAX} pts)
           </h3>
-          <div className="grid grid-cols-2 gap-1.5 text-xs text-[var(--text-secondary)]">
+          <div className="grid grid-cols-2 gap-1.5 text-xs text-[var(--m-text-secondary)]">
             {([
               ['Has description', HEALTH_SCORE_WEIGHTS.description],
               ['Assigned to capacity', HEALTH_SCORE_WEIGHTS.capacity],
@@ -293,10 +293,10 @@ function ThemeSection() {
     ];
 
   return (
-    <div className="rounded-lg border border-[var(--border-default)] bg-[var(--surface-primary)]">
-      <div className="flex items-center gap-2 border-b border-[var(--border-default)] px-5 py-3">
-        <Monitor className="h-4 w-4 text-[var(--text-secondary)]" />
-        <h2 className="text-sm font-medium text-[var(--text-primary)]">
+    <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)]">
+      <div className="flex items-center gap-2 border-b border-[var(--m-border)] px-5 py-3">
+        <Monitor className="h-4 w-4 text-[var(--m-text-secondary)]" />
+        <h2 className="text-sm font-medium text-[var(--m-text)]">
           Appearance
         </h2>
       </div>
@@ -308,8 +308,8 @@ function ThemeSection() {
               onClick={() => setTheme(opt.value)}
               className={`flex items-center gap-2 rounded-lg border-2 px-4 py-3 text-sm font-medium transition-colors ${
                 theme === opt.value
-                  ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-subtle)] text-[var(--brand-primary)]'
-                  : 'border-[var(--border-default)] text-[var(--text-secondary)] hover:border-[var(--text-tertiary)] hover:bg-[var(--surface-tertiary)]'
+                  ? 'border-[var(--m-primary)] bg-[var(--m-primary-subtle)] text-[var(--m-primary)]'
+                  : 'border-[var(--m-border)] text-[var(--m-text-secondary)] hover:border-[var(--text-tertiary)] hover:bg-[var(--m-surface)]'
               }`}
             >
               <opt.icon className="h-4 w-4" />
@@ -326,54 +326,54 @@ function ThemeSection() {
 
 function AboutSection() {
   return (
-    <div className="rounded-lg border border-[var(--border-default)] bg-[var(--surface-primary)]">
-      <div className="flex items-center gap-2 border-b border-[var(--border-default)] px-5 py-3">
-        <Info className="h-4 w-4 text-[var(--text-secondary)]" />
-        <h2 className="text-sm font-medium text-[var(--text-primary)]">
+    <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)]">
+      <div className="flex items-center gap-2 border-b border-[var(--m-border)] px-5 py-3">
+        <Info className="h-4 w-4 text-[var(--m-text-secondary)]" />
+        <h2 className="text-sm font-medium text-[var(--m-text)]">
           About
         </h2>
       </div>
       <div className="space-y-3 px-5 py-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--brand-primary)] text-lg font-bold text-white">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--m-primary)] text-lg font-bold text-white">
             F
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-[var(--text-primary)]">
+            <h3 className="text-sm font-semibold text-[var(--m-text)]">
               Fabric Lens
             </h3>
-            <p className="text-xs text-[var(--text-secondary)]">
+            <p className="text-xs text-[var(--m-text-secondary)]">
               v{APP_VERSION}
             </p>
           </div>
         </div>
 
-        <p className="text-sm text-[var(--text-secondary)]">
+        <p className="text-sm text-[var(--m-text-secondary)]">
           Governance, health intelligence, and inventory management for
           Microsoft Fabric tenants. Authenticates via Azure AD and calls Fabric
           REST APIs directly from the browser.
         </p>
 
         <div className="flex flex-wrap gap-2">
-          <span className="inline-flex rounded-md bg-[var(--surface-secondary)] px-2 py-0.5 text-[11px] font-medium text-[var(--text-secondary)]">
+          <span className="inline-flex rounded-full bg-[var(--m-surface)] px-2.5 py-0.5 text-[11px] font-semibold text-[var(--m-text-secondary)]">
             React 19
           </span>
-          <span className="inline-flex rounded-md bg-[var(--surface-secondary)] px-2 py-0.5 text-[11px] font-medium text-[var(--text-secondary)]">
+          <span className="inline-flex rounded-full bg-[var(--m-surface)] px-2.5 py-0.5 text-[11px] font-semibold text-[var(--m-text-secondary)]">
             TypeScript
           </span>
-          <span className="inline-flex rounded-md bg-[var(--surface-secondary)] px-2 py-0.5 text-[11px] font-medium text-[var(--text-secondary)]">
+          <span className="inline-flex rounded-full bg-[var(--m-surface)] px-2.5 py-0.5 text-[11px] font-semibold text-[var(--m-text-secondary)]">
             Vite
           </span>
-          <span className="inline-flex rounded-md bg-[var(--surface-secondary)] px-2 py-0.5 text-[11px] font-medium text-[var(--text-secondary)]">
+          <span className="inline-flex rounded-full bg-[var(--m-surface)] px-2.5 py-0.5 text-[11px] font-semibold text-[var(--m-text-secondary)]">
             Tailwind CSS
           </span>
-          <span className="inline-flex rounded-md bg-[var(--surface-secondary)] px-2 py-0.5 text-[11px] font-medium text-[var(--text-secondary)]">
+          <span className="inline-flex rounded-full bg-[var(--m-surface)] px-2.5 py-0.5 text-[11px] font-semibold text-[var(--m-text-secondary)]">
             Zustand
           </span>
-          <span className="inline-flex rounded-md bg-[var(--surface-secondary)] px-2 py-0.5 text-[11px] font-medium text-[var(--text-secondary)]">
+          <span className="inline-flex rounded-full bg-[var(--m-surface)] px-2.5 py-0.5 text-[11px] font-semibold text-[var(--m-text-secondary)]">
             Recharts
           </span>
-          <span className="inline-flex rounded-md bg-[var(--surface-secondary)] px-2 py-0.5 text-[11px] font-medium text-[var(--text-secondary)]">
+          <span className="inline-flex rounded-full bg-[var(--m-surface)] px-2.5 py-0.5 text-[11px] font-semibold text-[var(--m-text-secondary)]">
             MSAL.js
           </span>
         </div>
@@ -383,7 +383,7 @@ function AboutSection() {
             href="https://github.com/psistla/fabric-lens"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-sm text-[var(--brand-primary)]"
+            className="inline-flex items-center gap-1 text-sm text-[var(--m-primary)]"
           >
             GitHub
             <ExternalLink className="h-3 w-3" />
@@ -392,14 +392,14 @@ function AboutSection() {
             href="https://learn.microsoft.com/en-us/rest/api/fabric/articles/"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-sm text-[var(--brand-primary)]"
+            className="inline-flex items-center gap-1 text-sm text-[var(--m-primary)]"
           >
             Fabric REST API
             <ExternalLink className="h-3 w-3" />
           </a>
         </div>
 
-        <p className="text-[11px] text-[var(--text-tertiary)]">
+        <p className="text-[11px] text-[var(--m-text-tertiary)]">
           MIT License. Not affiliated with or endorsed by Microsoft.
         </p>
       </div>
@@ -413,10 +413,10 @@ export function SettingsPage() {
   return (
     <div className="space-y-6 p-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-[-0.02em] text-[var(--text-primary)]">
+        <h1 className="text-2xl font-semibold tracking-[-0.02em] text-[var(--m-text)]">
           Settings
         </h1>
-        <p className="mt-1 text-sm text-[var(--text-secondary)]">
+        <p className="mt-1 text-sm text-[var(--m-text-secondary)]">
           Application configuration and preferences.
         </p>
       </div>

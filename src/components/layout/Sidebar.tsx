@@ -48,17 +48,17 @@ export function Sidebar() {
 
   return (
     <aside
-      className={`hidden flex-col border-r border-[var(--border-default)] bg-[var(--surface-primary)] transition-all duration-200 md:flex ${
+      className={`hidden flex-col border-r border-[var(--m-border)] bg-[var(--m-bg)] transition-all duration-200 md:flex ${
         collapsed ? 'w-16' : 'w-60'
       }`}
     >
       {/* Logo */}
-      <div className="flex h-14 items-center gap-2 border-b border-[var(--border-default)] px-4">
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[var(--brand-primary)] text-sm font-bold text-white">
+      <div className="flex h-14 items-center gap-2 border-b border-[var(--m-border)] px-4">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[var(--m-primary)] text-sm font-bold text-white">
           F
         </div>
         {!collapsed && (
-          <span className="text-sm font-semibold text-[var(--text-primary)]">
+          <span className="text-sm font-semibold text-[var(--m-text)]">
             fabric-lens
           </span>
         )}
@@ -73,10 +73,10 @@ export function Sidebar() {
             end={item.path === '/'}
             title={collapsed ? item.label : undefined}
             className={({ isActive }) =>
-              `group flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors duration-[120ms] ${
+              `group flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors duration-[120ms] ${
                 isActive
-                  ? 'border-l-2 border-[var(--brand-primary)] bg-[var(--brand-primary-subtle)] font-semibold text-[var(--brand-primary)]'
-                  : 'border-l-2 border-transparent text-[var(--text-secondary)] hover:bg-[var(--surface-tertiary)] hover:text-[var(--text-primary)]'
+                  ? 'border-l-2 border-[var(--m-primary)] bg-[var(--m-primary-subtle)] font-semibold text-[var(--m-primary)]'
+                  : 'border-l-2 border-transparent text-[var(--m-text-secondary)] hover:bg-[var(--surface-tertiary)] hover:text-[var(--m-text)]'
               } ${collapsed ? 'justify-center px-0' : ''}`
             }
           >
@@ -87,11 +87,11 @@ export function Sidebar() {
       </nav>
 
       {/* Collapse toggle */}
-      <div className="border-t border-[var(--border-default)] p-2">
+      <div className="border-t border-[var(--m-border)] p-2">
         <button
           onClick={toggleSidebar}
           title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          className="flex w-full items-center justify-center gap-3 rounded-md px-3 py-2 text-sm text-[var(--text-tertiary)] transition-colors duration-[120ms] hover:bg-[var(--surface-tertiary)] hover:text-[var(--text-secondary)]"
+          className="flex w-full items-center justify-center gap-3 rounded-lg px-3 py-2 text-sm text-[var(--m-text-tertiary)] transition-colors hover:bg-[var(--surface-tertiary)] hover:text-[var(--m-text-secondary)]"
         >
           {collapsed ? (
             <PanelLeftOpen className="h-4 w-4" />

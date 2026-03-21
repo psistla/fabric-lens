@@ -19,14 +19,8 @@ export function LoadingState({ rows = 4 }: Props) {
         const widths = ROW_WIDTHS[i % ROW_WIDTHS.length];
         return (
           <div key={i} className="flex gap-4">
-            <div
-              className="h-4 animate-pulse rounded bg-[var(--surface-secondary)]"
-              style={{ width: widths.left }}
-            />
-            <div
-              className="h-4 animate-pulse rounded bg-[var(--surface-secondary)]"
-              style={{ width: widths.right }}
-            />
+            <div className="m-skeleton h-4" style={{ width: widths.left }} />
+            <div className="m-skeleton h-4" style={{ width: widths.right }} />
           </div>
         );
       })}

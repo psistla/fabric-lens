@@ -53,31 +53,31 @@ export const TOAST_DISMISS_MS = 5000;
 
 // -- Charts --
 
-/** Shared chart color palette (12 colors, wraps around for larger datasets). */
+/** Shared chart color palette (Meridian-aligned sequence). */
 export const CHART_COLORS = [
-  '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6',
-  '#ec4899', '#06b6d4', '#f97316', '#14b8a6', '#6366f1',
-  '#d946ef', '#84cc16',
+  '#4F46E5', '#B45309', '#818CF8', '#FBBF24', '#868E96',
+  '#6366F1', '#D97706', '#15803D', '#0891B2', '#7C3AED',
+  '#DB2777', '#EA580C',
 ] as const;
 
 /** Color map for workspace roles (used in Security page charts and badges). */
 export const ROLE_COLORS: Record<string, string> = {
-  Admin: '#ef4444',
-  Member: '#3b82f6',
-  Contributor: '#f59e0b',
-  Viewer: '#10b981',
+  Admin: '#DC2626',
+  Member: '#4F46E5',
+  Contributor: '#15803D',
+  Viewer: '#495057',
 };
 
 /** Default fallback color for unknown chart categories. */
-export const CHART_FALLBACK_COLOR = '#64748b';
+export const CHART_FALLBACK_COLOR = '#495057';
 
 /** Shared Recharts tooltip style object (dark themed, uses design tokens). */
 export const CHART_TOOLTIP_STYLE: CSSProperties = {
-  backgroundColor: 'var(--surface-inverse, #111827)',
-  border: '1px solid var(--border-default, #1E293B)',
-  borderRadius: 'var(--radius-md, 6px)',
+  backgroundColor: 'var(--m-neutral-900, #16191D)',
+  border: '1px solid var(--m-neutral-700, #343A40)',
+  borderRadius: 'var(--m-radius-md, 8px)',
   fontSize: '12px',
-  color: 'var(--text-inverse, #F9FAFB)',
+  color: 'var(--m-neutral-0, #FFFFFF)',
 };
 
 // -- Health scoring --
@@ -137,10 +137,10 @@ export const CU_RATE_PER_HOUR = 0.18;
 
 /** Color map for principal types (used in Security page badges and charts). */
 export const PRINCIPAL_TYPE_COLORS: Record<string, string> = {
-  User: '#6B7280',
-  Group: '#3B82F6',
-  ServicePrincipal: '#8B5CF6',
-  ServicePrincipalProfile: '#8B5CF6',
+  User: '#495057',
+  Group: '#4F46E5',
+  ServicePrincipal: '#7C3AED',
+  ServicePrincipalProfile: '#7C3AED',
 };
 
 // -- Session management --

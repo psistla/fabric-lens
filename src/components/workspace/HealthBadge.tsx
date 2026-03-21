@@ -1,12 +1,13 @@
 import { useState, useRef } from 'react';
 import type { HealthGrade } from '@/utils/healthScore';
 
+// Map grades to --health-* CSS tokens for consistent colors across all health UI
 const gradeColors: Record<HealthGrade, { bg: string; text: string; ring: string }> = {
-  A: { bg: 'bg-emerald-100 dark:bg-emerald-900/40', text: 'text-emerald-700 dark:text-emerald-400', ring: 'ring-emerald-500/30' },
-  B: { bg: 'bg-blue-100 dark:bg-blue-900/40', text: 'text-blue-700 dark:text-blue-400', ring: 'ring-blue-500/30' },
-  C: { bg: 'bg-yellow-100 dark:bg-yellow-900/40', text: 'text-yellow-700 dark:text-yellow-400', ring: 'ring-yellow-500/30' },
-  D: { bg: 'bg-orange-100 dark:bg-orange-900/40', text: 'text-orange-700 dark:text-orange-400', ring: 'ring-orange-500/30' },
-  F: { bg: 'bg-red-100 dark:bg-red-900/40', text: 'text-red-700 dark:text-red-400', ring: 'ring-red-500/30' },
+  A: { bg: 'bg-[var(--health-a-bg)]', text: 'text-[var(--health-a)]', ring: 'ring-[var(--health-a)]/30' },
+  B: { bg: 'bg-[var(--health-b-bg)]', text: 'text-[var(--health-b)]', ring: 'ring-[var(--health-b)]/30' },
+  C: { bg: 'bg-[var(--health-c-bg)]', text: 'text-[var(--health-c)]', ring: 'ring-[var(--health-c)]/30' },
+  D: { bg: 'bg-[var(--health-d-bg)]', text: 'text-[var(--health-d)]', ring: 'ring-[var(--health-d)]/30' },
+  F: { bg: 'bg-[var(--health-f-bg)]', text: 'text-[var(--health-f)]', ring: 'ring-[var(--health-f)]/30' },
 };
 
 interface Props {
@@ -29,9 +30,9 @@ export function HealthBadge({ grade, percentage }: Props) {
         {grade}
       </span>
       {showTooltip && (
-        <span className="absolute bottom-full left-1/2 z-50 mb-1.5 -translate-x-1/2 whitespace-nowrap rounded bg-[var(--surface-inverse)] px-2 py-1 text-xs text-[var(--text-inverse)] shadow">
+        <span className="absolute bottom-full left-1/2 z-[var(--m-z-tooltip)] mb-1.5 -translate-x-1/2 whitespace-nowrap rounded-lg bg-[var(--m-tooltip-bg)] px-2 py-1 text-xs text-[var(--m-tooltip-text)] shadow-[var(--m-shadow-md)]">
           Health: {percentage}%
-          <span className="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-[var(--surface-inverse)]" />
+          <span className="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-[var(--m-tooltip-bg)]" />
         </span>
       )}
     </span>

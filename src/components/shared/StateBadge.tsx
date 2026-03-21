@@ -5,10 +5,10 @@ interface Props {
 export function StateBadge({ state }: Props) {
   return (
     <span
-      className={`inline-flex rounded-md px-2 py-0.5 text-xs font-medium ${
+      className={`inline-flex rounded-full px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide ${
         state === 'Active'
-          ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400'
-          : 'bg-[var(--surface-secondary)] text-[var(--text-secondary)]'
+          ? 'bg-[var(--m-success-bg)] text-[var(--m-success)] dark:bg-[#052E16] dark:text-green-400'
+          : 'bg-[var(--m-surface)] text-[var(--m-text-secondary)]'
       }`}
     >
       {state}

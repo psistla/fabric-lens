@@ -97,24 +97,24 @@ function CostCalculator() {
   const autoscaleCost = reservedCost * (utilization / 100);
 
   return (
-    <div className="rounded-lg border border-[var(--border-default)] bg-[var(--surface-primary)] p-5">
+    <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)] p-5">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Calculator className="h-4 w-4 text-[var(--text-secondary)]" />
-          <h2 className="text-sm font-medium text-[var(--text-primary)]">
+          <Calculator className="h-4 w-4 text-[var(--m-text-secondary)]" />
+          <h2 className="text-sm font-medium text-[var(--m-text)]">
             Cost Calculator
           </h2>
         </div>
 
         {/* Pricing status badge */}
         {status === 'loading' && (
-          <span className="inline-flex items-center gap-1.5 text-xs text-[var(--text-tertiary)]">
+          <span className="inline-flex items-center gap-1.5 text-xs text-[var(--m-text-tertiary)]">
             <RefreshCw className="h-3 w-3 animate-spin" />
             Fetching live rates…
           </span>
         )}
         {status === 'live' && (
-          <span className="inline-flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400">
+          <span className="inline-flex items-center gap-1.5 text-xs text-[var(--m-success)]">
             <CheckCircle2 className="h-3 w-3" />
             Live pricing (USD)
           </span>
@@ -122,7 +122,7 @@ function CostCalculator() {
         {status === 'error' && (
           <button
             onClick={retry}
-            className="inline-flex items-center gap-1.5 text-xs text-amber-600 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-300"
+            className="inline-flex items-center gap-1.5 text-xs text-[var(--m-warning)] hover:opacity-80"
           >
             <AlertCircle className="h-3 w-3" />
             Using fallback rates — click to retry
@@ -133,13 +133,13 @@ function CostCalculator() {
       <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {/* Region select */}
         <div>
-          <label className="mb-1 block text-xs font-medium text-[var(--text-secondary)]">
+          <label className="mb-1 block text-xs font-medium text-[var(--m-text-secondary)]">
             Region
           </label>
           <select
             value={region}
             onChange={(e) => setRegion(e.target.value)}
-            className="w-full rounded-md border border-[var(--border-default)] bg-[var(--surface-primary)] px-3 py-1.5 text-sm text-[var(--text-primary)]"
+            className="w-full rounded-md border border-[var(--m-border)] bg-[var(--m-bg)] px-3 py-1.5 text-sm text-[var(--m-text)]"
           >
             {AZURE_REGIONS.map((r) => (
               <option key={r.name} value={r.name}>
@@ -151,13 +151,13 @@ function CostCalculator() {
 
         {/* SKU select */}
         <div>
-          <label className="mb-1 block text-xs font-medium text-[var(--text-secondary)]">
+          <label className="mb-1 block text-xs font-medium text-[var(--m-text-secondary)]">
             SKU
           </label>
           <select
             value={sku}
             onChange={(e) => setSku(e.target.value)}
-            className="w-full rounded-md border border-[var(--border-default)] bg-[var(--surface-primary)] px-3 py-1.5 text-sm text-[var(--text-primary)]"
+            className="w-full rounded-md border border-[var(--m-border)] bg-[var(--m-bg)] px-3 py-1.5 text-sm text-[var(--m-text)]"
           >
             {SKU_NAMES.map((s) => (
               <option key={s} value={s}>
@@ -169,7 +169,7 @@ function CostCalculator() {
 
         {/* Hours per day */}
         <div>
-          <label className="mb-1 block text-xs font-medium text-[var(--text-secondary)]">
+          <label className="mb-1 block text-xs font-medium text-[var(--m-text-secondary)]">
             Hours / day
           </label>
           <input
@@ -178,13 +178,13 @@ function CostCalculator() {
             max={24}
             value={hoursPerDay}
             onChange={(e) => setHoursPerDay(Math.min(24, Math.max(1, Number(e.target.value))))}
-            className="w-full rounded-md border border-[var(--border-default)] bg-[var(--surface-primary)] px-3 py-1.5 text-sm text-[var(--text-primary)]"
+            className="w-full rounded-md border border-[var(--m-border)] bg-[var(--m-bg)] px-3 py-1.5 text-sm text-[var(--m-text)]"
           />
         </div>
 
         {/* Days per month */}
         <div>
-          <label className="mb-1 block text-xs font-medium text-[var(--text-secondary)]">
+          <label className="mb-1 block text-xs font-medium text-[var(--m-text-secondary)]">
             Days / month
           </label>
           <input
@@ -193,20 +193,20 @@ function CostCalculator() {
             max={31}
             value={daysPerMonth}
             onChange={(e) => setDaysPerMonth(Math.min(31, Math.max(1, Number(e.target.value))))}
-            className="w-full rounded-md border border-[var(--border-default)] bg-[var(--surface-primary)] px-3 py-1.5 text-sm text-[var(--text-primary)]"
+            className="w-full rounded-md border border-[var(--m-border)] bg-[var(--m-bg)] px-3 py-1.5 text-sm text-[var(--m-text)]"
           />
         </div>
       </div>
 
       {/* Result */}
-      <div className="mt-4 rounded-md bg-[var(--surface-secondary)] px-4 py-3">
+      <div className="mt-4 rounded-md bg-[var(--m-surface)] px-4 py-3">
         <div className="flex items-center justify-between">
-          <span className="text-sm text-[var(--text-secondary)]">
+          <span className="text-sm text-[var(--m-text-secondary)]">
             Reserved (always-on)
           </span>
-          <span className="text-lg font-semibold text-[var(--text-primary)]">
+          <span className="text-lg font-semibold text-[var(--m-text)]">
             ${reservedCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-            <span className="text-xs font-normal text-[var(--text-secondary)]"> /mo</span>
+            <span className="text-xs font-normal text-[var(--m-text-secondary)]"> /mo</span>
           </span>
         </div>
       </div>
@@ -215,7 +215,7 @@ function CostCalculator() {
       <div className="mt-3">
         <button
           onClick={() => setShowAutoscale(!showAutoscale)}
-          className="flex items-center gap-1.5 text-xs font-medium text-[var(--brand-primary)]"
+          className="flex items-center gap-1.5 text-xs font-semibold text-[var(--m-primary)]"
         >
           {showAutoscale ? (
             <ChevronDown className="h-3 w-3" />
@@ -226,9 +226,9 @@ function CostCalculator() {
         </button>
 
         {showAutoscale && (
-          <div className="mt-3 space-y-3 rounded-md border border-[var(--border-default)] p-3">
-            <div className="flex items-start gap-2 text-xs text-[var(--text-secondary)]">
-              <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-blue-500" />
+          <div className="mt-3 space-y-3 rounded-md border border-[var(--m-border)] p-3">
+            <div className="flex items-start gap-2 text-xs text-[var(--m-text-secondary)]">
+              <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--m-info)]" />
               <span>
                 With Spark Autoscale, you pay only for the CU-seconds consumed.
                 Costs scale with actual utilization rather than reserved capacity.
@@ -236,7 +236,7 @@ function CostCalculator() {
             </div>
 
             <div>
-              <label className="mb-1 block text-xs font-medium text-[var(--text-secondary)]">
+              <label className="mb-1 block text-xs font-medium text-[var(--m-text-secondary)]">
                 Average utilization (%)
               </label>
               <input
@@ -245,23 +245,23 @@ function CostCalculator() {
                 max={100}
                 value={utilization}
                 onChange={(e) => setUtilization(Math.min(100, Math.max(1, Number(e.target.value))))}
-                className="w-32 rounded-md border border-[var(--border-default)] bg-[var(--surface-primary)] px-3 py-1.5 text-sm text-[var(--text-primary)]"
+                className="w-32 rounded-md border border-[var(--m-border)] bg-[var(--m-bg)] px-3 py-1.5 text-sm text-[var(--m-text)]"
               />
             </div>
 
-            <div className="flex items-center justify-between rounded-md bg-blue-50 px-3 py-2 dark:bg-blue-950/20">
-              <span className="text-xs text-blue-700 dark:text-blue-400">
+            <div className="flex items-center justify-between rounded-lg bg-[var(--m-info-bg)] px-3 py-2">
+              <span className="text-xs text-[var(--m-info-text)]">
                 Est. autoscale cost
               </span>
-              <span className="text-sm font-semibold text-blue-800 dark:text-blue-300">
+              <span className="text-sm font-semibold text-[var(--m-info-text)]">
                 ${autoscaleCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 <span className="text-xs font-normal"> /mo</span>
               </span>
             </div>
 
-            <div className="flex items-center justify-between text-xs text-[var(--text-secondary)]">
+            <div className="flex items-center justify-between text-xs text-[var(--m-text-secondary)]">
               <span>Potential savings</span>
-              <span className="font-medium text-emerald-600 dark:text-emerald-400">
+              <span className="font-semibold text-[var(--m-success)]">
                 ${(reservedCost - autoscaleCost).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 {' '}({Math.round(100 - utilization)}%)
               </span>
@@ -270,7 +270,7 @@ function CostCalculator() {
         )}
       </div>
 
-      <p className="mt-3 text-[10px] text-[var(--text-tertiary)]">
+      <p className="mt-3 text-[10px] text-[var(--m-text-tertiary)]">
         {status === 'live'
           ? 'Rates from Azure Retail Prices API (USD). Cached for 1 hour.'
           : 'Using estimated USD rates. Select a region for live pricing.'}
@@ -279,7 +279,7 @@ function CostCalculator() {
           href="https://azure.microsoft.com/en-us/pricing/details/microsoft-fabric/"
           target="_blank"
           rel="noopener noreferrer"
-          className="underline hover:text-[var(--text-secondary)]"
+          className="underline hover:text-[var(--m-text-secondary)]"
         >
           Azure pricing page
         </a>.
@@ -317,7 +317,7 @@ function CapacityDetail({
           {spec && (
             <div className="flex items-center gap-4">
               <SkuBadge sku={capacity.sku} />
-              <span className="text-sm text-[var(--text-secondary)]">
+              <span className="text-sm text-[var(--m-text-secondary)]">
                 {spec.cu} Capacity Units — ${spec.rate}/hr
               </span>
             </div>
@@ -326,14 +326,14 @@ function CapacityDetail({
           {/* Summary */}
           <div className="flex gap-6 text-sm">
             <div>
-              <span className="text-[var(--text-secondary)]">Assigned workspaces: </span>
-              <span className="font-medium text-[var(--text-primary)]">
+              <span className="text-[var(--m-text-secondary)]">Assigned workspaces: </span>
+              <span className="font-medium text-[var(--m-text)]">
                 {assigned.length}
               </span>
             </div>
             <div>
-              <span className="text-[var(--text-secondary)]">Total items: </span>
-              <span className="font-medium text-[var(--text-primary)]">
+              <span className="text-[var(--m-text-secondary)]">Total items: </span>
+              <span className="font-medium text-[var(--m-text)]">
                 {totalItems}
               </span>
             </div>
@@ -341,17 +341,17 @@ function CapacityDetail({
 
           {/* Workspace list */}
           {assigned.length > 0 ? (
-            <div className="rounded-md border border-[var(--border-default)]">
+            <div className="rounded-md border border-[var(--m-border)]">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-[var(--border-default)] bg-[var(--surface-secondary)]">
-                    <th className="px-3 py-2 text-left text-xs font-medium uppercase text-[var(--text-secondary)]">
+                  <tr className="border-b border-[var(--m-border)] bg-[var(--m-surface)]">
+                    <th className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-[0.04em] text-[var(--m-text-secondary)]">
                       Workspace
                     </th>
-                    <th className="px-3 py-2 text-left text-xs font-medium uppercase text-[var(--text-secondary)]">
+                    <th className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-[0.04em] text-[var(--m-text-secondary)]">
                       Items
                     </th>
-                    <th className="px-3 py-2 text-left text-xs font-medium uppercase text-[var(--text-secondary)]">
+                    <th className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-[0.04em] text-[var(--m-text-secondary)]">
                       State
                     </th>
                   </tr>
@@ -363,10 +363,10 @@ function CapacityDetail({
                       onClick={() => void navigate(`/workspaces/${ws.id}`)}
                       className="cursor-pointer hover:bg-[var(--surface-tertiary)]"
                     >
-                      <td className="px-3 py-2 font-medium text-[var(--brand-primary)]">
+                      <td className="px-3 py-2 font-medium text-[var(--m-primary)]">
                         {ws.displayName}
                       </td>
-                      <td className="px-3 py-2 text-[var(--text-secondary)]">
+                      <td className="px-3 py-2 text-[var(--m-text-secondary)]">
                         {allItemsByWorkspace[ws.id]?.length ?? 0}
                       </td>
                       <td className="px-3 py-2">
@@ -378,7 +378,7 @@ function CapacityDetail({
               </table>
             </div>
           ) : (
-            <p className="text-sm text-[var(--text-tertiary)]">
+            <p className="text-sm text-[var(--m-text-tertiary)]">
               No workspaces assigned to this capacity.
             </p>
           )}
@@ -468,10 +468,10 @@ export function CapacityPage() {
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-[-0.02em] text-[var(--text-primary)]">
+          <h1 className="text-2xl font-semibold tracking-[-0.02em] text-[var(--m-text)]">
             Capacities
           </h1>
-          <p className="mt-1 text-sm text-[var(--text-secondary)]">
+          <p className="mt-1 text-sm text-[var(--m-text-secondary)]">
             Monitor Fabric capacity usage and specifications.
           </p>
         </div>
@@ -481,13 +481,13 @@ export function CapacityPage() {
       </div>
 
       {capError && (
-        <div className="flex items-center justify-between rounded-md border border-red-200 bg-red-50 px-4 py-3 dark:border-red-900 dark:bg-red-950/30">
-          <span className="text-sm text-red-700 dark:text-red-400">
+        <div className="flex items-center justify-between rounded-xl border border-[var(--m-error)] bg-[var(--m-error-bg)] px-4 py-3">
+          <span className="text-sm text-[var(--m-error-text)]">
             Unable to load capacities. Please check your connection.
           </span>
           <button
             onClick={() => void loadData()}
-            className="shrink-0 rounded-md bg-red-100 px-3 py-1 text-xs font-medium text-red-700 transition-colors hover:bg-red-200 dark:bg-red-900/40 dark:text-red-400 dark:hover:bg-red-900/60"
+            className="shrink-0 rounded-lg bg-[var(--m-error-bg)] px-3 py-1 text-xs font-semibold text-[var(--m-error-text)] ring-1 ring-[var(--m-error)] transition-colors hover:opacity-80"
           >
             Retry
           </button>
@@ -495,29 +495,29 @@ export function CapacityPage() {
       )}
 
       {/* Capacity table */}
-      <div className="overflow-hidden rounded-lg border border-[var(--border-default)]">
+      <div className="overflow-hidden rounded-xl border border-[var(--m-border)]">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[var(--border-default)] bg-[var(--surface-secondary)]">
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[var(--text-secondary)]">
+              <tr className="border-b border-[var(--m-border)] bg-[var(--m-surface)]">
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[var(--m-text-secondary)]">
                   Name
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[var(--text-secondary)]">
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[var(--m-text-secondary)]">
                   SKU
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[var(--text-secondary)]">
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[var(--m-text-secondary)]">
                   Region
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[var(--text-secondary)]">
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[var(--m-text-secondary)]">
                   State
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[var(--text-secondary)]">
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[var(--m-text-secondary)]">
                   Workspaces
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[var(--border-default)] bg-[var(--surface-primary)]">
+            <tbody className="divide-y divide-[var(--m-border)] bg-[var(--m-bg)]">
               {loading && capacities.length === 0 &&
                 Array.from({ length: 3 }).map((_, i) => (
                   <tr key={i}>
@@ -533,7 +533,7 @@ export function CapacityPage() {
                 <tr>
                   <td
                     colSpan={5}
-                    className="px-4 py-12 text-center text-[var(--text-secondary)]"
+                    className="px-4 py-12 text-center text-[var(--m-text-secondary)]"
                   >
                     No capacities found.
                   </td>
@@ -554,11 +554,11 @@ export function CapacityPage() {
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
                           {isExpanded ? (
-                            <ChevronDown className="h-3.5 w-3.5 text-[var(--text-tertiary)]" />
+                            <ChevronDown className="h-3.5 w-3.5 text-[var(--m-text-tertiary)]" />
                           ) : (
-                            <ChevronRight className="h-3.5 w-3.5 text-[var(--text-tertiary)]" />
+                            <ChevronRight className="h-3.5 w-3.5 text-[var(--m-text-tertiary)]" />
                           )}
-                          <span className="font-medium text-[var(--text-primary)]">
+                          <span className="font-medium text-[var(--m-text)]">
                             {cap.displayName}
                           </span>
                         </div>
@@ -566,7 +566,7 @@ export function CapacityPage() {
                       <td className="px-4 py-3">
                         <SkuBadge sku={cap.sku} />
                       </td>
-                      <td className="px-4 py-3 text-[var(--text-secondary)]">
+                      <td className="px-4 py-3 text-[var(--m-text-secondary)]">
                         {cap.region}
                       </td>
                       <td className="px-4 py-3">
@@ -574,8 +574,8 @@ export function CapacityPage() {
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-1.5">
-                          <Package className="h-3.5 w-3.5 text-[var(--text-tertiary)]" />
-                          <span className="text-[var(--text-secondary)]">
+                          <Package className="h-3.5 w-3.5 text-[var(--m-text-tertiary)]" />
+                          <span className="text-[var(--m-text-secondary)]">
                             {workspaceCountByCapacity.get(cap.id) ?? 0}
                           </span>
                         </div>
@@ -597,8 +597,8 @@ export function CapacityPage() {
         </div>
 
         {!loading && capacities.length > 0 && (
-          <div className="border-t border-[var(--border-default)] bg-[var(--surface-secondary)] px-4 py-2">
-            <span className="text-xs text-[var(--text-secondary)]">
+          <div className="border-t border-[var(--m-border)] bg-[var(--m-surface)] px-4 py-2">
+            <span className="text-xs text-[var(--m-text-secondary)]">
               {capacities.length} {capacities.length === 1 ? 'capacity' : 'capacities'}
             </span>
           </div>

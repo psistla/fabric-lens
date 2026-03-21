@@ -11,22 +11,22 @@ const CONFIG: Record<PrincipalType, BadgeConfig> = {
   User: {
     label: 'User',
     icon: User,
-    className: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400',
+    className: 'bg-[var(--m-surface)] text-[var(--m-text-secondary)] dark:bg-[#212529] dark:text-[#ADB5BD]',
   },
   Group: {
     label: 'Group',
     icon: Users,
-    className: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400',
+    className: 'bg-[#EEF2FF] text-[#4F46E5] dark:bg-[#312E81]/40 dark:text-[#818CF8]',
   },
   ServicePrincipal: {
     label: 'SPN',
     icon: KeyRound,
-    className: 'bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-400',
+    className: 'bg-[#EDE9FE] text-[#7C3AED] dark:bg-violet-900/40 dark:text-violet-400',
   },
   ServicePrincipalProfile: {
     label: 'SPN',
     icon: KeyRound,
-    className: 'bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-400',
+    className: 'bg-[#EDE9FE] text-[#7C3AED] dark:bg-violet-900/40 dark:text-violet-400',
   },
 };
 
@@ -38,8 +38,7 @@ export function PrincipalTypeBadge({ type }: Props) {
   const { label, icon: Icon, className } = CONFIG[type];
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs font-medium ${className}`}
-      style={{ borderRadius: 'var(--radius-sm, 4px)' }}
+      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide ${className}`}
     >
       <Icon className="h-3 w-3" />
       {label}

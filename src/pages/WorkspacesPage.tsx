@@ -53,7 +53,7 @@ export function WorkspacesPage() {
         header: 'Name',
         sortable: true,
         render: (_val, row) => (
-          <span className="font-medium text-[var(--text-primary)]">
+          <span className="font-medium text-[var(--m-text)]">
             {row.displayName}
           </span>
         ),
@@ -63,7 +63,7 @@ export function WorkspacesPage() {
         header: 'Type',
         sortable: true,
         render: (_val, row) => (
-          <span className="inline-flex rounded-md bg-[var(--surface-secondary)] px-2 py-0.5 text-xs font-medium text-[var(--text-secondary)]">
+          <span className="inline-flex rounded-full bg-[var(--m-surface)] px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-[var(--m-text-secondary)]">
             {row.type}
           </span>
         ),
@@ -75,7 +75,7 @@ export function WorkspacesPage() {
         render: (_val, row) => {
           if (!row.capacityId) {
             return (
-              <span className="inline-flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400">
+              <span className="inline-flex items-center gap-1 text-xs text-[var(--m-warning)]">
                 <AlertCircle className="h-3 w-3" />
                 None
               </span>
@@ -83,7 +83,7 @@ export function WorkspacesPage() {
           }
           const cap = getCapacityById(row.capacityId);
           return (
-            <span className="text-[var(--text-secondary)]">
+            <span className="text-[var(--m-text-secondary)]">
               {cap?.displayName ?? row.capacityId}
             </span>
           );
@@ -94,7 +94,7 @@ export function WorkspacesPage() {
         header: 'Region',
         sortable: true,
         render: (_val, row) => (
-          <span className="text-[var(--text-secondary)]">
+          <span className="text-[var(--m-text-secondary)]">
             {row.capacityRegion ?? '—'}
           </span>
         ),
@@ -113,10 +113,10 @@ export function WorkspacesPage() {
     <div className="space-y-4 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-[-0.02em] text-[var(--text-primary)]">
+          <h1 className="text-2xl font-semibold tracking-[-0.02em] text-[var(--m-text)]">
             Workspaces
           </h1>
-          <p className="mt-1 text-sm text-[var(--text-secondary)]">
+          <p className="mt-1 text-sm text-[var(--m-text-secondary)]">
             Browse and manage tenant workspaces.
           </p>
         </div>
@@ -126,8 +126,8 @@ export function WorkspacesPage() {
       </div>
 
       {error && (
-        <div className="flex items-center justify-between rounded-md border border-red-200 bg-red-50 px-4 py-3 dark:border-red-900 dark:bg-red-950/30">
-          <div className="flex items-center gap-2 text-sm text-red-700 dark:text-red-400">
+        <div className="flex items-center justify-between rounded-xl border border-[var(--m-error)] bg-[var(--m-error-bg)] px-4 py-3">
+          <div className="flex items-center gap-2 text-sm text-[var(--m-error-text)]">
             <AlertCircle className="h-4 w-4 shrink-0" />
             Unable to connect to Fabric API. Please check your connection.
           </div>
@@ -136,7 +136,7 @@ export function WorkspacesPage() {
               void fetchWorkspaces();
               void fetchCapacities();
             }}
-            className="shrink-0 rounded-md bg-red-100 px-3 py-1 text-xs font-medium text-red-700 transition-colors hover:bg-red-200 dark:bg-red-900/40 dark:text-red-400 dark:hover:bg-red-900/60"
+            className="shrink-0 rounded-lg bg-[var(--m-error-bg)] px-3 py-1 text-xs font-semibold text-[var(--m-error-text)] ring-1 ring-[var(--m-error)] transition-colors hover:opacity-80"
           >
             Retry
           </button>
@@ -151,7 +151,7 @@ export function WorkspacesPage() {
             placeholder="Search workspaces..."
           />
         </div>
-        <span className="text-xs text-[var(--text-secondary)]">
+        <span className="text-xs text-[var(--m-text-secondary)]">
           Showing {filtered.length} of {workspaces.length} workspaces
         </span>
       </div>

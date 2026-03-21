@@ -1,119 +1,291 @@
-@import '@fontsource/geist-sans/400.css';
-@import '@fontsource/geist-sans/500.css';
-@import '@fontsource/geist-sans/600.css';
-@import '@fontsource/geist-mono/400.css';
+/* Self-hosted variable fonts (no CDN dependency) */
+@import '@fontsource-variable/manrope';
+@import '@fontsource-variable/jetbrains-mono';
+
 @import 'tailwindcss';
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* ── Design Tokens ── */
-
-:root {
-  /* Surface Hierarchy */
-  --surface-root:        #FAFBFC;
-  --surface-primary:     #FFFFFF;
-  --surface-secondary:   #F3F4F6;
-  --surface-tertiary:    #E8EAED;
-  --surface-inverse:     #111827;
-
-  /* Border */
-  --border-default:      #E2E4E9;
-  --border-strong:       #C9CCD1;
-  --border-focus:        #3B6CE7;
-
-  /* Text */
-  --text-primary:        #111827;
-  --text-secondary:      #4B5563;
-  --text-tertiary:       #9CA3AF;
-  --text-inverse:        #F9FAFB;
-  --text-link:           #3B6CE7;
-
-  /* Brand */
-  --brand-primary:       #3B6CE7;
-  --brand-primary-hover: #2F5AC4;
-  --brand-primary-subtle:#EBF0FD;
-
-  /* Health Scores */
-  --health-a:            #059669;
-  --health-a-bg:         #ECFDF5;
-  --health-b:            #3B6CE7;
-  --health-b-bg:         #EBF0FD;
-  --health-c:            #D97706;
-  --health-c-bg:         #FFFBEB;
-  --health-d:            #EA580C;
-  --health-d-bg:         #FFF7ED;
-  --health-f:            #DC2626;
-  --health-f-bg:         #FEF2F2;
-
-  /* Status */
-  --status-active:       #059669;
-  --status-active-bg:    #ECFDF5;
-  --status-inactive:     #9CA3AF;
-  --status-inactive-bg:  #F3F4F6;
-  --status-warning:      #D97706;
-  --status-warning-bg:   #FFFBEB;
-  --status-error:        #DC2626;
-  --status-error-bg:     #FEF2F2;
-
-  /* Radius */
-  --radius-sm:  4px;
-  --radius-md:  6px;
-  --radius-lg:  8px;
-  --radius-xl:  12px;
-
-  /* Shadow */
-  --shadow-sm:   0 1px 2px rgba(0,0,0,0.05);
-  --shadow-md:   0 2px 4px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-lg:   0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
-
-  /* Transitions */
-  --transition-fast:   120ms ease-out;
-  --transition-normal: 200ms ease-out;
-  --transition-slow:   300ms ease-out;
-}
-
-.dark {
-  --surface-root:        #0B1120;
-  --surface-primary:     #111827;
-  --surface-secondary:   #1A2332;
-  --surface-tertiary:    #243044;
-  --surface-inverse:     #F9FAFB;
-
-  --border-default:      #1E293B;
-  --border-strong:       #334155;
-  --border-focus:        #5B8DEF;
-
-  --text-primary:        #F1F5F9;
-  --text-secondary:      #94A3B8;
-  --text-tertiary:       #64748B;
-  --text-inverse:        #111827;
-  --text-link:           #5B8DEF;
-
-  --brand-primary:       #5B8DEF;
-  --brand-primary-hover: #7BA4F7;
-  --brand-primary-subtle:#1E2A4A;
-
-  --health-a-bg:         #062E1E;
-  --health-b-bg:         #1E2A4A;
-  --health-c-bg:         #2E2206;
-  --health-d-bg:         #2E1A06;
-  --health-f-bg:         #2E0A0A;
-
-  --status-active-bg:    #062E1E;
-  --status-inactive-bg:  #1A2332;
-  --status-warning-bg:   #2E2206;
-  --status-error-bg:     #2E0A0A;
-
-  --shadow-sm:   0 1px 2px rgba(0,0,0,0.3);
-  --shadow-md:   0 2px 4px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
-  --shadow-lg:   0 4px 12px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.2);
-}
-
 /* ── Tailwind v4 Theme ── */
 
 @theme {
-  --font-sans: 'Geist Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  --font-mono: 'Geist Mono', ui-monospace, 'Cascadia Code', 'Fira Code', monospace;
+  --font-sans: var(--m-font-primary);
+  --font-mono: var(--m-font-code);
+}
+
+/* ── Design Tokens ── */
+
+:root {
+  /* ─── FONTS ─────────────────────────────────────────────── */
+  --m-font-primary: 'Manrope Variable', system-ui, -apple-system, sans-serif;
+  --m-font-code:    'JetBrains Mono Variable', 'Fira Code', 'Consolas', monospace;
+
+  /* ─── NEUTRAL PALETTE ────────────────────────────────────── */
+  --m-neutral-0:   #FFFFFF;
+  --m-neutral-50:  #F8F9FA;
+  --m-neutral-100: #F1F3F5;
+  --m-neutral-200: #E9ECEF;
+  --m-neutral-300: #DEE2E6;
+  --m-neutral-400: #ADB5BD;
+  --m-neutral-500: #868E96;
+  --m-neutral-600: #495057;
+  --m-neutral-700: #343A40;
+  --m-neutral-800: #212529;
+  --m-neutral-900: #16191D;
+  --m-neutral-950: #0D0F12;
+
+  /* ─── PRIMARY PALETTE (Deep Indigo) ─────────────────────── */
+  --m-primary-50:  #EEF2FF;
+  --m-primary-100: #E0E7FF;
+  --m-primary-200: #C7D2FE;
+  --m-primary-300: #A5B4FC;
+  --m-primary-400: #818CF8;
+  --m-primary-500: #6366F1;
+  --m-primary-600: #4F46E5;
+  --m-primary-700: #4338CA;
+  --m-primary-800: #3730A3;
+  --m-primary-900: #312E81;
+
+  /* ─── ACCENT PALETTE (Warm Amber) ───────────────────────── */
+  --m-accent-50:  #FFFBEB;
+  --m-accent-100: #FEF3C7;
+  --m-accent-200: #FDE68A;
+  --m-accent-300: #FCD34D;
+  --m-accent-400: #FBBF24;
+  --m-accent-500: #F59E0B;
+  --m-accent-600: #D97706;
+  --m-accent-700: #B45309;
+  --m-accent-800: #92400E;
+  --m-accent-900: #78350F;
+
+  /* ─── SEMANTIC COLORS ────────────────────────────────────── */
+  --m-success:      #15803D;
+  --m-success-bg:   #F0FDF4;
+  --m-success-text: #14532D;
+  --m-warning:      #EA580C;
+  --m-warning-bg:   #FFF7ED;
+  --m-warning-text: #9A3412;
+  --m-error:        #DC2626;
+  --m-error-bg:     #FEF2F2;
+  --m-error-text:   #991B1B;
+  --m-info:         #2563EB;
+  --m-info-bg:      #EFF6FF;
+  --m-info-text:    #1E40AF;
+
+  /* ─── SEMANTIC ALIASES ────────────────────────────────────── */
+  --m-bg:             var(--m-neutral-0);
+  --m-surface:        var(--m-neutral-50);
+  --m-surface-hover:  var(--m-neutral-100);
+  --m-border:         var(--m-neutral-200);
+  --m-border-subtle:  var(--m-neutral-100);
+  --m-text:           var(--m-neutral-800);
+  --m-text-secondary: var(--m-neutral-600);
+  --m-text-tertiary:  var(--m-neutral-500);
+  --m-primary:        var(--m-primary-600);
+  --m-primary-hover:  var(--m-primary-700);
+  --m-primary-subtle: var(--m-primary-50);
+  --m-accent:         var(--m-accent-700);
+  --m-accent-vivid:   var(--m-accent-500);
+  --m-accent-subtle:  var(--m-accent-50);
+
+  /* ─── FABRIC-LENS EXTENSIONS: Health Grades ─────────────── */
+  --health-a:    #15803D;  --health-a-bg: #F0FDF4;  /* Emerald — Meridian success */
+  --health-b:    #4F46E5;  --health-b-bg: #EEF2FF;  /* Indigo  — Meridian primary */
+  --health-c:    #B45309;  --health-c-bg: #FFFBEB;  /* Amber   — Meridian accent  */
+  --health-d:    #EA580C;  --health-d-bg: #FFF7ED;  /* Orange  — Meridian warning */
+  --health-f:    #DC2626;  --health-f-bg: #FEF2F2;  /* Red     — Meridian error   */
+
+  /* ─── FABRIC-LENS EXTENSIONS: Status ────────────────────── */
+  --status-active:       #15803D;  --status-active-bg:   #F0FDF4;
+  --status-inactive:     #868E96;  --status-inactive-bg: #F1F3F5;
+  --status-warning:      #EA580C;  --status-warning-bg:  #FFF7ED;
+  --status-error:        #DC2626;  --status-error-bg:    #FEF2F2;
+
+  /* ─── FABRIC-LENS EXTENSIONS: Item Types ────────────────── */
+  --item-lakehouse:      #4F46E5;  /* Indigo  — primary       */
+  --item-notebook:       #7C3AED;  /* Violet                  */
+  --item-pipeline:       #15803D;  /* Green   — success       */
+  --item-warehouse:      #0891B2;  /* Cyan                    */
+  --item-report:         #B45309;  /* Amber   — accent        */
+  --item-semantic-model: #DB2777;  /* Pink                    */
+  --item-dashboard:      #EA580C;  /* Orange  — warning       */
+  --item-default:        #495057;  /* Gray    — neutral-600   */
+
+  /* ─── FABRIC-LENS EXTENSIONS: Roles ─────────────────────── */
+  --role-admin:       #DC2626;
+  --role-member:      #4F46E5;
+  --role-contributor: #15803D;
+  --role-viewer:      #495057;
+
+  /* ─── BORDER RADIUS ─────────────────────────────────────── */
+  --m-radius-none: 0;
+  --m-radius-sm:   4px;
+  --m-radius-md:   8px;
+  --m-radius-lg:   12px;
+  --m-radius-xl:   16px;
+  --m-radius-full: 9999px;
+
+  /* ─── SHADOWS ────────────────────────────────────────────── */
+  --m-shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --m-shadow-md: 0 2px 8px rgba(0,0,0,0.06);
+  --m-shadow-lg: 0 4px 16px rgba(0,0,0,0.08);
+  --m-shadow-xl: 0 8px 32px rgba(0,0,0,0.1);
+
+  /* ─── TRANSITIONS ────────────────────────────────────────── */
+  --m-transition-fast:  120ms ease;
+  --m-transition-base:  200ms ease;
+  --m-transition-slow:  300ms ease;
+  --m-transition-enter: 250ms ease-out;
+  --m-transition-exit:  150ms ease-in;
+
+  /* ─── Z-INDEX SCALE ──────────────────────────────────────── */
+  --m-z-base:     0;
+  --m-z-raised:   10;
+  --m-z-dropdown: 100;
+  --m-z-sticky:   200;
+  --m-z-overlay:  300;
+  --m-z-modal:    400;
+  --m-z-toast:    500;
+  --m-z-tooltip:  600;
+
+  /* ─── COMPONENT TOKENS ──────────────────────────────────── */
+  --m-skeleton-base:     var(--m-neutral-200);
+  --m-skeleton-shine:    var(--m-neutral-100);
+  --m-skeleton-duration: 1.8s;
+  --m-tooltip-bg:        var(--m-neutral-900);
+  --m-tooltip-text:      var(--m-neutral-0);
+  --m-tooltip-radius:    var(--m-radius-md);
+  --m-tooltip-delay:     300ms;
+  --m-tooltip-max-w:     240px;
+  --m-modal-overlay:     rgba(0, 0, 0, 0.5);
+  --m-modal-radius:      var(--m-radius-xl);
+  --m-toast-max-w:       420px;
+  --m-toast-radius:      var(--m-radius-lg);
+  --m-toast-duration:    5000ms;
+  --m-icon-sm:  16px;
+  --m-icon-md:  20px;
+  --m-icon-lg:  24px;
+  --m-icon-touch: 44px;
+
+  /* ─── LEGACY ALIASES (keep components working during migration) */
+  --surface-root:        var(--m-bg);
+  --surface-primary:     var(--m-bg);
+  --surface-secondary:   var(--m-surface);
+  --surface-tertiary:    var(--m-neutral-100);  /* hover tint in light mode */
+  --surface-inverse:     var(--m-neutral-800);
+  --border-default:      var(--m-border);
+  --border-strong:       var(--m-neutral-300);
+  --border-focus:        var(--m-primary);
+  --text-primary:        var(--m-text);
+  --text-secondary:      var(--m-text-secondary);
+  --text-tertiary:       var(--m-text-tertiary);
+  --text-inverse:        var(--m-neutral-0);
+  --text-link:           var(--m-primary);
+  --brand-primary:       var(--m-primary);
+  --brand-primary-hover: var(--m-primary-hover);
+  --brand-primary-subtle:var(--m-primary-subtle);
+  --radius-sm:  var(--m-radius-sm);
+  --radius-md:  var(--m-radius-md);
+  --radius-lg:  var(--m-radius-lg);
+  --radius-xl:  var(--m-radius-xl);
+  --shadow-sm:  var(--m-shadow-sm);
+  --shadow-md:  var(--m-shadow-md);
+  --shadow-lg:  var(--m-shadow-lg);
+  --transition-fast:   var(--m-transition-fast);
+  --transition-normal: var(--m-transition-base);
+  --transition-slow:   var(--m-transition-slow);
+}
+
+/* ── Dark Mode ── */
+
+.dark {
+  --m-bg:             var(--m-neutral-950);
+  --m-surface:        var(--m-neutral-900);
+  --m-surface-hover:  var(--m-neutral-800);
+  --m-border:         var(--m-neutral-700);
+  --m-border-subtle:  var(--m-neutral-800);
+  --m-text:           var(--m-neutral-200);
+  --m-text-secondary: var(--m-neutral-400);
+  --m-text-tertiary:  var(--m-neutral-500);
+  --m-primary:        var(--m-primary-400);
+  --m-primary-hover:  var(--m-primary-300);
+  --m-primary-subtle: var(--m-primary-900);
+  --m-accent:         var(--m-accent-400);
+  --m-accent-vivid:   var(--m-accent-300);
+  --m-accent-subtle:  var(--m-accent-900);
+
+  --m-shadow-sm: 0 1px 2px rgba(0,0,0,0.2);
+  --m-shadow-md: 0 2px 8px rgba(0,0,0,0.3);
+  --m-shadow-lg: 0 4px 16px rgba(0,0,0,0.4);
+  --m-shadow-xl: 0 8px 32px rgba(0,0,0,0.5);
+
+  --m-skeleton-base:  var(--m-neutral-800);
+  --m-skeleton-shine: var(--m-neutral-700);
+  --m-tooltip-bg:     var(--m-neutral-200);
+  --m-tooltip-text:   var(--m-neutral-900);
+
+  /* Health grade backgrounds — dark-tinted variants */
+  --health-a-bg: #052E16;
+  --health-b-bg: #1E1B4B;
+  --health-c-bg: #451A03;
+  --health-d-bg: #431407;
+  --health-f-bg: #450A0A;
+
+  /* Status backgrounds — dark-tinted variants */
+  --status-active-bg:   #052E16;
+  --status-inactive-bg: var(--m-neutral-900);
+  --status-warning-bg:  #431407;
+  --status-error-bg:    #450A0A;
+
+  /* Legacy alias overrides for dark mode */
+  --surface-tertiary:    var(--m-neutral-800);  /* hover tint in dark mode */
+  --surface-inverse:     var(--m-neutral-200);  /* tooltip bg in dark = light surface */
+  --text-inverse:        var(--m-neutral-900);  /* tooltip text in dark = dark text */
+
+  color-scheme: dark;
+}
+
+/* ── Skeleton Shimmer ── */
+
+@keyframes m-shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+.m-skeleton {
+  background: linear-gradient(90deg,
+    var(--m-border) 25%,
+    var(--m-border-subtle) 50%,
+    var(--m-border) 75%
+  );
+  background-size: 200% 100%;
+  animation: m-shimmer 1.8s ease-in-out infinite;
+  border-radius: var(--m-radius-sm);
+}
+
+/* ── Accessibility ── */
+
+:focus-visible {
+  outline: 2px solid var(--m-primary);
+  outline-offset: 2px;
+  border-radius: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+::selection {
+  background: #E0E7FF; /* primary-100 */
+  color: #312E81;      /* primary-900 */
+}
+
+.dark ::selection {
+  background: #3730A3; /* primary-800 */
+  color: #E0E7FF;      /* primary-100 */
 }
 
 /* ── Animations ── */
