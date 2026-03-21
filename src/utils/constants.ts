@@ -9,8 +9,11 @@ import type { CSSProperties } from 'react';
 /** Default Fabric REST API base URL (overridden by VITE_FABRIC_API_BASE). */
 export const DEFAULT_FABRIC_API_BASE = 'https://api.fabric.microsoft.com/v1';
 
-/** OAuth scopes required for Fabric API calls. */
-export const FABRIC_SCOPES = ['https://api.fabric.microsoft.com/.default'];
+/** OAuth scopes for core Fabric API calls (workspaces, items, capacities). */
+export const CORE_SCOPES = ['https://api.fabric.microsoft.com/.default'];
+
+/** OAuth scopes for Fabric Admin APIs (requires incremental consent). */
+export const ADMIN_SCOPES = ['https://api.fabric.microsoft.com/Tenant.Read.All'];
 
 // -- Graph API --
 

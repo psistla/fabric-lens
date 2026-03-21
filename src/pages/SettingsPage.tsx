@@ -9,7 +9,7 @@ import {
   ExternalLink,
   CheckCircle2,
   XCircle,
-  Network,
+  ShieldCheck,
 } from 'lucide-react';
 import { useAuth } from '@/auth/useAuth';
 import { useUiStore } from '@/store/uiStore';
@@ -106,17 +106,58 @@ function AuthStatusSection() {
   );
 }
 
-// --- Microsoft Graph Section ---
+// --- Permissions Section ---
 
-function GraphStatusSection() {
+interface PermissionRow {
+  label: string;
+  description: string;
+  granted: boolean | null; // null = checking
+  onGrant?: () => void;
+  granting?: boolean;
+}
+
+function PermissionStatusBadge({ granted }: { granted: boolean | null }) {
+  if (isDemoMode) {
+    return (
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FBBF24] px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-[#78350F]">
+        Demo Mode
+      </span>
+    );
+  }
+  if (granted === null) {
+    return <span className="m-skeleton h-4 w-16 rounded" />;
+  }
+  return granted ? (
+    <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--m-success)]">
+      <CheckCircle2 className="h-3.5 w-3.5" />
+      Connected
+    </span>
+  ) : (
+    <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--m-warning)]">
+      <XCircle className="h-3.5 w-3.5" />
+      Not granted
+    </span>
+  );
+}
+
+function PermissionsSection() {
+  const { hasAdminAccess, checkAdminConsent, requestAdminConsent } = useAuth();
+
+  const [adminChecked, setAdminChecked] = useState(false);
+  const [adminGranting, setAdminGranting] = useState(false);
   const [graphConnected, setGraphConnected] = useState<boolean | null>(null);
-  const [granting, setGranting] = useState(false);
+  const [graphGranting, setGraphGranting] = useState(false);
 
   useEffect(() => {
     if (isDemoMode) {
+      setAdminChecked(true);
       setGraphConnected(true);
       return;
     }
+    // Check admin consent silently
+    void checkAdminConsent().then(() => setAdminChecked(true));
+
+    // Check Graph consent silently
     const account = msalInstance!.getAllAccounts()[0];
     if (!account) {
       setGraphConnected(false);
@@ -126,76 +167,80 @@ function GraphStatusSection() {
       .acquireTokenSilent({ scopes: GRAPH_SCOPES, account })
       .then(() => setGraphConnected(true))
       .catch(() => setGraphConnected(false));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleGrant = async () => {
-    setGranting(true);
+  const handleGrantAdmin = async () => {
+    setAdminGranting(true);
+    await requestAdminConsent();
+    setAdminChecked(true);
+    setAdminGranting(false);
+  };
+
+  const handleGrantGraph = async () => {
+    setGraphGranting(true);
     try {
-      await msalInstance!.acquireTokenPopup({ scopes: GRAPH_SCOPES });
+      const account = msalInstance!.getAllAccounts()[0];
+      await msalInstance!.acquireTokenPopup({ scopes: GRAPH_SCOPES, account });
       setGraphConnected(true);
     } catch {
-      // User cancelled or consent denied
+      // User cancelled
     } finally {
-      setGranting(false);
+      setGraphGranting(false);
     }
   };
+
+  const rows: PermissionRow[] = [
+    {
+      label: 'Core APIs',
+      description: 'Workspaces, items, capacities',
+      granted: true, // Always granted — required scopes on login
+    },
+    {
+      label: 'Admin APIs',
+      description: 'Security audit — cross-workspace role assignments',
+      granted: adminChecked ? hasAdminAccess : null,
+      onGrant: () => void handleGrantAdmin(),
+      granting: adminGranting,
+    },
+    {
+      label: 'Microsoft Graph',
+      description: 'Group membership expansion',
+      granted: graphConnected,
+      onGrant: () => void handleGrantGraph(),
+      granting: graphGranting,
+    },
+  ];
 
   return (
     <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)]">
       <div className="flex items-center gap-2 border-b border-[var(--m-border)] px-5 py-3">
-        <Network className="h-4 w-4 text-[var(--m-text-secondary)]" />
+        <ShieldCheck className="h-4 w-4 text-[var(--m-text-secondary)]" />
         <h2 className="text-sm font-medium text-[var(--m-text)]">
-          Microsoft Graph
+          Permissions
         </h2>
       </div>
-      <div className="divide-y divide-[var(--border-default)]">
-        <div className="flex items-center justify-between px-5 py-3">
-          <span className="text-sm text-[var(--m-text-secondary)]">
-            Status
-          </span>
-          {isDemoMode ? (
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FBBF24] px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-[#78350F]">
-              Demo Mode
-            </span>
-          ) : graphConnected ? (
-            <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--m-success)]">
-              <CheckCircle2 className="h-3.5 w-3.5" />
-              Connected
-            </span>
-          ) : (
-            <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--m-warning)]">
-              <XCircle className="h-3.5 w-3.5" />
-              Not connected
-            </span>
-          )}
-        </div>
-
-        <div className="flex items-center justify-between px-5 py-3">
-          <span className="text-sm text-[var(--m-text-secondary)]">
-            Scope
-          </span>
-          <span className="font-mono text-xs text-[var(--m-text)]">
-            {GRAPH_SCOPES[0]}
-          </span>
-        </div>
-
-        {!isDemoMode && !graphConnected && (
-          <div className="px-5 py-3">
-            <button
-              onClick={() => void handleGrant()}
-              disabled={granting}
-              className="inline-flex items-center gap-1.5 rounded-md bg-[var(--m-primary)] px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-[var(--m-primary-hover)] disabled:opacity-50"
-            >
-              {granting ? 'Granting...' : 'Grant Access'}
-            </button>
+      <div className="divide-y divide-[var(--m-border)]">
+        {rows.map((row) => (
+          <div key={row.label} className="flex items-center justify-between gap-4 px-5 py-3">
+            <div className="min-w-0">
+              <p className="text-sm font-medium text-[var(--m-text)]">{row.label}</p>
+              <p className="text-xs text-[var(--m-text-tertiary)]">{row.description}</p>
+            </div>
+            <div className="flex shrink-0 items-center gap-3">
+              <PermissionStatusBadge granted={isDemoMode ? true : row.granted} />
+              {!isDemoMode && row.granted === false && row.onGrant && (
+                <button
+                  onClick={row.onGrant}
+                  disabled={row.granting}
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--m-primary)] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[var(--m-primary-hover)] disabled:opacity-50"
+                >
+                  {row.granting ? 'Granting...' : 'Grant Access'}
+                </button>
+              )}
+            </div>
           </div>
-        )}
-
-        <div className="px-5 py-3">
-          <p className="text-xs text-[var(--m-text-tertiary)]">
-            Required for expanding group membership in Security Audit.
-          </p>
-        </div>
+        ))}
       </div>
     </div>
   );
@@ -424,7 +469,7 @@ export function SettingsPage() {
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="space-y-6">
           <AuthStatusSection />
-          <GraphStatusSection />
+          <PermissionsSection />
           <ThemeSection />
         </div>
         <div className="space-y-6">

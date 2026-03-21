@@ -1,9 +1,14 @@
 import type { Configuration, PopupRequest } from '@azure/msal-browser';
 import { LogLevel } from '@azure/msal-browser';
-import { FABRIC_SCOPES } from '@/utils/constants';
+import { CORE_SCOPES, ADMIN_SCOPES, GRAPH_SCOPES } from '@/utils/constants';
+
+// Re-export for callers that import scope constants from this module.
+export { CORE_SCOPES, ADMIN_SCOPES, GRAPH_SCOPES };
 
 const clientId = import.meta.env.VITE_MSAL_CLIENT_ID as string;
-const tenantId = import.meta.env.VITE_MSAL_TENANT_ID as string;
+// Fall back to 'common' for multi-tenant support when VITE_MSAL_TENANT_ID is
+// unset, empty, or explicitly set to 'common'.
+const tenantId = (import.meta.env.VITE_MSAL_TENANT_ID as string) || 'common';
 const redirectUri = import.meta.env.VITE_MSAL_REDIRECT_URI as string;
 
 export const msalConfig: Configuration = {
@@ -33,5 +38,5 @@ export const msalConfig: Configuration = {
 };
 
 export const fabricLoginRequest: PopupRequest = {
-  scopes: [...FABRIC_SCOPES],
+  scopes: [...CORE_SCOPES],
 };

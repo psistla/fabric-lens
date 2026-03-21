@@ -26,6 +26,7 @@ import {
   ResponsiveContainer,
   Cell,
 } from 'recharts';
+import { useAuth } from '@/auth/useAuth';
 import { useSecurityStore } from '@/store/securityStore';
 import { useWorkspaceStore } from '@/store/workspaceStore';
 import { ExportButton } from '@/components/shared/ExportButton';
@@ -104,6 +105,44 @@ function getPageNumbers(current: number, total: number): (number | 'ellipsis')[]
   return pages;
 }
 
+// --- Consent card (shown when ADMIN_SCOPES not yet granted) ---
+
+interface ConsentCardProps {
+  onGrant: () => void;
+  granting: boolean;
+  error: string | null;
+}
+
+function AdminConsentCard({ onGrant, granting, error }: ConsentCardProps) {
+  return (
+    <div className="mx-auto max-w-lg space-y-4 py-16 text-center">
+      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[var(--m-primary-subtle)]">
+        <Shield className="h-8 w-8 text-[var(--m-primary)]" />
+      </div>
+      <h2 className="text-lg font-semibold text-[var(--m-text)]">
+        Security audit requires elevated permissions
+      </h2>
+      <p className="text-sm text-[var(--m-text-secondary)]">
+        fabric-lens needs Fabric Admin API access to view cross-workspace role
+        assignments.
+      </p>
+      <button
+        onClick={onGrant}
+        disabled={granting}
+        className="inline-flex items-center gap-2 rounded-lg bg-[var(--m-primary)] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[var(--m-primary-hover)] disabled:opacity-50"
+      >
+        {granting ? 'Requesting access...' : 'Grant Admin Access'}
+      </button>
+      {error && (
+        <p className="text-sm text-[var(--m-error)]">{error}</p>
+      )}
+      <p className="text-xs text-[var(--m-text-tertiary)]">
+        Note: your tenant admin may need to approve this request.
+      </p>
+    </div>
+  );
+}
+
 // --- Non-admin card ---
 
 function AdminRequiredCard() {
@@ -148,6 +187,7 @@ function AdminRequiredCard() {
 
 export function SecurityPage() {
   const navigate = useNavigate();
+  const { checkAdminConsent, requestAdminConsent, hasAdminAccess } = useAuth();
   const {
     workspaceUsers,
     resolvedGroups,
@@ -166,10 +206,40 @@ export function SecurityPage() {
     loading: wsLoading,
   } = useWorkspaceStore();
 
+  // Incremental consent: try silent token first, then show consent card if needed.
+  const [consentChecked, setConsentChecked] = useState(isDemoMode);
+  const [consentGranting, setConsentGranting] = useState(false);
+  const [consentError, setConsentError] = useState<string | null>(null);
+
   useEffect(() => {
-    if (isAdmin === null) void checkAdminAccess();
+    if (isDemoMode) return;
+    void checkAdminConsent().then((granted) => {
+      setConsentChecked(true);
+      if (granted && isAdmin === null) void checkAdminAccess();
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     if (workspaces.length === 0) void fetchWorkspaces();
-  }, [isAdmin, checkAdminAccess, workspaces.length, fetchWorkspaces]);
+  }, [workspaces.length, fetchWorkspaces]);
+
+  // In demo mode, trigger admin access check (bypasses auth entirely).
+  useEffect(() => {
+    if (isDemoMode && isAdmin === null) void checkAdminAccess();
+  }, [isAdmin, checkAdminAccess]);
+
+  const handleGrantConsent = useCallback(async () => {
+    setConsentGranting(true);
+    setConsentError(null);
+    const granted = await requestAdminConsent();
+    setConsentGranting(false);
+    if (granted) {
+      void checkAdminAccess();
+    } else {
+      setConsentError('Access was not granted. Your tenant admin may need to approve this request first.');
+    }
+  }, [requestAdminConsent, checkAdminAccess]);
 
   const handleScanAll = useCallback(() => {
     const ids = workspaces.map((w) => w.id);
@@ -472,8 +542,8 @@ export function SecurityPage() {
       : <ArrowDown className="h-3 w-3 text-[var(--m-primary)]" />;
   }
 
-  // Still checking admin status
-  if (isAdmin === null || (loading && !scanProgress)) {
+  // Checking consent / admin status
+  if (!consentChecked || (isAdmin === null && (hasAdminAccess || isDemoMode)) || (loading && !scanProgress)) {
     return (
       <div className="space-y-4 p-6">
         <div className="m-skeleton h-7 w-40" />
@@ -483,7 +553,26 @@ export function SecurityPage() {
     );
   }
 
-  // Not admin
+  // Admin consent not yet granted — show incremental consent card
+  if (!isDemoMode && !hasAdminAccess) {
+    return (
+      <div className="p-6">
+        <h1 className="text-2xl font-semibold tracking-[-0.02em] text-[var(--m-text)]">
+          Security
+        </h1>
+        <p className="mt-1 text-sm text-[var(--m-text-secondary)]">
+          Role assignments and access governance.
+        </p>
+        <AdminConsentCard
+          onGrant={() => void handleGrantConsent()}
+          granting={consentGranting}
+          error={consentError}
+        />
+      </div>
+    );
+  }
+
+  // Not admin (has consent but lacks Fabric Admin role)
   if (isAdmin === false) {
     return (
       <div className="p-6">

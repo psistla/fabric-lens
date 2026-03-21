@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { FabricApiError, type PaginatedResponse } from './types/common';
 import {
   DEFAULT_FABRIC_API_BASE,
-  FABRIC_SCOPES,
+  CORE_SCOPES,
   DEFAULT_RETRY_AFTER_MS,
   MAX_RETRY_COUNT,
   BASE_RETRY_DELAY_MS,
@@ -82,7 +82,7 @@ export class FabricClient {
     body?: unknown,
     retryCount = 0,
   ): Promise<T> {
-    const token = await this.getToken(FABRIC_SCOPES);
+    const token = await this.getToken(CORE_SCOPES);
     const url = path.startsWith('http') ? path : `${FABRIC_API_BASE}${path}`;
 
     const headers: Record<string, string> = {
@@ -98,7 +98,7 @@ export class FabricClient {
     });
 
     if (response.status === 401) {
-      const retryToken = await this.getToken(FABRIC_SCOPES);
+      const retryToken = await this.getToken(CORE_SCOPES);
       const retryResponse = await fetch(url, {
         method,
         headers: { ...headers, Authorization: `Bearer ${retryToken}` },
