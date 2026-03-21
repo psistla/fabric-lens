@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronDown, ChevronRight, CheckCircle2, XCircle } from 'lucide-react';
+import { ChevronDown, ChevronRight, CheckCircle2, XCircle, Tag } from 'lucide-react';
 import type { HealthScore } from '@/utils/healthScore';
 
 // Progress bar colors aligned to --health-* tokens
@@ -86,6 +86,9 @@ export function HealthDetail({ score, defaultExpanded = false }: Props) {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium text-[var(--m-text)]">
+                      {check.name === 'Tag coverage' && (
+                        <Tag className="-mt-0.5 mr-1 inline h-4 w-4 text-[var(--m-text-tertiary)]" />
+                      )}
                       {check.name}
                     </span>
                     <span className="ml-2 text-xs text-[var(--m-text-secondary)]">

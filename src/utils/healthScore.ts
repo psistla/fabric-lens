@@ -151,6 +151,31 @@ export function calculateWorkspaceHealth(
       : 'No service principal — configure workspace identity (SPN)',
   });
 
+  // Tag coverage — skip when workspace has no items (neutral, not penalizing)
+  if (items.length > 0) {
+    const taggedCount = items.filter((i) => i.tags && i.tags.length > 0).length;
+    const tagPct = taggedCount / items.length;
+    let tagPoints: number;
+    if (tagPct >= 0.8) {
+      tagPoints = w.tagCoverage;
+    } else if (tagPct >= 0.5) {
+      tagPoints = Math.round(w.tagCoverage / 2);
+    } else {
+      tagPoints = 0;
+    }
+    const tagPassed = tagPct >= 0.8;
+    const tagPctDisplay = Math.round(tagPct * 100);
+    checks.push({
+      name: 'Tag coverage',
+      passed: tagPassed,
+      points: tagPoints,
+      maxPoints: w.tagCoverage,
+      detail: tagPassed
+        ? `${taggedCount} of ${items.length} items tagged (${tagPctDisplay}%)`
+        : `Only ${taggedCount} of ${items.length} items tagged (${tagPctDisplay}%) — apply tags to improve item discoverability and governance`,
+    });
+  }
+
   const total = checks.reduce((sum, c) => sum + c.points, 0);
   const maxTotal = checks.reduce((sum, c) => sum + c.maxPoints, 0);
   const percentage = maxTotal > 0 ? Math.round((total / maxTotal) * 100) : 0;

@@ -173,84 +173,106 @@ export const mockWorkspaces: Workspace[] = [
   },
 ];
 
+// --- Mock tags (Fabric March 2026 Tags API) ---
+const TAG_PRODUCTION = { id: 'a1b2c3d4-e5f6-7890-abcd-000000000001', displayName: 'Production' };
+const TAG_PII        = { id: 'a1b2c3d4-e5f6-7890-abcd-000000000002', displayName: 'PII' };
+const TAG_FINANCE    = { id: 'a1b2c3d4-e5f6-7890-abcd-000000000003', displayName: 'Finance' };
+const TAG_APPROVED   = { id: 'a1b2c3d4-e5f6-7890-abcd-000000000004', displayName: 'Approved' };
+const TAG_CERTIFIED  = { id: 'a1b2c3d4-e5f6-7890-abcd-000000000005', displayName: 'Certified' };
+
 const itemsMap: Record<string, Item[]> = {
+  // ws-1 (well-governed): 6/8 = 75% tagged → half points
   'ws-1': [
-    { id: 'item-1', displayName: 'Sales Lakehouse', description: 'Central data store for sales data', type: 'Lakehouse', workspaceId: 'ws-1' },
-    { id: 'item-2', displayName: 'Daily ETL', description: 'Daily ingestion pipeline', type: 'DataPipeline', workspaceId: 'ws-1' },
-    { id: 'item-3', displayName: 'Revenue Report', description: 'Monthly revenue dashboard', type: 'Report', workspaceId: 'ws-1' },
-    { id: 'item-4', displayName: 'Sales Model', description: 'Semantic model for sales data', type: 'SemanticModel', workspaceId: 'ws-1' },
-    { id: 'item-5', displayName: 'Forecast Notebook', description: 'ML-based sales forecasting', type: 'Notebook', workspaceId: 'ws-1' },
-    { id: 'item-6', displayName: 'Sales Dashboard', description: 'Executive overview', type: 'Dashboard', workspaceId: 'ws-1' },
+    { id: 'item-1', displayName: 'Sales Lakehouse', description: 'Central data store for sales data', type: 'Lakehouse', workspaceId: 'ws-1', tags: [TAG_PRODUCTION, TAG_CERTIFIED] },
+    { id: 'item-2', displayName: 'Daily ETL', description: 'Daily ingestion pipeline', type: 'DataPipeline', workspaceId: 'ws-1', tags: [TAG_PRODUCTION] },
+    { id: 'item-3', displayName: 'Revenue Report', description: 'Monthly revenue dashboard', type: 'Report', workspaceId: 'ws-1', tags: [TAG_FINANCE, TAG_APPROVED] },
+    { id: 'item-4', displayName: 'Sales Model', description: 'Semantic model for sales data', type: 'SemanticModel', workspaceId: 'ws-1', tags: [TAG_FINANCE] },
+    { id: 'item-5', displayName: 'Forecast Notebook', description: 'ML-based sales forecasting', type: 'Notebook', workspaceId: 'ws-1', tags: [TAG_APPROVED] },
+    { id: 'item-6', displayName: 'Sales Dashboard', description: 'Executive overview', type: 'Dashboard', workspaceId: 'ws-1', tags: [TAG_CERTIFIED] },
     { id: 'item-7', displayName: 'SQL Endpoint', description: 'Analytics SQL endpoint', type: 'SQLEndpoint', workspaceId: 'ws-1' },
     { id: 'item-8', displayName: 'Churn Pipeline', description: 'Customer churn prediction', type: 'Pipeline', workspaceId: 'ws-1' },
   ],
+  // ws-2 (poorly-governed): 1/4 = 25% tagged → 0 points
   'ws-2': [
-    { id: 'item-20', displayName: 'Finance Warehouse', description: 'Financial data warehouse', type: 'Warehouse', workspaceId: 'ws-2' },
+    { id: 'item-20', displayName: 'Finance Warehouse', description: 'Financial data warehouse', type: 'Warehouse', workspaceId: 'ws-2', tags: [TAG_FINANCE] },
     { id: 'item-21', displayName: 'Budget Report', description: 'Quarterly budget report', type: 'Report', workspaceId: 'ws-2' },
     { id: 'item-22', displayName: 'P&L Dashboard', description: 'Profit and loss overview', type: 'Dashboard', workspaceId: 'ws-2' },
     { id: 'item-23', displayName: 'Finance Model', description: 'Core semantic model', type: 'SemanticModel', workspaceId: 'ws-2' },
   ],
+  // ws-3 (poorly-governed): 0/3 = 0% tagged → 0 points
   'ws-3': [
     { id: 'item-30', displayName: 'CI/CD Metrics', description: 'Build and deploy tracking', type: 'Report', workspaceId: 'ws-3' },
     { id: 'item-31', displayName: 'Eng Notebook', description: 'Data exploration notebook', type: 'Notebook', workspaceId: 'ws-3' },
     { id: 'item-32', displayName: 'KQL Logs', description: 'Application log analytics', type: 'KQLDatabase', workspaceId: 'ws-3' },
   ],
+  // ws-4 (poorly-governed): 0/2 = 0% tagged → 0 points
   'ws-4': [
     { id: 'item-40', displayName: 'Campaign Analytics', description: 'Marketing campaign performance', type: 'Report', workspaceId: 'ws-4' },
     { id: 'item-41', displayName: 'Segment Dataflow', description: 'Customer segmentation flow', type: 'Dataflow', workspaceId: 'ws-4' },
   ],
+  // ws-5 (worst): 0 items → tag check skipped
   'ws-5': [],
+  // ws-6 (personal): 0/1 = 0% → 0 points
   'ws-6': [
     { id: 'item-60', displayName: 'Scratch Notebook', description: 'Quick experiments', type: 'Notebook', workspaceId: 'ws-6' },
   ],
+  // ws-7 (legacy/worst): 0/1 = 0% → 0 points
   'ws-7': [
     { id: 'item-70', displayName: 'Old Report', description: 'Legacy monthly report', type: 'PaginatedReport', workspaceId: 'ws-7' },
   ],
+  // ws-8 (well-governed): 4/5 = 80% tagged → full points
   'ws-8': [
-    { id: 'item-80', displayName: 'Tickets Lakehouse', description: 'Support ticket data store', type: 'Lakehouse', workspaceId: 'ws-8' },
-    { id: 'item-81', displayName: 'SLA Report', description: 'SLA compliance dashboard', type: 'Report', workspaceId: 'ws-8' },
-    { id: 'item-82', displayName: 'Ticket ETL', description: 'Zendesk ingestion pipeline', type: 'DataPipeline', workspaceId: 'ws-8' },
-    { id: 'item-83', displayName: 'Support Model', description: 'Ticket classification model', type: 'SemanticModel', workspaceId: 'ws-8' },
+    { id: 'item-80', displayName: 'Tickets Lakehouse', description: 'Support ticket data store', type: 'Lakehouse', workspaceId: 'ws-8', tags: [TAG_PRODUCTION, TAG_PII] },
+    { id: 'item-81', displayName: 'SLA Report', description: 'SLA compliance dashboard', type: 'Report', workspaceId: 'ws-8', tags: [TAG_APPROVED] },
+    { id: 'item-82', displayName: 'Ticket ETL', description: 'Zendesk ingestion pipeline', type: 'DataPipeline', workspaceId: 'ws-8', tags: [TAG_PRODUCTION] },
+    { id: 'item-83', displayName: 'Support Model', description: 'Ticket classification model', type: 'SemanticModel', workspaceId: 'ws-8', tags: [TAG_CERTIFIED] },
     { id: 'item-84', displayName: 'CSAT Dashboard', description: 'Customer satisfaction overview', type: 'Dashboard', workspaceId: 'ws-8' },
   ],
+  // ws-9 (poorly-governed): 1/6 = 17% tagged → 0 points
   'ws-9': [
-    { id: 'item-90', displayName: 'ML Experiments', description: 'Model training experiments', type: 'MLExperiment', workspaceId: 'ws-9' },
+    { id: 'item-90', displayName: 'ML Experiments', description: 'Model training experiments', type: 'MLExperiment', workspaceId: 'ws-9', tags: [TAG_APPROVED] },
     { id: 'item-91', displayName: 'Feature Notebook', description: 'Feature engineering', type: 'Notebook', workspaceId: 'ws-9' },
     { id: 'item-92', displayName: 'Prediction Model', description: 'Production ML model', type: 'MLModel', workspaceId: 'ws-9' },
     { id: 'item-93', displayName: 'Training Data', description: 'ML training dataset', type: 'Lakehouse', workspaceId: 'ws-9' },
     { id: 'item-94', displayName: 'Model Report', description: 'Model performance metrics', type: 'Report', workspaceId: 'ws-9' },
     { id: 'item-95', displayName: 'Eval Notebook', description: 'Model evaluation', type: 'Notebook', workspaceId: 'ws-9' },
   ],
+  // ws-10 (well-governed): 2/4 = 50% tagged → half points
   'ws-10': [
-    { id: 'item-100', displayName: 'Inventory Warehouse', description: 'Inventory data warehouse', type: 'Warehouse', workspaceId: 'ws-10' },
-    { id: 'item-101', displayName: 'Logistics Report', description: 'Shipping and delivery tracking', type: 'Report', workspaceId: 'ws-10' },
+    { id: 'item-100', displayName: 'Inventory Warehouse', description: 'Inventory data warehouse', type: 'Warehouse', workspaceId: 'ws-10', tags: [TAG_PRODUCTION, TAG_CERTIFIED] },
+    { id: 'item-101', displayName: 'Logistics Report', description: 'Shipping and delivery tracking', type: 'Report', workspaceId: 'ws-10', tags: [TAG_APPROVED] },
     { id: 'item-102', displayName: 'Demand Forecast', description: 'Demand prediction pipeline', type: 'Pipeline', workspaceId: 'ws-10' },
     { id: 'item-103', displayName: 'Supply Dashboard', description: 'Supply chain overview', type: 'Dashboard', workspaceId: 'ws-10' },
   ],
+  // ws-11 (well-governed): 3/5 = 60% tagged → half points
   'ws-11': [
-    { id: 'item-110', displayName: 'CEO Dashboard', description: 'Executive KPI dashboard', type: 'Dashboard', workspaceId: 'ws-11' },
-    { id: 'item-111', displayName: 'Board Report', description: 'Quarterly board report', type: 'PaginatedReport', workspaceId: 'ws-11' },
-    { id: 'item-112', displayName: 'KPI Model', description: 'Cross-functional KPI model', type: 'SemanticModel', workspaceId: 'ws-11' },
+    { id: 'item-110', displayName: 'CEO Dashboard', description: 'Executive KPI dashboard', type: 'Dashboard', workspaceId: 'ws-11', tags: [TAG_APPROVED, TAG_CERTIFIED] },
+    { id: 'item-111', displayName: 'Board Report', description: 'Quarterly board report', type: 'PaginatedReport', workspaceId: 'ws-11', tags: [TAG_APPROVED] },
+    { id: 'item-112', displayName: 'KPI Model', description: 'Cross-functional KPI model', type: 'SemanticModel', workspaceId: 'ws-11', tags: [TAG_CERTIFIED] },
     { id: 'item-113', displayName: 'Revenue Dataflow', description: 'Revenue consolidation', type: 'Dataflow', workspaceId: 'ws-11' },
     { id: 'item-114', displayName: 'Exec SQL', description: 'Executive analytics endpoint', type: 'SQLEndpoint', workspaceId: 'ws-11' },
   ],
+  // ws-12 (poorly-governed): 1/4 = 25% tagged → 0 points
   'ws-12': [
-    { id: 'item-120', displayName: 'Usage Report', description: 'Product usage analytics', type: 'Report', workspaceId: 'ws-12' },
+    { id: 'item-120', displayName: 'Usage Report', description: 'Product usage analytics', type: 'Report', workspaceId: 'ws-12', tags: [TAG_APPROVED] },
     { id: 'item-121', displayName: 'Funnel Dashboard', description: 'Conversion funnel', type: 'Dashboard', workspaceId: 'ws-12' },
     { id: 'item-122', displayName: 'Event Stream', description: 'User event ingestion', type: 'Eventstream', workspaceId: 'ws-12' },
     { id: 'item-123', displayName: 'Product Lakehouse', description: 'Product telemetry data', type: 'Lakehouse', workspaceId: 'ws-12' },
   ],
+  // ws-13 (well-governed): 3/5 = 60% tagged → half points
   'ws-13': [
-    { id: 'item-130', displayName: 'Audit Logs', description: 'Compliance audit trail', type: 'KQLDatabase', workspaceId: 'ws-13' },
-    { id: 'item-131', displayName: 'Compliance Report', description: 'Regulatory compliance status', type: 'Report', workspaceId: 'ws-13' },
-    { id: 'item-132', displayName: 'Policy Dashboard', description: 'Policy violation tracking', type: 'Dashboard', workspaceId: 'ws-13' },
+    { id: 'item-130', displayName: 'Audit Logs', description: 'Compliance audit trail', type: 'KQLDatabase', workspaceId: 'ws-13', tags: [TAG_PII, TAG_CERTIFIED] },
+    { id: 'item-131', displayName: 'Compliance Report', description: 'Regulatory compliance status', type: 'Report', workspaceId: 'ws-13', tags: [TAG_APPROVED] },
+    { id: 'item-132', displayName: 'Policy Dashboard', description: 'Policy violation tracking', type: 'Dashboard', workspaceId: 'ws-13', tags: [TAG_CERTIFIED] },
     { id: 'item-133', displayName: 'Audit Queries', description: 'Compliance KQL queries', type: 'KQLQueryset', workspaceId: 'ws-13' },
     { id: 'item-134', displayName: 'Mirror DB', description: 'Compliance database mirror', type: 'MirroredDatabase', workspaceId: 'ws-13' },
   ],
+  // ws-14 (dev sandbox/worst): 0/2 = 0% → 0 points
   'ws-14': [
     { id: 'item-140', displayName: 'Test Notebook', description: 'API testing notebook', type: 'Notebook', workspaceId: 'ws-14' },
     { id: 'item-141', displayName: 'Spark Job', description: 'Test Spark job definition', type: 'SparkJobDefinition', workspaceId: 'ws-14' },
   ],
+  // ws-15 (worst): 0/5 = 0% → 0 points
   'ws-15': [
     { id: 'item-150', displayName: 'Sensor Data', description: 'IoT sensor ingestion', type: 'Eventstream', workspaceId: 'ws-15' },
     { id: 'item-151', displayName: 'Telemetry Lakehouse', description: 'Device telemetry store', type: 'Lakehouse', workspaceId: 'ws-15' },

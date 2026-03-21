@@ -19,6 +19,11 @@ export type FabricItemType =
   | 'SparkJobDefinition'
   | 'Warehouse';
 
+export interface ItemTag {
+  id: string;
+  displayName?: string;
+}
+
 export interface Item {
   id: string;
   displayName: string;
@@ -26,4 +31,5 @@ export interface Item {
   type: FabricItemType;
   workspaceId: string;
   folderId?: string;
+  tags?: ItemTag[];
 }

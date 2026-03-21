@@ -102,6 +102,7 @@ export const HEALTH_SCORE_WEIGHTS = {
   dataLayer: 10,
   reasonableCount: 10,
   identity: 10,
+  tagCoverage: 10,
 } as const;
 
 /** Total possible health score points. */

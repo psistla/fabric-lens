@@ -45,10 +45,10 @@ function makeItems(n: number, type: Item['type'] = 'Notebook'): Item[] {
   return Array.from({ length: n }, (_, i) => makeItem(type, `item-${i}`));
 }
 
-/** Items for PERFECT_WS: 1 Lakehouse + 1 Notebook = 2 items, all checks pass. */
+/** Items for PERFECT_WS: 1 Lakehouse + 1 Notebook, both tagged → all 10 checks pass. */
 const PERFECT_ITEMS: Item[] = [
-  makeItem('Lakehouse', 'lh-1'),
-  makeItem('Notebook', 'nb-1'),
+  { ...makeItem('Lakehouse', 'lh-1'), tags: [{ id: 'tag-0001', displayName: 'Production' }] },
+  { ...makeItem('Notebook', 'nb-1'), tags: [{ id: 'tag-0002', displayName: 'Approved' }] },
 ];
 
 // Helper to find a check by name
@@ -250,11 +250,11 @@ describe('calculateWorkspaceHealth — individual checks', () => {
 // ---------------------------------------------------------------------------
 
 describe('calculateWorkspaceHealth — boundary conditions', () => {
-  it('perfect score: all 9 checks pass → score = 100, grade = A', () => {
+  it('perfect score: all 10 checks pass → score = 100%, grade = A', () => {
     const result = calculateWorkspaceHealth(PERFECT_WS, PERFECT_ITEMS);
 
-    expect(result.total).toBe(100);
-    expect(result.maxTotal).toBe(100);
+    expect(result.total).toBe(110);
+    expect(result.maxTotal).toBe(110);
     expect(result.percentage).toBe(100);
     expect(result.grade).toBe('A');
     expect(result.checks.every((c) => c.passed)).toBe(true);
@@ -270,73 +270,100 @@ describe('calculateWorkspaceHealth — boundary conditions', () => {
   });
 
   describe('grade boundaries', () => {
-    it('score 90 → grade A (≥ 90)', () => {
-      // Fail description (10pts) only → 100 - 10 = 90
-      const ws = { ...PERFECT_WS, description: '' };
-      const result = calculateWorkspaceHealth(ws, PERFECT_ITEMS);
-      expect(result.total).toBe(90);
+    // With 10 checks and maxTotal=110, achievable percentages are:
+    // 110→100%, 100→91%, 95→86%, 90→82%, 85→77%, 80→73%, 75→68%,
+    // 70→64%, 65→59%, 60→55%, 55→50%, 50→45%, 45→41% ...
+
+    it('91% → grade A (≥ 90): fail tag coverage only (untagged items)', () => {
+      // Fail tag(10) only → 110 - 10 = 100, percentage = 91%
+      const items = PERFECT_ITEMS.map((i) => ({ ...i, tags: undefined }));
+      const result = calculateWorkspaceHealth(PERFECT_WS, items);
+      expect(result.total).toBe(100);
+      expect(result.maxTotal).toBe(110);
+      expect(result.percentage).toBe(91);
       expect(result.grade).toBe('A');
     });
 
-    it('score 80 → grade B (≥ 80)', () => {
-      // Fail description(10) + domain(10) → 100 - 20 = 80
-      const ws = { ...PERFECT_WS, description: '', domainId: undefined };
-      const result = calculateWorkspaceHealth(ws, PERFECT_ITEMS);
-      expect(result.total).toBe(80);
+    it('82% → grade B (≥ 80): fail description + tag coverage', () => {
+      // Fail description(10) + tag(10) → 110 - 20 = 90, percentage = 82%
+      const ws = { ...PERFECT_WS, description: '' };
+      const items = PERFECT_ITEMS.map((i) => ({ ...i, tags: undefined }));
+      const result = calculateWorkspaceHealth(ws, items);
+      expect(result.total).toBe(90);
+      expect(result.maxTotal).toBe(110);
+      expect(result.percentage).toBe(82);
       expect(result.grade).toBe('B');
     });
 
-    it('score 75 → grade C (< 80, ≥ 65)', () => {
-      // Fail capacity(15) + domain(10) → 100 - 25 = 75
+    it('77% → grade C (< 80, ≥ 65): fail description + domain + tag coverage', () => {
+      // Fail description(10) + domain(10) + tag(10) → 110 - 30 = 80, percentage = 73%
+      const ws = { ...PERFECT_WS, description: '', domainId: undefined };
+      const items = PERFECT_ITEMS.map((i) => ({ ...i, tags: undefined }));
+      const result = calculateWorkspaceHealth(ws, items);
+      expect(result.total).toBe(80);
+      expect(result.maxTotal).toBe(110);
+      expect(result.percentage).toBe(73);
+      expect(result.grade).toBe('C');
+    });
+
+    it('68% → grade C (in C range): fail capacity + domain + tag coverage', () => {
+      // Fail capacity(15) + domain(10) + tag(10) → 110 - 35 = 75, percentage = 68%
       const ws = { ...PERFECT_WS, capacityId: undefined, domainId: undefined };
-      const result = calculateWorkspaceHealth(ws, PERFECT_ITEMS);
+      const items = PERFECT_ITEMS.map((i) => ({ ...i, tags: undefined }));
+      const result = calculateWorkspaceHealth(ws, items);
       expect(result.total).toBe(75);
+      expect(result.maxTotal).toBe(110);
+      expect(result.percentage).toBe(68);
       expect(result.grade).toBe('C');
     });
 
-    it('score 65 → grade C (exactly at C threshold)', () => {
-      // Fail capacity(15) + domain(10) + description(10) → 100 - 35 = 65
-      const ws = { ...PERFECT_WS, capacityId: undefined, domainId: undefined, description: '' };
-      const result = calculateWorkspaceHealth(ws, PERFECT_ITEMS);
-      expect(result.total).toBe(65);
-      expect(result.grade).toBe('C');
-    });
-
-    it('score 60 → grade D (< 65, ≥ 50)', () => {
-      // Fail workspaceIdentity (git 15 + identity 10 = 25) + capacity(15) → 100 - 40 = 60
+    it('64% → grade D (< 65): fail capacity + domain + description + tag coverage', () => {
+      // Fail capacity(15) + domain(10) + description(10) + tag(10) → 110 - 45 = 65, percentage = 59%
+      // Using capacity+workspaceIdentity instead for a simpler setup:
+      // Fail workspaceIdentity(git 15 + identity 10) + capacity(15) + tag(10) → 110 - 50 = 60, percentage = 55%
       const ws = { ...PERFECT_WS, capacityId: undefined, workspaceIdentity: undefined };
-      const result = calculateWorkspaceHealth(ws, PERFECT_ITEMS);
+      const items = PERFECT_ITEMS.map((i) => ({ ...i, tags: undefined }));
+      const result = calculateWorkspaceHealth(ws, items);
+      // Fail: capacity(15) + git(15) + identity(10) + tag(10) = 50 → total = 60
       expect(result.total).toBe(60);
+      expect(result.maxTotal).toBe(110);
+      expect(result.percentage).toBe(55);
       expect(result.grade).toBe('D');
     });
 
-    it('score 50 → grade D (exactly at D threshold)', () => {
-      // Fail workspaceIdentity(25) + capacity(15) + description(10) → 100 - 50 = 50
+    it('50% → grade D (exactly at D threshold)', () => {
+      // Fail capacity(15) + domain(10) + description(10) + naming(10) + tag(10) = 55 → total = 55
+      // percentage = 55/110 * 100 = 50% → D
       const ws = {
         ...PERFECT_WS,
-        workspaceIdentity: undefined,
         capacityId: undefined,
+        domainId: undefined,
         description: '',
+        displayName: 'invalid', // fails naming
       };
-      const result = calculateWorkspaceHealth(ws, PERFECT_ITEMS);
-      expect(result.total).toBe(50);
+      const items = PERFECT_ITEMS.map((i) => ({ ...i, tags: undefined }));
+      const result = calculateWorkspaceHealth(ws, items);
+      expect(result.total).toBe(55);
+      expect(result.maxTotal).toBe(110);
+      expect(result.percentage).toBe(50);
       expect(result.grade).toBe('D');
     });
 
-    it('score 45 → grade F (< 50)', () => {
+    it('41% → grade F (< 50)', () => {
       // capacity(15) + activeItems(10) + dataLayer(10) + reasonableCount(10) = 45
-      // Fail: description, domain, naming, workspaceIdentity (git+identity)
+      // Fails: description, naming, domain, git, identity, tag (0/1 = 0%)
       const ws: Workspace = {
-        id: 'ws-45',
+        id: 'ws-f',
         displayName: 'invalid',
         description: '',
         type: 'Workspace',
         state: 'Active',
-        capacityId: 'cap-1', // passes capacity (15)
-        // no domainId, no workspaceIdentity, naming fails
+        capacityId: 'cap-1',
       };
       const result = calculateWorkspaceHealth(ws, [makeItem('Lakehouse')]);
       expect(result.total).toBe(45);
+      expect(result.maxTotal).toBe(110);
+      expect(result.percentage).toBe(41);
       expect(result.grade).toBe('F');
     });
   });
@@ -467,5 +494,113 @@ describe('calculateWorkspaceHealth — naming convention', () => {
   it('DEFAULT_NAMING_PATTERN exported from constants matches same regex used by healthScore', () => {
     // Verify the pattern string is documented correctly
     expect(DEFAULT_NAMING_PATTERN).toEqual(/^[A-Z][a-zA-Z0-9]+([-_ ][A-Za-z0-9]+)*$/);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// e) Tag coverage check
+// ---------------------------------------------------------------------------
+
+describe('calculateWorkspaceHealth — tag coverage', () => {
+  function makeTaggedItem(id: string, hasTag: boolean): Item {
+    return {
+      ...makeItem('Notebook', id),
+      tags: hasTag ? [{ id: 'tag-prod', displayName: 'Production' }] : undefined,
+    };
+  }
+
+  it('0 items: tag coverage check is skipped (not in checks array)', () => {
+    const result = calculateWorkspaceHealth(BASE_WS, []);
+    expect(result.checks.find((c) => c.name === 'Tag coverage')).toBeUndefined();
+  });
+
+  it('≥80% tagged: passes with full points (10)', () => {
+    // 4/4 = 100% tagged → full points
+    const items = [1, 2, 3, 4].map((n) => makeTaggedItem(`item-${n}`, true));
+    const result = calculateWorkspaceHealth(BASE_WS, items);
+    const check = result.checks.find((c) => c.name === 'Tag coverage')!;
+    expect(check.passed).toBe(true);
+    expect(check.points).toBe(10);
+    expect(check.maxPoints).toBe(10);
+    expect(check.detail).toContain('4 of 4');
+  });
+
+  it('exactly 80% tagged: passes with full points', () => {
+    // 4/5 = 80%
+    const items = [
+      makeTaggedItem('a', true), makeTaggedItem('b', true),
+      makeTaggedItem('c', true), makeTaggedItem('d', true),
+      makeTaggedItem('e', false),
+    ];
+    const result = calculateWorkspaceHealth(BASE_WS, items);
+    const check = result.checks.find((c) => c.name === 'Tag coverage')!;
+    expect(check.passed).toBe(true);
+    expect(check.points).toBe(10);
+  });
+
+  it('50–79% tagged: fails with half points (5)', () => {
+    // 3/5 = 60%
+    const items = [
+      makeTaggedItem('a', true), makeTaggedItem('b', true), makeTaggedItem('c', true),
+      makeTaggedItem('d', false), makeTaggedItem('e', false),
+    ];
+    const result = calculateWorkspaceHealth(BASE_WS, items);
+    const check = result.checks.find((c) => c.name === 'Tag coverage')!;
+    expect(check.passed).toBe(false);
+    expect(check.points).toBe(5);
+    expect(check.maxPoints).toBe(10);
+    expect(check.detail).toContain('Only 3 of 5');
+  });
+
+  it('exactly 50% tagged: half points', () => {
+    // 1/2 = 50%
+    const items = [makeTaggedItem('a', true), makeTaggedItem('b', false)];
+    const result = calculateWorkspaceHealth(BASE_WS, items);
+    const check = result.checks.find((c) => c.name === 'Tag coverage')!;
+    expect(check.passed).toBe(false);
+    expect(check.points).toBe(5);
+  });
+
+  it('<50% tagged: fails with 0 points', () => {
+    // 1/4 = 25%
+    const items = [
+      makeTaggedItem('a', true),
+      makeTaggedItem('b', false), makeTaggedItem('c', false), makeTaggedItem('d', false),
+    ];
+    const result = calculateWorkspaceHealth(BASE_WS, items);
+    const check = result.checks.find((c) => c.name === 'Tag coverage')!;
+    expect(check.passed).toBe(false);
+    expect(check.points).toBe(0);
+    expect(check.detail).toContain('Only 1 of 4');
+    expect(check.detail).toContain('apply tags');
+  });
+
+  it('0% tagged: 0 points', () => {
+    const items = [makeTaggedItem('a', false), makeTaggedItem('b', false)];
+    const result = calculateWorkspaceHealth(BASE_WS, items);
+    const check = result.checks.find((c) => c.name === 'Tag coverage')!;
+    expect(check.passed).toBe(false);
+    expect(check.points).toBe(0);
+    expect(check.detail).toContain('Only 0 of 2');
+  });
+
+  it('items with empty tags array treated as untagged', () => {
+    const items: Item[] = [
+      { ...makeItem('Notebook', 'a'), tags: [] },
+      { ...makeItem('Notebook', 'b'), tags: [] },
+    ];
+    const result = calculateWorkspaceHealth(BASE_WS, items);
+    const check = result.checks.find((c) => c.name === 'Tag coverage')!;
+    expect(check.points).toBe(0);
+  });
+
+  it('tag coverage included in maxTotal when items present', () => {
+    const result = calculateWorkspaceHealth(BASE_WS, [makeItem('Notebook', 'x')]);
+    expect(result.maxTotal).toBe(110); // 100 base + 10 tag
+  });
+
+  it('tag coverage excluded from maxTotal when 0 items', () => {
+    const result = calculateWorkspaceHealth(BASE_WS, []);
+    expect(result.maxTotal).toBe(100); // no tag check
   });
 });
