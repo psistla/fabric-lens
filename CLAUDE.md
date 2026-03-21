@@ -261,8 +261,8 @@ npm run test:watch   # Vitest (watch mode)
 - **Multi-tenant:** When `VITE_MSAL_TENANT_ID=common`, the MSAL authority is `https://login.microsoftonline.com/common` — supports any Azure AD tenant
 - In demo mode, auth is fully bypassed — no Azure AD required
 
-## Health Scoring (100 pts)
-Weights are defined in `HEALTH_SCORE_WEIGHTS` constant:
+## Health Scoring (up to 110 pts)
+Weights are defined in `HEALTH_SCORE_WEIGHTS` constant. Score is normalized: maxTotal is 110 when items are present, 100 when the workspace has no items (tag coverage is skipped).
 
 | Criterion | Points |
 |-----------|--------|
@@ -271,9 +271,10 @@ Weights are defined in `HEALTH_SCORE_WEIGHTS` constant:
 | Assigned to domain | 10 |
 | Git integration | 15 |
 | Naming convention | 10 |
-| No stale items (90 days) | 10 |
+| Active items (has ≥1 item) | 10 |
 | Data layer present | 10 |
 | Reasonable item count (<100) | 10 |
 | Workspace identity (SPN) | 10 |
+| Tag coverage (≥80%=10, ≥50%=5, skipped if no items) | 10 |
 
 Grade thresholds: A ≥ 90%, B ≥ 80%, C ≥ 65%, D ≥ 50%, F < 50%
