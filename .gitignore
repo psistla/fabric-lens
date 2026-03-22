@@ -21,6 +21,10 @@ dist-ssr
 CLAUDE.md
 DESIGN_GUIDE.md
 
+# Meridian design system reference files (local only — copy from your design system repo)
+meridian-tokens.css
+meridian-prompt-stem.md
+
 # OS
 .DS_Store
 Thumbs.db
