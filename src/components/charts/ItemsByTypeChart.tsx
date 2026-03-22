@@ -12,6 +12,8 @@ import { CHART_TOOLTIP_STYLE, CHART_FALLBACK_COLOR } from '@/utils/constants';
 
 interface Props {
   data: { name: string; value: number }[];
+  /** Override the denominator for % calculation (e.g. pass full item count when data is sliced) */
+  total?: number;
 }
 
 // Hex values mirror --item-* CSS tokens — needed for SVG fill attributes
@@ -26,7 +28,7 @@ const ITEM_TYPE_COLORS: Record<string, string> = {
   DataPipeline: '#15803D',
 };
 
-export function ItemsByTypeChart({ data }: Props) {
+export function ItemsByTypeChart({ data, total: totalOverride }: Props) {
   if (data.length === 0) {
     return (
       <div className="flex h-48 items-center justify-center text-sm text-[var(--m-text-tertiary)]">
@@ -35,7 +37,7 @@ export function ItemsByTypeChart({ data }: Props) {
     );
   }
 
-  const total = data.reduce((sum, d) => sum + d.value, 0);
+  const total = totalOverride ?? data.reduce((sum, d) => sum + d.value, 0);
   const chartHeight = data.length * 28 + 8;
 
   return (
