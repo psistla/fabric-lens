@@ -111,6 +111,16 @@
   --item-dashboard:      #EA580C;  /* Orange  — warning       */
   --item-default:        #495057;  /* Gray    — neutral-600   */
 
+  /* ─── FABRIC-LENS EXTENSIONS: Item Type Backgrounds ─────── */
+  --item-lakehouse-bg:      #EEF2FF;
+  --item-notebook-bg:       #EDE9FE;
+  --item-pipeline-bg:       #F0FDF4;
+  --item-warehouse-bg:      #ECFEFF;
+  --item-report-bg:         #FFFBEB;
+  --item-semantic-model-bg: #FDF2F8;
+  --item-dashboard-bg:      #FFF7ED;
+  --item-default-bg:        var(--m-surface);
+
   /* ─── FABRIC-LENS EXTENSIONS: Roles ─────────────────────── */
   --role-admin:       #DC2626;
   --role-member:      #4F46E5;
@@ -236,6 +246,45 @@
   --status-inactive-bg: var(--m-neutral-900);
   --status-warning-bg:  #431407;
   --status-error-bg:    #450A0A;
+
+  /* ─ Semantic colors (dark) — lighter tints that pass AA on #0D0F12 ─ */
+  --m-success:      #4ADE80;  /* green-400: 9.74:1 on #0D0F12 */
+  --m-success-bg:   rgba(74, 222, 128, 0.10);
+  --m-success-text: #86EFAC;  /* green-300 */
+  --m-warning:      #FB923C;  /* orange-400: 8.13:1 on #0D0F12 */
+  --m-warning-bg:   rgba(251, 146, 60, 0.10);
+  --m-warning-text: #FDBA74;  /* orange-300 */
+  --m-error:        #F87171;  /* red-400: 6.59:1 on #0D0F12 */
+  --m-error-bg:     rgba(248, 113, 113, 0.10);
+  --m-error-text:   #FCA5A5;  /* red-300 */
+  --m-info:         #60A5FA;  /* blue-400: 6.90:1 on #0D0F12 */
+  --m-info-bg:      rgba(96, 165, 250, 0.10);
+  --m-info-text:    #93C5FD;  /* blue-300 */
+
+  /* ─ Health grade foregrounds (dark) — lighter for contrast ─ */
+  --health-a: #4ADE80;  /* green-400 — matches --m-success dark */
+  --health-b: #818CF8;  /* indigo-400 — matches --m-primary dark */
+  --health-c: #FBBF24;  /* amber-400 — matches --m-accent dark */
+  --health-d: #FB923C;  /* orange-400 — matches --m-warning dark */
+  --health-f: #F87171;  /* red-400 — matches --m-error dark */
+
+  /* ─ Item type colors (dark) — lighter for contrast on dark backgrounds ─ */
+  --item-lakehouse:      #818CF8;  /* indigo-400 */
+  --item-notebook:       #A78BFA;  /* violet-400 */
+  --item-pipeline:       #4ADE80;  /* green-400 */
+  --item-warehouse:      #22D3EE;  /* cyan-400 */
+  --item-report:         #FBBF24;  /* amber-400 */
+  --item-semantic-model: #F472B6;  /* pink-400 */
+  --item-dashboard:      #FB923C;  /* orange-400 */
+  --item-default:        #ADB5BD;  /* neutral-400 */
+  --item-lakehouse-bg:      rgba(79, 70, 229, 0.15);
+  --item-notebook-bg:       rgba(124, 58, 237, 0.15);
+  --item-pipeline-bg:       rgba(21, 128, 61, 0.15);
+  --item-warehouse-bg:      rgba(8, 145, 178, 0.15);
+  --item-report-bg:         rgba(180, 83, 9, 0.15);
+  --item-semantic-model-bg: rgba(219, 39, 119, 0.15);
+  --item-dashboard-bg:      rgba(234, 88, 12, 0.15);
+  --item-default-bg:        rgba(73, 80, 87, 0.15);
 
   /* Legacy alias overrides for dark mode */
   --surface-tertiary:    var(--m-neutral-800);  /* hover tint in dark mode */

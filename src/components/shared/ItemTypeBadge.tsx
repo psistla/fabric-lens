@@ -5,24 +5,16 @@ interface Props {
 }
 
 // Pill badges — rounded-full, semibold, uppercase, 0.04em tracking
-// Colors aligned to Meridian palette via CSS token variables
+// Colors via CSS token variables — auto-adapt to dark mode via .dark {} overrides
 const typeColors: Partial<Record<FabricItemType, string>> = {
-  Lakehouse:
-    'bg-[#EEF2FF] text-[#4F46E5] dark:bg-[#312E81]/40 dark:text-[#818CF8]',
-  Notebook:
-    'bg-[#EDE9FE] text-[#7C3AED] dark:bg-violet-900/40 dark:text-violet-400',
-  Pipeline:
-    'bg-[#F0FDF4] text-[#15803D] dark:bg-green-900/40 dark:text-green-400',
-  Report:
-    'bg-[#FFFBEB] text-[#B45309] dark:bg-amber-900/40 dark:text-amber-400',
-  Warehouse:
-    'bg-[#ECFEFF] text-[#0891B2] dark:bg-cyan-900/40 dark:text-cyan-400',
-  SemanticModel:
-    'bg-[#FDF2F8] text-[#DB2777] dark:bg-pink-900/40 dark:text-pink-400',
-  Dashboard:
-    'bg-[#FFF7ED] text-[#EA580C] dark:bg-orange-900/40 dark:text-orange-400',
-  DataPipeline:
-    'bg-[#F0FDF4] text-[#15803D] dark:bg-green-900/40 dark:text-green-400',
+  Lakehouse:    'bg-[var(--item-lakehouse-bg)] text-[var(--item-lakehouse)]',
+  Notebook:     'bg-[var(--item-notebook-bg)] text-[var(--item-notebook)]',
+  Pipeline:     'bg-[var(--item-pipeline-bg)] text-[var(--item-pipeline)]',
+  Report:       'bg-[var(--item-report-bg)] text-[var(--item-report)]',
+  Warehouse:    'bg-[var(--item-warehouse-bg)] text-[var(--item-warehouse)]',
+  SemanticModel:'bg-[var(--item-semantic-model-bg)] text-[var(--item-semantic-model)]',
+  Dashboard:    'bg-[var(--item-dashboard-bg)] text-[var(--item-dashboard)]',
+  DataPipeline: 'bg-[var(--item-pipeline-bg)] text-[var(--item-pipeline)]',
 };
 
 const defaultColors =

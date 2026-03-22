@@ -42,14 +42,11 @@ const icons = {
   info: Info,
 } as const;
 
-// Semantic token colors — icon/border uses vivid, text uses -text variant for AA contrast
+// Semantic token colors — auto-adapt to dark mode via .dark {} CSS var overrides
 const styles = {
-  success:
-    'border-[var(--m-success)] bg-[var(--m-success-bg)] text-[var(--m-success-text)] dark:border-green-800 dark:bg-[#052E16] dark:text-green-300',
-  error:
-    'border-[var(--m-error)] bg-[var(--m-error-bg)] text-[var(--m-error-text)] dark:border-red-800 dark:bg-[#450A0A] dark:text-red-300',
-  info:
-    'border-[var(--m-info)] bg-[var(--m-info-bg)] text-[var(--m-info-text)] dark:border-blue-800 dark:bg-blue-950/30 dark:text-blue-300',
+  success: 'border-[var(--m-success)] bg-[var(--m-success-bg)] text-[var(--m-success-text)]',
+  error:   'border-[var(--m-error)] bg-[var(--m-error-bg)] text-[var(--m-error-text)]',
+  info:    'border-[var(--m-info)] bg-[var(--m-info-bg)] text-[var(--m-info-text)]',
 } as const;
 
 function ToastItemCard({ toast }: { toast: ToastItem }) {

@@ -44,10 +44,10 @@ export const SKU_NAMES = SKU_CU_VALUES.map((cu) => `F${cu}`);
 
 /** Tailwind classes for each tier — used by SkuBadge. */
 export const SKU_TIER_STYLES: Record<SkuTier, string> = {
-  gray: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',
-  blue: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300',
-  indigo: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300',
-  purple: 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300',
+  gray:   'bg-[var(--m-surface)] text-[var(--m-text-secondary)]',
+  blue:   'bg-[var(--m-primary-subtle)] text-[var(--m-primary)]',
+  indigo: 'bg-[var(--m-primary-subtle)] text-[var(--m-primary)]',
+  purple: 'bg-[var(--item-notebook-bg)] text-[var(--item-notebook)]',
 };
 
 // ---------------------------------------------------------------------------

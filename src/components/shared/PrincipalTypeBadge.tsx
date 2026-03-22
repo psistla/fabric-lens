@@ -11,22 +11,22 @@ const CONFIG: Record<PrincipalType, BadgeConfig> = {
   User: {
     label: 'User',
     icon: User,
-    className: 'bg-[var(--m-surface)] text-[var(--m-text-secondary)] dark:bg-[#212529] dark:text-[#ADB5BD]',
+    className: 'bg-[var(--m-surface)] text-[var(--m-text-secondary)]',
   },
   Group: {
     label: 'Group',
     icon: Users,
-    className: 'bg-[#EEF2FF] text-[#4F46E5] dark:bg-[#312E81]/40 dark:text-[#818CF8]',
+    className: 'bg-[var(--item-lakehouse-bg)] text-[var(--item-lakehouse)]',
   },
   ServicePrincipal: {
     label: 'SPN',
     icon: KeyRound,
-    className: 'bg-[#EDE9FE] text-[#7C3AED] dark:bg-violet-900/40 dark:text-violet-400',
+    className: 'bg-[var(--item-notebook-bg)] text-[var(--item-notebook)]',
   },
   ServicePrincipalProfile: {
     label: 'SPN',
     icon: KeyRound,
-    className: 'bg-[#EDE9FE] text-[#7C3AED] dark:bg-violet-900/40 dark:text-violet-400',
+    className: 'bg-[var(--item-notebook-bg)] text-[var(--item-notebook)]',
   },
 };
 

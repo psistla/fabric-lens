@@ -23,7 +23,7 @@ export function HealthBadge({ grade, percentage }: Props) {
   return (
     <span className="relative inline-flex" ref={badgeRef}>
       <span
-        className={`inline-flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ring-1 transition-transform duration-[120ms] hover:scale-110 ${colors.bg} ${colors.text} ${colors.ring}`}
+        className={`inline-flex h-7 w-7 items-center justify-center rounded-full text-[11px] font-semibold ring-1 transition-transform duration-[120ms] hover:scale-110 ${colors.bg} ${colors.text} ${colors.ring}`}
         onMouseEnter={() => setShowTooltip(true)}
         onMouseLeave={() => setShowTooltip(false)}
       >

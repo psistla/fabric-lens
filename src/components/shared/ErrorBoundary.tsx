@@ -39,17 +39,17 @@ export class ErrorBoundary extends Component<Props, State> {
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30">
               <AlertTriangle className="h-6 w-6 text-red-600 dark:text-red-400" />
             </div>
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+            <h2 className="text-lg font-semibold text-[var(--m-text)]">
               {this.props.fallbackTitle ?? 'Something went wrong'}
             </h2>
-            <p className="text-sm text-slate-500 dark:text-slate-400">
+            <p className="text-sm text-[var(--m-text-secondary)]">
               {import.meta.env.DEV && this.state.error?.message
                 ? this.state.error.message
                 : 'An unexpected error occurred. Please try again.'}
             </p>
             <button
               onClick={this.handleRetry}
-              className="inline-flex items-center gap-1.5 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--m-primary)] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[var(--m-primary-hover)]"
             >
               Try Again
             </button>

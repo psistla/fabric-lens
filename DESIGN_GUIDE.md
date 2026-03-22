@@ -258,12 +258,33 @@ Not a simple inversion. Dark mode shifts surfaces to near-black with neutral und
   --m-accent:         var(--m-accent-400);   /* #FBBF24 */
   --m-accent-subtle:  var(--m-accent-900);   /* #78350F */
 
+  /* Semantic colors — lighter tints that pass WCAG AA on #0D0F12 */
+  --m-success:      #4ADE80;  /* green-400  9.74:1 */
+  --m-success-bg:   rgba(74, 222, 128, 0.10);
+  --m-success-text: #86EFAC;  /* green-300 */
+  --m-warning:      #FB923C;  /* orange-400 8.13:1 */
+  --m-warning-bg:   rgba(251, 146, 60, 0.10);
+  --m-warning-text: #FDBA74;  /* orange-300 */
+  --m-error:        #F87171;  /* red-400   6.59:1 */
+  --m-error-bg:     rgba(248, 113, 113, 0.10);
+  --m-error-text:   #FCA5A5;  /* red-300 */
+  --m-info:         #60A5FA;  /* blue-400  6.90:1 */
+  --m-info-bg:      rgba(96, 165, 250, 0.10);
+  --m-info-text:    #93C5FD;  /* blue-300 */
+
   /* Health grade backgrounds — dark-tinted variants */
   --health-a-bg: #052E16;
   --health-b-bg: #1E1B4B;
   --health-c-bg: #451A03;
   --health-d-bg: #431407;
   --health-f-bg: #450A0A;
+
+  /* Health grade foregrounds — lighter for AA contrast on dark tinted bg */
+  --health-a: #4ADE80;  /* green-400  */
+  --health-b: #818CF8;  /* indigo-400 */
+  --health-c: #FBBF24;  /* amber-400  */
+  --health-d: #FB923C;  /* orange-400 */
+  --health-f: #F87171;  /* red-400    */
 
   color-scheme: dark;
 }

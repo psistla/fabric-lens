@@ -134,6 +134,8 @@ When adding new values, add them to constants.ts and import — do not inline.
 - **Icons:** Lucide React — 20px for nav, 16px inline, never mix filled/outlined on same surface
 - **Motion:** Functional only. 120ms hover, 200ms transitions, 300ms layout shifts. Ease-out only. No bounce/overshoot.
 - **Copy tone:** Professional, precise, quietly confident. Empty states guide, errors are actionable, health scores are opportunities not report cards
+- **Design token source of truth:** `src/index.css` — all CSS custom properties, dark mode overrides, animations, and skeleton shimmer
+- **Component behavior rules:** `DESIGN_GUIDE.md` — full specification for patterns, anti-patterns, accessibility, and component standards
 
 ### File Naming
 - Components: PascalCase (`WorkspaceList.tsx`)
