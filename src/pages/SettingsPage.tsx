@@ -394,9 +394,10 @@ function AboutSection() {
         </div>
 
         <p className="text-sm text-[var(--m-text-secondary)]">
-          Governance, health intelligence, and inventory management for
-          Microsoft Fabric tenants. Authenticates via Azure AD and calls Fabric
-          REST APIs directly from the browser.
+          Fabric Lens gives Microsoft Fabric tenant admins a clear picture of
+          workspace health, access governance, and security posture — all
+          derived from live Fabric APIs, directly in the browser. No backend
+          required.
         </p>
 
         <div className="flex flex-wrap gap-2">
@@ -447,6 +448,20 @@ function AboutSection() {
         <p className="text-[11px] text-[var(--m-text-tertiary)]">
           MIT License. Not affiliated with or endorsed by Microsoft.
         </p>
+
+        <div className="flex items-center justify-between border-t border-[var(--m-border)] pt-3">
+          <p className="text-[11px] text-[var(--m-text-tertiary)]">
+            Created for the curious, by{' '}
+            <a
+              href="https://www.linkedin.com/in/prasanthsistla/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[var(--m-primary)] hover:underline"
+            >
+              Prasanth Sistla
+            </a>
+          </p>
+        </div>
       </div>
     </div>
   );

@@ -30,9 +30,13 @@ src/
     shared/     → DataTable, StatCard, SearchBar, EmptyState, ErrorBoundary,
                   ExportButton, ItemTypeBadge, LoadingState, StateBadge, Toast
     charts/     → ItemsByTypeChart, WorkspacesByCapacityChart
+    security/   → EffectiveAccessCard, GroupExpansionRow, SecurityFindingsPanel,
+                  SecurityPostureCard, WorkspacePivotTable
   pages/        → DashboardPage, WorkspacesPage, WorkspaceDetailPage,
                   CapacityPage, SecurityPage, SettingsPage
-  utils/        → healthScore, export (CSV), constants (single source of truth)
+  utils/        → healthScore, export (CSV), constants (single source of truth),
+                  securityFindings (posture score + findings derivation),
+                  effectiveAccess (transitive access computation)
 ```
 
 ## Code Conventions
@@ -91,7 +95,7 @@ All magic numbers, thresholds, colors, and config values live in `src/utils/cons
 | Charts | `CHART_COLORS` (Meridian 12-color sequence: indigo→amber→violet→...), `CHART_TOOLTIP_STYLE` (dark panel), `CHART_FALLBACK_COLOR` (#495057) |
 | Roles | `ROLE_COLORS` (Admin=#DC2626, Member=#4F46E5, Contributor=#15803D, Viewer=#495057) |
 | Health | `HEALTH_SCORE_WEIGHTS`, `GRADE_THRESHOLDS`, `MAX_REASONABLE_ITEM_COUNT` |
-| Security | `ADMIN_ROLE_WARNING_THRESHOLD` (5), `GROUP_EXPAND_INITIAL_COUNT` (3) |
+| Security | `ADMIN_ROLE_WARNING_THRESHOLD` (5), `GROUP_EXPAND_INITIAL_COUNT` (3), `ADMIN_ASSIGNMENT_PCT_THRESHOLD` (30) |
 | Graph | `GRAPH_SCOPES` (`GroupMember.Read.All`) |
 | Pricing | `CU_RATE_PER_HOUR` (0.18 USD) |
 

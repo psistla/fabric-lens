@@ -132,6 +132,9 @@ export const DEFAULT_STALE_THRESHOLD_DAYS = 90;
 /** Number of Admin-role assignments before flagging a user as over-permissioned. */
 export const ADMIN_ROLE_WARNING_THRESHOLD = 5;
 
+/** Admin assignments percentage threshold — above this is flagged as unhealthy role distribution. */
+export const ADMIN_ASSIGNMENT_PCT_THRESHOLD = 30;
+
 /** Number of group members to show before "Show all" link. */
 export const GROUP_EXPAND_INITIAL_COUNT = 10;
 
@@ -209,4 +212,4 @@ export const HEALTH_GRID_HOVER_SCALE = 1.15;
 // -- App metadata --
 
 /** Application version (mirrors package.json). */
-export const APP_VERSION = '0.1.0';
+export const APP_VERSION = '1.0.0';

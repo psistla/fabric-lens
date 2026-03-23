@@ -17,15 +17,6 @@ import {
   Bot,
   Download,
 } from 'lucide-react';
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  Cell,
-} from 'recharts';
 import { useAuth } from '@/auth/useAuth';
 import { useSecurityStore } from '@/store/securityStore';
 import { useWorkspaceStore } from '@/store/workspaceStore';
@@ -33,13 +24,18 @@ import { ExportButton } from '@/components/shared/ExportButton';
 import { SearchBar } from '@/components/shared/SearchBar';
 import { GroupBadge, GroupExpansionRow } from '@/components/security/GroupExpansionRow';
 import { EffectiveAccessCard } from '@/components/security/EffectiveAccessCard';
+import { SecurityFindingsPanel } from '@/components/security/SecurityFindingsPanel';
+import { SecurityPostureCard } from '@/components/security/SecurityPostureCard';
+import { SpnGovernancePanel } from '@/components/security/SpnGovernancePanel';
+import { SpofWorkspacesPanel } from '@/components/security/SpofWorkspacesPanel';
+import { AccessConcentrationChart } from '@/components/security/AccessConcentrationChart';
+import { WorkspacePivotTable } from '@/components/security/WorkspacePivotTable';
+import { deriveSecurityFindings, computeSecurityPosture } from '@/utils/securityFindings';
 import { exportToCSV } from '@/utils/export';
 import { isDemoMode } from '@/api/demo';
 import type { PrincipalType, EffectiveAccessSummary } from '@/api/types/admin';
 import {
   ROLE_COLORS,
-  CHART_FALLBACK_COLOR,
-  CHART_TOOLTIP_STYLE,
   ADMIN_RATE_LIMIT,
   ADMIN_ROLE_WARNING_THRESHOLD,
 } from '@/utils/constants';
@@ -293,6 +289,18 @@ export function SecurityPage() {
     return computeEffectiveAccess(userSummaries, resolvedGroups);
   }, [hasScanned, userSummaries, resolvedGroups]);
 
+  // Security findings (derived from scan data — no extra API calls)
+  const securityFindings = useMemo(
+    () => (hasScanned ? deriveSecurityFindings(userSummaries, resolvedGroups) : []),
+    [hasScanned, userSummaries, resolvedGroups],
+  );
+
+  // Security posture score
+  const securityPosture = useMemo(
+    () => (hasScanned ? computeSecurityPosture(userSummaries, resolvedGroups) : null),
+    [hasScanned, userSummaries, resolvedGroups],
+  );
+
   // Over-permissioned users (Admin on 5+ workspaces)
   const overPermissioned = useMemo(
     () =>
@@ -379,22 +387,9 @@ export function SecurityPage() {
     exportToCSV(rows, 'fabric-lens-effective-access.csv');
   }, [userSummaries, resolvedGroups]);
 
-  // Role distribution data
-  const roleDistribution = useMemo(() => {
-    const counts: Record<string, number> = {};
-    for (const users of Object.values(workspaceUsers)) {
-      for (const u of users) {
-        const role = u.workspaceAccessDetails.workspaceRole;
-        counts[role] = (counts[role] ?? 0) + 1;
-      }
-    }
-    return Object.entries(counts)
-      .map(([role, count]) => ({ role, count }))
-      .sort((a, b) => b.count - a.count);
-  }, [workspaceUsers]);
-
   // --- Search, filter, sort, pagination state ---
 
+  const [pivotView, setPivotView] = useState<'users' | 'workspaces'>('users');
   const [search, setSearch] = useState('');
   const [activeRoles, setActiveRoles] = useState<Set<string>>(new Set());
   const [currentPage, setCurrentPage] = useState(1);
@@ -635,10 +630,28 @@ export function SecurityPage() {
       {/* Results */}
       {hasScanned && (
         <>
+          {/* Security Posture Score */}
+          {securityPosture && <SecurityPostureCard posture={securityPosture} />}
+
+          {/* Security Findings Panel */}
+          <SecurityFindingsPanel findings={securityFindings} />
+
+          {/* SPOF Workspaces Panel */}
+          <SpofWorkspacesPanel workspaceUsers={workspaceUsers} workspaces={workspaces} />
+
           {/* Effective Access Card */}
           {effectiveAccessSummary && (
             <EffectiveAccessCard summary={effectiveAccessSummary} />
           )}
+
+          {/* SPN Governance Panel */}
+          <SpnGovernancePanel userSummaries={userSummaries} />
+
+          {/* Access Concentration Charts */}
+          <AccessConcentrationChart
+            workspaceUsers={workspaceUsers}
+            userSummaries={userSummaries}
+          />
 
           {/* Over-permissioned alert */}
           {overPermissioned.length > 0 && (
@@ -674,51 +687,48 @@ export function SecurityPage() {
             </div>
           )}
 
-          {/* Role distribution chart + User access table */}
-          <div className="grid gap-6 lg:grid-cols-5">
-            {/* Role distribution chart */}
-            <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)] p-4 lg:col-span-2">
-              <h2 className="mb-2 text-sm font-medium text-[var(--m-text)]">
-                Role Distribution
-              </h2>
-              {roleDistribution.length > 0 ? (
-                <ResponsiveContainer width="100%" height={220}>
-                  <BarChart
-                    data={roleDistribution}
-                    margin={{ left: 10, right: 10, top: 10, bottom: 10 }}
+          {/* User / Workspace pivot table */}
+          <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)]">
+              {/* Header with toggle */}
+              <div className="flex items-center justify-between border-b border-[var(--m-border)] px-4 py-3">
+                <h2 className="text-sm font-medium text-[var(--m-text)]">
+                  {pivotView === 'users' ? 'User Access Summary' : 'Workspace Risk View'}
+                </h2>
+                <div className="flex rounded-lg border border-[var(--m-border)] p-0.5 text-[11px] font-semibold">
+                  <button
+                    onClick={() => setPivotView('users')}
+                    className={`rounded-md px-2.5 py-1 transition-colors ${
+                      pivotView === 'users'
+                        ? 'bg-[var(--m-primary)] text-white'
+                        : 'text-[var(--m-text-secondary)] hover:text-[var(--m-text)]'
+                    }`}
                   >
-                    <XAxis dataKey="role" tick={{ fontSize: 12 }} />
-                    <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
-                    <Tooltip
-                      contentStyle={CHART_TOOLTIP_STYLE}
-                      formatter={(value: number | string | readonly (string | number)[] | undefined) => [
-                        typeof value === 'number' ? value : 0,
-                        'Assignments',
-                      ]}
-                    />
-                    <Bar dataKey="count" radius={[4, 4, 0, 0]} barSize={36}>
-                      {roleDistribution.map((entry, index) => (
-                        <Cell
-                          key={index}
-                          fill={ROLE_COLORS[entry.role] ?? CHART_FALLBACK_COLOR}
-                        />
-                      ))}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
-              ) : (
-                <div className="flex h-[220px] items-center justify-center text-sm text-[var(--m-text-tertiary)]">
-                  No data
+                    Users
+                  </button>
+                  <button
+                    onClick={() => setPivotView('workspaces')}
+                    className={`rounded-md px-2.5 py-1 transition-colors ${
+                      pivotView === 'workspaces'
+                        ? 'bg-[var(--m-primary)] text-white'
+                        : 'text-[var(--m-text-secondary)] hover:text-[var(--m-text)]'
+                    }`}
+                  >
+                    Workspaces
+                  </button>
                 </div>
-              )}
-            </div>
+              </div>
 
-            {/* User access summary table */}
-            <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)] lg:col-span-3">
-              {/* Header */}
-              <h2 className="border-b border-[var(--m-border)] px-4 py-3 text-sm font-medium text-[var(--m-text)]">
-                User Access Summary
-              </h2>
+              {/* Workspace pivot */}
+              {pivotView === 'workspaces' && (
+                <WorkspacePivotTable
+                  workspaceUsers={workspaceUsers}
+                  workspaces={workspaces}
+                />
+              )}
+
+              {/* User view: summary stats + table */}
+              {pivotView === 'users' && (
+              <>
 
               {/* Summary stats */}
               <div className="grid grid-cols-3 gap-3 border-b border-[var(--m-border)] px-4 py-3">
@@ -964,8 +974,9 @@ export function SecurityPage() {
                   </div>
                 )}
               </div>
+              </>
+              )}
             </div>
-          </div>
         </>
       )}
     </div>
