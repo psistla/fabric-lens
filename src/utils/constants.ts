@@ -177,6 +177,17 @@ export const HTTP_ERROR_MESSAGES: Readonly<Partial<Record<number, string>>> = {
 export const HTTP_ERROR_MESSAGE_SERVER =
   'Microsoft Fabric API is experiencing issues. Try again later.';
 
+// -- Score ring --
+
+/** Duration (ms) for the ScoreRing mount animation. */
+export const SCORE_RING_ANIMATION_MS = 600;
+
+/** Default diameter (px) for the ScoreRing component. */
+export const SCORE_RING_DEFAULT_SIZE = 120;
+
+/** Default stroke width (px) for the ScoreRing track and arc. */
+export const SCORE_RING_STROKE_WIDTH = 8;
+
 // -- App metadata --
 
 /** Application version (mirrors package.json). */
