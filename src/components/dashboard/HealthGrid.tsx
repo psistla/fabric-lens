@@ -1,111 +1,355 @@
-import { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router';
-import type { Workspace } from '@/api/types/workspace';
-import type { Item } from '@/api/types/item';
-import type { HealthGrade } from '@/utils/healthScore';
-import { calculateWorkspaceHealth } from '@/utils/healthScore';
+import { useState, useCallback } from 'react';
+import {
+  HEALTH_GRID_TILE_SIZE,
+  HEALTH_GRID_GAP,
+  HEALTH_GRID_MAX_TILES,
+  HEALTH_GRID_HOVER_SCALE,
+} from '@/utils/constants';
 
-interface Props {
-  workspaces: Workspace[];
-  allItemsByWorkspace: Record<string, Item[]>;
-}
+// Grade ordering: worst → best
+const GRADE_ORDER = ['F', 'D', 'C', 'B', 'A'] as const;
+type Grade = (typeof GRADE_ORDER)[number];
 
-const GRADE_COLORS: Record<HealthGrade, string> = {
-  A: 'var(--health-a)',
-  B: 'var(--health-b)',
-  C: 'var(--health-c)',
-  D: 'var(--health-d)',
-  F: 'var(--health-f)',
+// Saturated colors used for filter buttons and distribution squares (always readable with white text)
+const GRADE_PRIMARY: Record<Grade, string> = {
+  A: '#15803D',
+  B: '#4F46E5',
+  C: '#B45309',
+  D: '#EA580C',
+  F: '#DC2626',
 };
 
-interface TileData {
-  id: string;
-  name: string;
-  grade: HealthGrade;
-  percentage: number;
+export interface HealthGridProps {
+  workspaces: Array<{
+    id: string;
+    name: string;
+    score: number;
+    grade: string;
+    topFailedCheck?: string;
+  }>;
+  onWorkspaceClick?: (workspaceId: string) => void;
 }
 
-export function HealthGrid({ workspaces, allItemsByWorkspace }: Props) {
-  const navigate = useNavigate();
-  const [hoveredId, setHoveredId] = useState<string | null>(null);
+interface TooltipState {
+  x: number;
+  y: number;
+  entry: HealthGridProps['workspaces'][number];
+}
 
-  const tiles = useMemo((): TileData[] => {
-    return workspaces
-      .map((ws) => {
-        const items = allItemsByWorkspace[ws.id] ?? [];
-        const health = calculateWorkspaceHealth(ws, items);
-        return {
-          id: ws.id,
-          name: ws.displayName,
-          grade: health.grade,
-          percentage: health.percentage,
-        };
-      })
-      .sort((a, b) => b.percentage - a.percentage);
-  }, [workspaces, allItemsByWorkspace]);
-
-  if (tiles.length === 0) return null;
-
-  const gradeCounts = tiles.reduce<Record<HealthGrade, number>>(
-    (acc, t) => {
-      acc[t.grade]++;
-      return acc;
-    },
-    { A: 0, B: 0, C: 0, D: 0, F: 0 },
-  );
+// ---------------------------------------------------------------------------
+// Tooltip — fixed-positioned near cursor
+// ---------------------------------------------------------------------------
+function Tooltip({ state }: { state: TooltipState }) {
+  const { x, y, entry } = state;
+  const primary = GRADE_PRIMARY[entry.grade as Grade] ?? '#868E96';
 
   return (
-    <div className="rounded-[var(--radius-lg)] border border-[var(--border-default)] bg-[var(--surface-primary)] p-5">
-      <div className="mb-3 flex items-center justify-between">
-        <h2 className="text-[15px] font-medium tracking-[-0.005em] text-[var(--text-primary)]">
-          Tenant Health Grid
-        </h2>
-        <div className="flex items-center gap-3 text-xs text-[var(--text-tertiary)]">
-          {(['A', 'B', 'C', 'D', 'F'] as HealthGrade[]).map((grade) => (
-            <span key={grade} className="flex items-center gap-1">
-              <span
-                className="inline-block h-2.5 w-2.5 rounded-sm"
-                style={{ backgroundColor: GRADE_COLORS[grade] }}
-              />
-              {grade}: {gradeCounts[grade]}
-            </span>
-          ))}
-        </div>
-      </div>
-      <div
-        className="grid gap-1"
+    <div
+      style={{
+        position: 'fixed',
+        left: x + 14,
+        top: y - 10,
+        transform: 'translateY(-100%)',
+        zIndex: 600,
+        pointerEvents: 'none',
+        background: 'var(--m-neutral-900)',
+        border: '1px solid var(--m-neutral-700)',
+        borderRadius: 8,
+        padding: '8px 10px',
+        minWidth: 180,
+        maxWidth: 260,
+        boxShadow: '0 8px 24px rgba(0,0,0,0.35)',
+      }}
+    >
+      <p
         style={{
-          gridTemplateColumns: 'repeat(auto-fill, minmax(32px, 1fr))',
+          fontSize: 13,
+          fontWeight: 700,
+          color: 'var(--m-neutral-0)',
+          marginBottom: 6,
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
         }}
       >
-        {tiles.map((tile) => {
-          const isHovered = hoveredId === tile.id;
-          return (
-            <div key={tile.id} className="relative">
-              <button
-                onClick={() => void navigate(`/workspaces/${tile.id}`)}
-                onMouseEnter={() => setHoveredId(tile.id)}
-                onMouseLeave={() => setHoveredId(null)}
-                className="flex h-8 w-full items-center justify-center rounded-[var(--radius-sm)] text-xs font-bold text-white transition-transform duration-[120ms] hover:scale-[1.15]"
-                style={{ backgroundColor: GRADE_COLORS[tile.grade] }}
-                title={`${tile.name}: ${tile.grade} (${tile.percentage}%)`}
-              >
-                {tile.grade}
-              </button>
-              {isHovered && (
-                <div className="absolute bottom-full left-1/2 z-50 mb-1.5 -translate-x-1/2 whitespace-nowrap rounded-[var(--radius-md)] bg-[var(--surface-inverse)] px-2.5 py-1.5 text-xs text-[var(--text-inverse)] shadow-[var(--shadow-lg)]">
-                  <span className="font-medium">{tile.name}</span>
-                  <span className="ml-1.5 opacity-75">{tile.percentage}%</span>
-                  <span className="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-[var(--surface-inverse)]" />
-                </div>
-              )}
+        {entry.name}
+      </p>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <span
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: 20,
+            height: 20,
+            borderRadius: '50%',
+            backgroundColor: primary,
+            color: '#FFFFFF',
+            fontSize: 11,
+            fontWeight: 700,
+            flexShrink: 0,
+          }}
+        >
+          {entry.grade}
+        </span>
+        <span style={{ fontSize: 12, color: 'var(--m-neutral-300)' }}>
+          {entry.score}/100
+        </span>
+      </div>
+      {entry.topFailedCheck && (
+        <p
+          style={{
+            marginTop: 6,
+            fontSize: 11,
+            lineHeight: 1.4,
+            color: 'var(--m-neutral-400)',
+          }}
+        >
+          <span style={{ color: 'var(--m-accent-400, #FBBF24)' }}>Quick win:</span>{' '}
+          {entry.topFailedCheck}
+        </p>
+      )}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Distribution summary bar
+// ---------------------------------------------------------------------------
+function DistributionBar({
+  workspaces,
+  activeGrade,
+  shownCount,
+}: {
+  workspaces: HealthGridProps['workspaces'];
+  activeGrade: string | null;
+  shownCount: number;
+}) {
+  const counts = GRADE_ORDER.reduce<Record<string, number>>((acc, g) => {
+    acc[g] = workspaces.filter((w) => w.grade === g).length;
+    return acc;
+  }, {});
+  const total = workspaces.length;
+
+  return (
+    <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
+      {GRADE_ORDER.map((g) => {
+        const count = counts[g];
+        if (count === 0) return null;
+        return (
+          <div key={g} className="flex items-center gap-1.5">
+            <span
+              className="inline-block h-2.5 w-2.5 rounded-sm"
+              style={{ backgroundColor: GRADE_PRIMARY[g] }}
+            />
+            <span className="text-xs text-[var(--m-text-secondary)]">
+              <span className="font-semibold text-[var(--m-text)]">{count}</span> {g}
+            </span>
+          </div>
+        );
+      })}
+      {activeGrade !== null && (
+        <span className="text-xs text-[var(--m-text-tertiary)]">
+          {shownCount} of {total} shown
+        </span>
+      )}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Compact summary mode — horizontal bars per grade
+// ---------------------------------------------------------------------------
+function SummaryView({ workspaces }: { workspaces: HealthGridProps['workspaces'] }) {
+  const total = workspaces.length;
+  return (
+    <div className="space-y-2">
+      {GRADE_ORDER.map((g) => {
+        const count = workspaces.filter((w) => w.grade === g).length;
+        if (count === 0) return null;
+        const pct = Math.round((count / total) * 100);
+        return (
+          <div key={g} className="flex items-center gap-3">
+            <span
+              className="w-4 shrink-0 text-center text-xs font-bold"
+              style={{ color: GRADE_PRIMARY[g] }}
+            >
+              {g}
+            </span>
+            <div className="h-5 flex-1 overflow-hidden rounded bg-[var(--m-surface)]">
+              <div
+                className="h-full rounded transition-all"
+                style={{ width: `${pct}%`, backgroundColor: GRADE_PRIMARY[g], opacity: 0.85 }}
+              />
             </div>
+            <span className="w-16 shrink-0 text-right text-xs text-[var(--m-text-secondary)]">
+              {count} ({pct}%)
+            </span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// HealthGrid
+// ---------------------------------------------------------------------------
+export function HealthGrid({ workspaces, onWorkspaceClick }: HealthGridProps) {
+  const [activeGrade, setActiveGrade] = useState<string | null>(null);
+  const [tooltip, setTooltip] = useState<TooltipState | null>(null);
+  const [showGrid, setShowGrid] = useState(true);
+
+  const isCompact = workspaces.length > HEALTH_GRID_MAX_TILES;
+
+  // Sort worst-first (ascending score)
+  const sorted = [...workspaces].sort((a, b) => a.score - b.score);
+
+  // Apply grade filter
+  const filtered = activeGrade ? sorted.filter((w) => w.grade === activeGrade) : sorted;
+
+  // In compact grid mode, cap at MAX_TILES
+  const tiles = isCompact && showGrid ? filtered.slice(0, HEALTH_GRID_MAX_TILES) : filtered;
+
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent, entry: HealthGridProps['workspaces'][number]) => {
+      setTooltip({ x: e.clientX, y: e.clientY, entry });
+    },
+    [],
+  );
+
+  const handleTileEnter = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+    e.currentTarget.style.transform = `scale(${HEALTH_GRID_HOVER_SCALE})`;
+    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.25)';
+  }, []);
+
+  const handleTileOut = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+    e.currentTarget.style.transform = 'scale(1)';
+    e.currentTarget.style.boxShadow = 'none';
+    setTooltip(null);
+  }, []);
+
+  const handleFilterClick = useCallback(
+    (grade: string | null) => setActiveGrade((prev) => (prev === grade ? null : grade)),
+    [],
+  );
+
+  if (workspaces.length === 0) return null;
+
+  return (
+    <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)] p-4">
+      {/* Header */}
+      <div className="mb-3 flex items-center justify-between">
+        <h2 className="text-sm font-medium text-[var(--m-text)]">Workspace Health Grid</h2>
+        {isCompact && (
+          <button
+            onClick={() => setShowGrid((v) => !v)}
+            className="text-xs font-semibold text-[var(--m-primary)] transition-colors hover:underline"
+          >
+            {showGrid ? 'Show summary' : 'Show grid'}
+          </button>
+        )}
+      </div>
+
+      {/* Filter buttons */}
+      <div className="mb-3 flex flex-wrap items-center gap-1.5">
+        <button
+          onClick={() => handleFilterClick(null)}
+          className="rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-wide transition-colors"
+          style={
+            activeGrade === null
+              ? { backgroundColor: '#4F46E5', color: '#FFFFFF' }
+              : { backgroundColor: 'var(--m-surface)', color: 'var(--m-text-secondary)' }
+          }
+        >
+          All
+        </button>
+        {GRADE_ORDER.map((g) => {
+          const count = workspaces.filter((w) => w.grade === g).length;
+          if (count === 0) return null;
+          const isActive = activeGrade === g;
+          return (
+            <button
+              key={g}
+              onClick={() => handleFilterClick(g)}
+              className="rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-wide transition-colors"
+              style={
+                isActive
+                  ? { backgroundColor: GRADE_PRIMARY[g], color: '#FFFFFF' }
+                  : { backgroundColor: 'var(--m-surface)', color: 'var(--m-text-secondary)' }
+              }
+            >
+              {g}
+            </button>
           );
         })}
       </div>
-      <p className="mt-2 text-xs text-[var(--text-tertiary)]">
-        {tiles.length} workspaces — click a tile to view details.
-      </p>
+
+      {/* Grid or summary */}
+      {!isCompact || showGrid ? (
+        <>
+          {isCompact && filtered.length > HEALTH_GRID_MAX_TILES && (
+            <p className="mb-2 text-xs text-[var(--m-text-tertiary)]">
+              Showing {HEALTH_GRID_MAX_TILES} of {filtered.length} workspaces (worst first)
+            </p>
+          )}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: `repeat(auto-fill, minmax(${HEALTH_GRID_TILE_SIZE}px, ${HEALTH_GRID_TILE_SIZE}px))`,
+              gap: `${HEALTH_GRID_GAP}px`,
+            }}
+          >
+            {tiles.map((entry) => (
+              <button
+                key={entry.id}
+                onClick={() => onWorkspaceClick?.(entry.id)}
+                onMouseMove={(e) => handleMouseMove(e, entry)}
+                onMouseEnter={handleTileEnter}
+                onMouseLeave={handleTileOut}
+                aria-label={`${entry.name} — Grade ${entry.grade}, ${entry.score}%`}
+                style={{
+                  width: HEALTH_GRID_TILE_SIZE,
+                  height: HEALTH_GRID_TILE_SIZE,
+                  borderRadius: 6,
+                  background: `var(--health-${entry.grade.toLowerCase()}-bg)`,
+                  color: `var(--health-${entry.grade.toLowerCase()})`,
+                  fontSize: 13,
+                  fontWeight: 700,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  border: 'none',
+                  transition: `transform 120ms ease-out, box-shadow 120ms ease-out`,
+                  flexShrink: 0,
+                }}
+              >
+                {entry.grade}
+              </button>
+            ))}
+            {tiles.length === 0 && (
+              <p className="text-xs text-[var(--m-text-tertiary)]">
+                No workspaces match the selected filter.
+              </p>
+            )}
+          </div>
+        </>
+      ) : (
+        <SummaryView workspaces={filtered} />
+      )}
+
+      {/* Distribution bar */}
+      <div className="mt-4 border-t border-[var(--m-border-subtle)] pt-3">
+        <DistributionBar
+          workspaces={workspaces}
+          activeGrade={activeGrade}
+          shownCount={filtered.length}
+        />
+      </div>
+
+      {/* Tooltip */}
+      {tooltip && <Tooltip state={tooltip} />}
     </div>
   );
 }

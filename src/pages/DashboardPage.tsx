@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useCallback } from 'react';
+import { useNavigate } from 'react-router';
 import {
   FolderOpen,
   Package,
@@ -19,6 +20,7 @@ import { HealthGrid } from '@/components/dashboard/HealthGrid';
 import { exportToJSON } from '@/utils/export';
 
 export function DashboardPage() {
+  const navigate = useNavigate();
   const {
     workspaces,
     allItemsByWorkspace,
@@ -98,6 +100,26 @@ export function DashboardPage() {
       .map(([name, count]) => ({ name, count }))
       .sort((a, b) => b.count - a.count);
   }, [workspaces, getCapacityById]);
+
+  // Derived workspace data for HealthGrid
+  const healthGridData = useMemo(
+    () =>
+      workspaces.map((ws) => {
+        const wsItems = allItemsByWorkspace[ws.id] ?? [];
+        const health = calculateWorkspaceHealth(ws, wsItems);
+        const topFailed = health.checks
+          .filter((c) => !c.passed)
+          .sort((a, b) => b.maxPoints - a.maxPoints)[0];
+        return {
+          id: ws.id,
+          name: ws.displayName,
+          score: health.percentage,
+          grade: health.grade,
+          topFailedCheck: topFailed?.detail,
+        };
+      }),
+    [workspaces, allItemsByWorkspace],
+  );
 
   // Governance issue counts
   const governance = useMemo(() => {
@@ -302,8 +324,8 @@ export function DashboardPage() {
       {/* Health Grid */}
       {workspaces.length > 0 && (
         <HealthGrid
-          workspaces={workspaces}
-          allItemsByWorkspace={allItemsByWorkspace}
+          workspaces={healthGridData}
+          onWorkspaceClick={(id) => void navigate(`/workspaces/${id}`)}
         />
       )}
 

@@ -188,6 +188,20 @@ export const SCORE_RING_DEFAULT_SIZE = 120;
 /** Default stroke width (px) for the ScoreRing track and arc. */
 export const SCORE_RING_STROKE_WIDTH = 8;
 
+// -- Health Grid --
+
+/** Tile size (px) for each workspace tile in the HealthGrid. */
+export const HEALTH_GRID_TILE_SIZE = 36;
+
+/** Gap (px) between tiles in the HealthGrid. */
+export const HEALTH_GRID_GAP = 6;
+
+/** Maximum tiles shown in grid mode when workspace count exceeds this threshold. */
+export const HEALTH_GRID_MAX_TILES = 100;
+
+/** Scale factor applied to a tile on hover. */
+export const HEALTH_GRID_HOVER_SCALE = 1.15;
+
 // -- App metadata --
 
 /** Application version (mirrors package.json). */
