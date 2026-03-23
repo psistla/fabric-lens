@@ -1,102 +1,81 @@
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
+  PieChart,
+  Pie,
   Cell,
   Tooltip,
-  LabelList,
   ResponsiveContainer,
 } from 'recharts';
-import { CHART_TOOLTIP_STYLE, CHART_FALLBACK_COLOR } from '@/utils/constants';
+import { CHART_COLORS, CHART_TOOLTIP_STYLE } from '@/utils/constants';
 
 interface Props {
   data: { name: string; value: number }[];
-  /** Override the denominator for % calculation (e.g. pass full item count when data is sliced) */
-  total?: number;
 }
 
-// Hex values mirror --item-* CSS tokens — needed for SVG fill attributes
-const ITEM_TYPE_COLORS: Record<string, string> = {
-  Lakehouse:    '#4F46E5',
-  Notebook:     '#7C3AED',
-  Pipeline:     '#15803D',
-  Warehouse:    '#0891B2',
-  Report:       '#B45309',
-  SemanticModel:'#DB2777',
-  Dashboard:    '#EA580C',
-  DataPipeline: '#15803D',
-};
-
-export function ItemsByTypeChart({ data, total: totalOverride }: Props) {
+export function ItemsByTypeChart({ data }: Props) {
   if (data.length === 0) {
     return (
-      <div className="flex h-48 items-center justify-center text-sm text-[var(--m-text-tertiary)]">
+      <div className="flex h-64 items-center justify-center text-sm text-[var(--text-tertiary)]">
         No items to display
       </div>
     );
   }
 
-  const total = totalOverride ?? data.reduce((sum, d) => sum + d.value, 0);
-  const chartHeight = data.length * 28 + 8;
+  const total = data.reduce((sum, d) => sum + d.value, 0);
 
   return (
-    <ResponsiveContainer width="100%" height={chartHeight}>
-      <BarChart
-        layout="vertical"
-        data={data}
-        margin={{ top: 0, right: 64, bottom: 0, left: 8 }}
-      >
-        <XAxis type="number" hide />
-        <YAxis
-          type="category"
-          dataKey="name"
-          width={130}
-          tick={{ fontSize: 12, fill: 'var(--m-text-secondary)' }}
-          axisLine={false}
-          tickLine={false}
-        />
-        <Tooltip
-          contentStyle={CHART_TOOLTIP_STYLE}
-          itemStyle={{ color: '#e2e8f0' }}
-          formatter={(value?: number | string | readonly (string | number)[]) => {
-            const v = typeof value === 'number' ? value : 0;
-            return [`${v} (${total > 0 ? Math.round((v / total) * 100) : 0}%)`, 'Items'];
-          }}
-          cursor={{ fill: 'var(--m-surface-hover)', opacity: 0.6 }}
-        />
-        <Bar dataKey="value" radius={[0, 3, 3, 0]} barSize={14}>
-          {data.map((entry, index) => (
-            <Cell
-              key={index}
-              fill={ITEM_TYPE_COLORS[entry.name] ?? CHART_FALLBACK_COLOR}
+    <div className="flex items-start gap-4">
+      <div className="shrink-0" style={{ width: 200, height: 200 }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <PieChart>
+            <Pie
+              data={data}
+              cx="50%"
+              cy="50%"
+              innerRadius={50}
+              outerRadius={85}
+              paddingAngle={2}
+              dataKey="value"
+              nameKey="name"
+              stroke="none"
+            >
+              {data.map((_entry, index) => (
+                <Cell key={index} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip
+              contentStyle={CHART_TOOLTIP_STYLE}
+              itemStyle={{ color: '#e2e8f0' }}
+              formatter={(value: number | string | readonly (string | number)[] | undefined, name: string | number | undefined) => {
+                const v = typeof value === 'number' ? value : 0;
+                return [
+                  `${v} (${total > 0 ? Math.round((v / total) * 100) : 0}%)`,
+                  name != null ? String(name) : '',
+                ];
+              }}
             />
-          ))}
-          <LabelList
-            dataKey="value"
-            position="right"
-            content={(props) => {
-              const { x = 0, y = 0, width = 0, height = 0, value } = props as {
-                x?: number; y?: number; width?: number; height?: number; value?: number;
-              };
-              const v = value ?? 0;
-              const pct = total > 0 ? Math.round((v / total) * 100) : 0;
-              return (
-                <text
-                  x={x + width + 6}
-                  y={y + height / 2}
-                  dominantBaseline="middle"
-                  fontSize={11}
-                  fill="var(--m-text-secondary)"
-                  fontFamily="inherit"
-                >
-                  {v} · {pct}%
-                </text>
-              );
-            }}
-          />
-        </Bar>
-      </BarChart>
-    </ResponsiveContainer>
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
+
+      <div className="min-w-0 flex-1 space-y-1 pt-1">
+        {data.map((entry, index) => (
+          <div key={entry.name} className="flex items-center gap-2 text-xs">
+            <span
+              className="h-2.5 w-2.5 shrink-0 rounded-full"
+              style={{ backgroundColor: CHART_COLORS[index % CHART_COLORS.length] }}
+            />
+            <span className="min-w-0 flex-1 truncate text-[var(--text-secondary)]">
+              {entry.name}
+            </span>
+            <span className="shrink-0 font-medium tabular-nums text-[var(--text-primary)]">
+              {entry.value}
+            </span>
+            <span className="w-9 shrink-0 text-right text-[var(--text-tertiary)]">
+              {total > 0 ? `${Math.round((entry.value / total) * 100)}%` : '—'}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }

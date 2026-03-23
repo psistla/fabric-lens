@@ -11,6 +11,7 @@ import { useCapacityStore } from '@/store/capacityStore';
 import { useUiStore } from '@/store/uiStore';
 import { StatCard } from '@/components/shared/StatCard';
 import { ItemsByTypeChart } from '@/components/charts/ItemsByTypeChart';
+import { WorkspacesByCapacityChart } from '@/components/charts/WorkspacesByCapacityChart';
 import { GovernanceIssues } from '@/components/workspace/GovernanceIssues';
 import { calculateWorkspaceHealth } from '@/utils/healthScore';
 import { ExportButton } from '@/components/shared/ExportButton';
@@ -82,6 +83,19 @@ export function DashboardPage() {
       .sort((a, b) => b.value - a.value);
   }, [allItems]);
 
+  // Workspaces by capacity chart data
+  const workspacesByCapacity = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const ws of workspaces) {
+      const capName = ws.capacityId
+        ? (getCapacityById(ws.capacityId)?.displayName ?? 'Unknown')
+        : 'No Capacity';
+      counts.set(capName, (counts.get(capName) ?? 0) + 1);
+    }
+    return [...counts.entries()]
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count);
+  }, [workspaces, getCapacityById]);
 
   // Governance issue counts
   const governance = useMemo(() => {
@@ -241,7 +255,23 @@ export function DashboardPage() {
         />
       </div>
 
-      {/* Health Grid — hero: the at-a-glance governance posture */}
+      {/* Charts row */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)] p-4">
+          <h2 className="mb-2 text-sm font-medium text-[var(--m-text)]">
+            Items by Type
+          </h2>
+          <ItemsByTypeChart data={itemsByType} />
+        </div>
+        <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)] p-4">
+          <h2 className="mb-2 text-sm font-medium text-[var(--m-text)]">
+            Workspaces by Capacity
+          </h2>
+          <WorkspacesByCapacityChart data={workspacesByCapacity} />
+        </div>
+      </div>
+
+      {/* Health Grid */}
       {workspaces.length > 0 && (
         <HealthGrid
           workspaces={workspaces}
@@ -249,21 +279,13 @@ export function DashboardPage() {
         />
       )}
 
-      {/* Bottom row: actionable issues + artifact breakdown */}
-      <div className="grid gap-6 lg:grid-cols-2">
-        <GovernanceIssues
-          noCapacity={governance.noCapacity}
-          noDescription={governance.noDescription}
-          noGitIntegration={governance.noGitIntegration}
-          personalWorkspaces={governance.personalWorkspaces}
-        />
-        <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)] p-4">
-          <h2 className="mb-3 text-sm font-medium text-[var(--m-text)]">
-            Items by Type
-          </h2>
-          <ItemsByTypeChart data={itemsByType.slice(0, 8)} total={allItems.length} />
-        </div>
-      </div>
+      {/* Governance Issues */}
+      <GovernanceIssues
+        noCapacity={governance.noCapacity}
+        noDescription={governance.noDescription}
+        noGitIntegration={governance.noGitIntegration}
+        personalWorkspaces={governance.personalWorkspaces}
+      />
     </div>
   );
 }
