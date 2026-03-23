@@ -18,6 +18,7 @@ import { aggregateGovernanceIssues } from '@/utils/governanceIssues';
 import { calculateWorkspaceHealth } from '@/utils/healthScore';
 import { ExportButton } from '@/components/shared/ExportButton';
 import { HealthGrid } from '@/components/dashboard/HealthGrid';
+import { SecurityQuickView } from '@/components/dashboard/SecurityQuickView';
 import { exportToJSON } from '@/utils/export';
 
 export function DashboardPage() {
@@ -346,11 +347,14 @@ export function DashboardPage() {
         />
       )}
 
-      {/* Governance Issues Panel */}
-      <GovernanceIssuesPanel
-        issues={aggregatedIssues}
-        workspaces={workspaces}
-      />
+      {/* Bottom row: Governance Issues + Security Quick View */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        <GovernanceIssuesPanel
+          issues={aggregatedIssues}
+          workspaces={workspaces}
+        />
+        <SecurityQuickView />
+      </div>
     </div>
   );
 }
