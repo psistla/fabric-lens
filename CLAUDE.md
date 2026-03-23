@@ -148,7 +148,7 @@ When adding new values, add them to constants.ts and import — do not inline.
 The app runs in **demo mode** when `VITE_MSAL_CLIENT_ID` is unset or set to `'demo'`.
 
 - Detection: `isDemoMode` flag exported from `src/api/demo.ts`
-- Mock data: 3 capacities, 15 workspaces, 54+ items (all 18+ item types), 6 users with role assignments
+- Mock data: 3 capacities, 35 workspaces, 200+ items (all 19 item types), 8 users, 4 groups with role assignments
 - UI behavior:
   - Amber banner at top: "DEMO MODE — Exploring with sample data. Sign in to connect your Fabric tenant."
   - Header shows flask icon + "Demo" label (not user avatar)
