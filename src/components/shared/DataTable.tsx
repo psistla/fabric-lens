@@ -129,7 +129,7 @@ export function DataTable<T>({
                   onClick={onRowClick ? () => onRowClick(row) : undefined}
                   className={
                     onRowClick
-                      ? 'cursor-pointer hover:bg-[var(--surface-tertiary)] transition-colors duration-[120ms]'
+                      ? 'cursor-pointer hover:bg-[var(--m-surface-hover)] transition-colors duration-[120ms]'
                       : ''
                   }
                 >

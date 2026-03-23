@@ -21,7 +21,7 @@ const BASE_WS: Workspace = {
   state: 'Active',
   // capacityId: absent → fails capacity
   // domainId: absent → fails domain
-  // workspaceIdentity: absent → fails git + identity
+  // workspaceIdentity: absent → fails workspaceIdentity (merged SPN+Git check)
 };
 
 /** Workspace where every check passes (score = 100). */
@@ -75,11 +75,10 @@ describe('calculateWorkspaceHealth — individual checks', () => {
     // All independent checks still fail
     expect(getCheck(result, 'Capacity assigned').passed).toBe(false);
     expect(getCheck(result, 'Domain assigned').passed).toBe(false);
-    expect(getCheck(result, 'Git integration').passed).toBe(false);
+    expect(getCheck(result, 'Workspace identity').passed).toBe(false);
     expect(getCheck(result, 'Naming convention').passed).toBe(false);
     expect(getCheck(result, 'Active items').passed).toBe(false);
     expect(getCheck(result, 'Data layer present').passed).toBe(false);
-    expect(getCheck(result, 'Workspace identity').passed).toBe(false);
     // Note: reasonableCount co-passes with 0 items (0 ≤ MAX_REASONABLE_ITEM_COUNT).
   });
 
@@ -93,11 +92,10 @@ describe('calculateWorkspaceHealth — individual checks', () => {
 
     expect(getCheck(result, 'Description provided').passed).toBe(false);
     expect(getCheck(result, 'Domain assigned').passed).toBe(false);
-    expect(getCheck(result, 'Git integration').passed).toBe(false);
+    expect(getCheck(result, 'Workspace identity').passed).toBe(false);
     expect(getCheck(result, 'Naming convention').passed).toBe(false);
     expect(getCheck(result, 'Active items').passed).toBe(false);
     expect(getCheck(result, 'Data layer present').passed).toBe(false);
-    expect(getCheck(result, 'Workspace identity').passed).toBe(false);
   });
 
   it('domain: passes when domainId is set', () => {
@@ -110,36 +108,31 @@ describe('calculateWorkspaceHealth — individual checks', () => {
 
     expect(getCheck(result, 'Description provided').passed).toBe(false);
     expect(getCheck(result, 'Capacity assigned').passed).toBe(false);
-    expect(getCheck(result, 'Git integration').passed).toBe(false);
+    expect(getCheck(result, 'Workspace identity').passed).toBe(false);
     expect(getCheck(result, 'Naming convention').passed).toBe(false);
     expect(getCheck(result, 'Active items').passed).toBe(false);
     expect(getCheck(result, 'Data layer present').passed).toBe(false);
-    expect(getCheck(result, 'Workspace identity').passed).toBe(false);
   });
 
-  it('git: passes when workspaceIdentity is set (with empty servicePrincipalId)', () => {
-    // workspaceIdentity exists → git passes; servicePrincipalId='' → identity fails
+  it('workspaceIdentity: passes with 25 pts when servicePrincipalId is non-empty', () => {
+    // identity requires workspaceIdentity.servicePrincipalId to be truthy
     const ws = {
       ...BASE_WS,
-      workspaceIdentity: { applicationId: 'app-1', servicePrincipalId: '' },
+      workspaceIdentity: { applicationId: 'app-1', servicePrincipalId: 'spn-1' },
     };
-    // Use 101 Notebooks so reasonableCount fails, activeItems passes → only git+activeItems
-    const result = calculateWorkspaceHealth(ws, makeItems(101));
+    const result = calculateWorkspaceHealth(ws, []);
 
-    const gitCheck = getCheck(result, 'Git integration');
-    expect(gitCheck.passed).toBe(true);
-    expect(gitCheck.points).toBe(W.git);
-
-    // identity must fail (empty servicePrincipalId)
-    expect(getCheck(result, 'Workspace identity').passed).toBe(false);
+    const check = getCheck(result, 'Workspace identity');
+    expect(check.passed).toBe(true);
+    expect(check.points).toBe(W.workspaceIdentity);
+    expect(check.maxPoints).toBe(W.workspaceIdentity);
 
     expect(getCheck(result, 'Description provided').passed).toBe(false);
     expect(getCheck(result, 'Capacity assigned').passed).toBe(false);
     expect(getCheck(result, 'Domain assigned').passed).toBe(false);
     expect(getCheck(result, 'Naming convention').passed).toBe(false);
+    expect(getCheck(result, 'Active items').passed).toBe(false);
     expect(getCheck(result, 'Data layer present').passed).toBe(false);
-    // 101 items → reasonableCount fails, activeItems passes
-    expect(getCheck(result, 'Reasonable item count').passed).toBe(false);
   });
 
   it('naming: passes when displayName matches the naming convention regex', () => {
@@ -153,10 +146,9 @@ describe('calculateWorkspaceHealth — individual checks', () => {
     expect(getCheck(result, 'Description provided').passed).toBe(false);
     expect(getCheck(result, 'Capacity assigned').passed).toBe(false);
     expect(getCheck(result, 'Domain assigned').passed).toBe(false);
-    expect(getCheck(result, 'Git integration').passed).toBe(false);
+    expect(getCheck(result, 'Workspace identity').passed).toBe(false);
     expect(getCheck(result, 'Active items').passed).toBe(false);
     expect(getCheck(result, 'Data layer present').passed).toBe(false);
-    expect(getCheck(result, 'Workspace identity').passed).toBe(false);
   });
 
   it('activeItems: passes when items.length > 0 (isolated from reasonableCount via 101 items)', () => {
@@ -173,11 +165,10 @@ describe('calculateWorkspaceHealth — individual checks', () => {
     expect(getCheck(result, 'Description provided').passed).toBe(false);
     expect(getCheck(result, 'Capacity assigned').passed).toBe(false);
     expect(getCheck(result, 'Domain assigned').passed).toBe(false);
-    expect(getCheck(result, 'Git integration').passed).toBe(false);
+    expect(getCheck(result, 'Workspace identity').passed).toBe(false);
     expect(getCheck(result, 'Naming convention').passed).toBe(false);
     expect(getCheck(result, 'Data layer present').passed).toBe(false);
     expect(getCheck(result, 'Reasonable item count').passed).toBe(false);
-    expect(getCheck(result, 'Workspace identity').passed).toBe(false);
   });
 
   it('dataLayer: passes when a Lakehouse or Warehouse is present', () => {
@@ -195,9 +186,8 @@ describe('calculateWorkspaceHealth — individual checks', () => {
     expect(getCheck(result, 'Description provided').passed).toBe(false);
     expect(getCheck(result, 'Capacity assigned').passed).toBe(false);
     expect(getCheck(result, 'Domain assigned').passed).toBe(false);
-    expect(getCheck(result, 'Git integration').passed).toBe(false);
-    expect(getCheck(result, 'Naming convention').passed).toBe(false);
     expect(getCheck(result, 'Workspace identity').passed).toBe(false);
+    expect(getCheck(result, 'Naming convention').passed).toBe(false);
   });
 
   it('reasonableCount: passes when items.length ≤ MAX_REASONABLE_ITEM_COUNT (perfectly isolated)', () => {
@@ -214,31 +204,7 @@ describe('calculateWorkspaceHealth — individual checks', () => {
     expect(getCheck(result, 'Description provided').passed).toBe(false);
     expect(getCheck(result, 'Capacity assigned').passed).toBe(false);
     expect(getCheck(result, 'Domain assigned').passed).toBe(false);
-    expect(getCheck(result, 'Git integration').passed).toBe(false);
-    expect(getCheck(result, 'Naming convention').passed).toBe(false);
-    expect(getCheck(result, 'Active items').passed).toBe(false);
-    expect(getCheck(result, 'Data layer present').passed).toBe(false);
     expect(getCheck(result, 'Workspace identity').passed).toBe(false);
-  });
-
-  it('identity: passes when workspaceIdentity has a non-empty servicePrincipalId', () => {
-    // identity requires workspaceIdentity.servicePrincipalId → git co-passes (unavoidable)
-    const ws = {
-      ...BASE_WS,
-      workspaceIdentity: { applicationId: 'app-1', servicePrincipalId: 'spn-1' },
-    };
-    const result = calculateWorkspaceHealth(ws, []);
-
-    const check = getCheck(result, 'Workspace identity');
-    expect(check.passed).toBe(true);
-    expect(check.points).toBe(W.identity);
-
-    // git must also pass when workspaceIdentity is set (unavoidable dependency)
-    expect(getCheck(result, 'Git integration').passed).toBe(true);
-
-    expect(getCheck(result, 'Description provided').passed).toBe(false);
-    expect(getCheck(result, 'Capacity assigned').passed).toBe(false);
-    expect(getCheck(result, 'Domain assigned').passed).toBe(false);
     expect(getCheck(result, 'Naming convention').passed).toBe(false);
     expect(getCheck(result, 'Active items').passed).toBe(false);
     expect(getCheck(result, 'Data layer present').passed).toBe(false);
@@ -317,14 +283,11 @@ describe('calculateWorkspaceHealth — boundary conditions', () => {
       expect(result.grade).toBe('C');
     });
 
-    it('64% → grade D (< 65): fail capacity + domain + description + tag coverage', () => {
-      // Fail capacity(15) + domain(10) + description(10) + tag(10) → 110 - 45 = 65, percentage = 59%
-      // Using capacity+workspaceIdentity instead for a simpler setup:
-      // Fail workspaceIdentity(git 15 + identity 10) + capacity(15) + tag(10) → 110 - 50 = 60, percentage = 55%
+    it('55% → grade D (< 65): fail capacity + workspaceIdentity + tag coverage', () => {
+      // Fail: capacity(15) + workspaceIdentity(25) + tag(10) = 50 → total = 60, percentage = 55%
       const ws = { ...PERFECT_WS, capacityId: undefined, workspaceIdentity: undefined };
       const items = PERFECT_ITEMS.map((i) => ({ ...i, tags: undefined }));
       const result = calculateWorkspaceHealth(ws, items);
-      // Fail: capacity(15) + git(15) + identity(10) + tag(10) = 50 → total = 60
       expect(result.total).toBe(60);
       expect(result.maxTotal).toBe(110);
       expect(result.percentage).toBe(55);
@@ -351,7 +314,7 @@ describe('calculateWorkspaceHealth — boundary conditions', () => {
 
     it('41% → grade F (< 50)', () => {
       // capacity(15) + activeItems(10) + dataLayer(10) + reasonableCount(10) = 45
-      // Fails: description, naming, domain, git, identity, tag (0/1 = 0%)
+      // Fails: description, naming, domain, workspaceIdentity, tag (0/1 = 0%)
       const ws: Workspace = {
         id: 'ws-f',
         displayName: 'invalid',
@@ -397,7 +360,6 @@ describe('calculateWorkspaceHealth — edge cases', () => {
 
     expect(getCheck(result, 'Capacity assigned').passed).toBe(false);
     expect(getCheck(result, 'Domain assigned').passed).toBe(false);
-    expect(getCheck(result, 'Git integration').passed).toBe(false);
     expect(getCheck(result, 'Workspace identity').passed).toBe(false);
     // description and naming pass
     expect(getCheck(result, 'Description provided').passed).toBe(true);
@@ -428,14 +390,15 @@ describe('calculateWorkspaceHealth — edge cases', () => {
     expect(getCheck(result, 'Description provided').passed).toBe(false);
   });
 
-  it('workspaceIdentity with empty servicePrincipalId: git passes, identity fails', () => {
+  it('workspaceIdentity with empty servicePrincipalId: merged check fails', () => {
     const ws = {
       ...BASE_WS,
       workspaceIdentity: { applicationId: 'app-1', servicePrincipalId: '' },
     };
     const result = calculateWorkspaceHealth(ws, []);
-    expect(getCheck(result, 'Git integration').passed).toBe(true);
+    // Empty servicePrincipalId is falsy → merged workspaceIdentity check fails
     expect(getCheck(result, 'Workspace identity').passed).toBe(false);
+    expect(getCheck(result, 'Workspace identity').points).toBe(0);
   });
 });
 

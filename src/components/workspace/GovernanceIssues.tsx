@@ -73,7 +73,7 @@ export function GovernanceIssues({
               onClick={() =>
                 void navigate(`/workspaces?filter=${issue.filter}`)
               }
-              className="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-[var(--surface-tertiary)]"
+              className="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-[var(--m-surface-hover)]"
             >
               <issue.icon className="h-4 w-4 shrink-0 text-[var(--m-warning)]" />
               <span className="text-sm text-[var(--m-text-secondary)]">

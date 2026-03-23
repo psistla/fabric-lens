@@ -100,7 +100,7 @@ export function Header() {
           onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
           title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
           aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-          className="rounded-lg p-2 text-[var(--m-text-tertiary)] transition-colors hover:bg-[var(--surface-tertiary)] hover:text-[var(--m-text-secondary)]"
+          className="rounded-lg p-2 text-[var(--m-text-tertiary)] transition-colors hover:bg-[var(--m-surface-hover)] hover:text-[var(--m-text-secondary)]"
         >
           {theme === 'dark' ? (
             <Sun className="h-4 w-4" />
@@ -116,11 +116,11 @@ export function Header() {
             onClick={() => setMenuOpen(!menuOpen)}
             aria-expanded={menuOpen}
             aria-haspopup="true"
-            className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm transition-colors hover:bg-[var(--surface-tertiary)]"
+            className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm transition-colors hover:bg-[var(--m-surface-hover)]"
           >
             {isDemoMode && !user ? (
               <>
-                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#FBBF24] text-xs font-semibold text-[#78350F]">
+                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--m-accent-400)] text-xs font-semibold text-[var(--m-accent-900)]">
                   <FlaskConical className="h-3.5 w-3.5" />
                 </div>
                 <span className="hidden text-[var(--m-text-secondary)] sm:inline">
@@ -162,7 +162,7 @@ export function Header() {
                       closeMenu();
                       void login();
                     }}
-                    className="flex w-full items-center gap-2 px-3 py-2 text-sm text-[var(--m-primary)] transition-colors hover:bg-[var(--surface-tertiary)]"
+                    className="flex w-full items-center gap-2 px-3 py-2 text-sm text-[var(--m-primary)] transition-colors hover:bg-[var(--m-surface-hover)]"
                   >
                     <LogIn className="h-4 w-4" />
                     Sign in to tenant
@@ -186,7 +186,7 @@ export function Header() {
                       closeMenu();
                       void logout();
                     }}
-                    className="flex w-full items-center gap-2 px-3 py-2 text-sm text-[var(--m-text-secondary)] transition-colors hover:bg-[var(--surface-tertiary)]"
+                    className="flex w-full items-center gap-2 px-3 py-2 text-sm text-[var(--m-text-secondary)] transition-colors hover:bg-[var(--m-surface-hover)]"
                   >
                     <LogOut className="h-4 w-4" />
                     Sign out

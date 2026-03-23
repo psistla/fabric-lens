@@ -271,12 +271,11 @@ Weights are defined in `HEALTH_SCORE_WEIGHTS` constant. Score is normalized: max
 | Has description | 10 |
 | Assigned to capacity | 15 |
 | Assigned to domain | 10 |
-| Git integration | 15 |
+| Workspace identity (SPN + Git) | 25 |
 | Naming convention | 10 |
 | Active items (has ≥1 item) | 10 |
 | Data layer present | 10 |
 | Reasonable item count (<100) | 10 |
-| Workspace identity (SPN) | 10 |
 | Tag coverage (≥80%=10, ≥50%=5, skipped if no items) | 10 |
 
 Grade thresholds: A ≥ 90%, B ≥ 80%, C ≥ 65%, D ≥ 50%, F < 50%

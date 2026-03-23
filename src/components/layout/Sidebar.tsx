@@ -76,7 +76,7 @@ export function Sidebar() {
               `group flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors duration-[120ms] ${
                 isActive
                   ? 'border-l-2 border-[var(--m-primary)] bg-[var(--m-primary-subtle)] font-semibold text-[var(--m-primary)]'
-                  : 'border-l-2 border-transparent text-[var(--m-text-secondary)] hover:bg-[var(--surface-tertiary)] hover:text-[var(--m-text)]'
+                  : 'border-l-2 border-transparent text-[var(--m-text-secondary)] hover:bg-[var(--m-surface-hover)] hover:text-[var(--m-text)]'
               } ${collapsed ? 'justify-center px-0' : ''}`
             }
           >
@@ -91,7 +91,7 @@ export function Sidebar() {
         <button
           onClick={toggleSidebar}
           title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          className="flex w-full items-center justify-center gap-3 rounded-lg px-3 py-2 text-sm text-[var(--m-text-tertiary)] transition-colors hover:bg-[var(--surface-tertiary)] hover:text-[var(--m-text-secondary)]"
+          className="flex w-full items-center justify-center gap-3 rounded-lg px-3 py-2 text-sm text-[var(--m-text-tertiary)] transition-colors hover:bg-[var(--m-surface-hover)] hover:text-[var(--m-text-secondary)]"
         >
           {collapsed ? (
             <PanelLeftOpen className="h-4 w-4" />

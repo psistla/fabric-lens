@@ -31,8 +31,12 @@ export function ScoreRing({
   strokeWidth = SCORE_RING_STROKE_WIDTH,
 }: ScoreRingProps) {
   const reduced = prefersReducedMotion();
-  const [displayed, setDisplayed] = useState(reduced ? score : 0);
+  const [animatedScore, setAnimatedScore] = useState(0);
   const rafRef = useRef<number | null>(null);
+
+  // When reduced motion is preferred, derive displayed value directly from score
+  // (no state update needed). Otherwise use the rAF-animated value.
+  const displayed = reduced ? score : animatedScore;
 
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
@@ -40,10 +44,7 @@ export function ScoreRing({
   const cy = size / 2;
 
   useEffect(() => {
-    if (reduced) {
-      setDisplayed(score);
-      return;
-    }
+    if (reduced) return;
 
     const start = performance.now();
 
@@ -52,7 +53,7 @@ export function ScoreRing({
       const progress = Math.min(elapsed / SCORE_RING_ANIMATION_MS, 1);
       // ease-out cubic
       const eased = 1 - Math.pow(1 - progress, 3);
-      setDisplayed(Math.round(eased * score));
+      setAnimatedScore(Math.round(eased * score));
 
       if (progress < 1) {
         rafRef.current = requestAnimationFrame(tick);
@@ -88,7 +89,7 @@ export function ScoreRing({
           cx={cx}
           cy={cy}
           r={radius}
-          stroke="var(--border-default)"
+          stroke="var(--m-border)"
           strokeWidth={strokeWidth}
           fill="none"
         />
@@ -116,7 +117,7 @@ export function ScoreRing({
           {grade}
         </span>
         <span
-          className="font-medium leading-none text-[var(--text-secondary)] tabular-nums"
+          className="font-medium leading-none text-[var(--m-text-secondary)] tabular-nums"
           style={{ fontSize: size * 0.16, marginTop: size * 0.04 }}
         >
           {displayed}

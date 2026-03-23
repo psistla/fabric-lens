@@ -18,12 +18,11 @@ const CHECK_NAME_TO_ID: Record<string, string> = {
   'Description provided': 'description',
   'Capacity assigned': 'capacity',
   'Domain assigned': 'domain',
-  'Git integration': 'git',
+  'Workspace identity': 'workspaceIdentity',
   'Naming convention': 'naming',
   'Active items': 'activeItems',
   'Data layer present': 'dataLayer',
   'Reasonable item count': 'reasonableCount',
-  'Workspace identity': 'identity',
   'Tag coverage': 'tagCoverage',
 };
 
@@ -32,12 +31,11 @@ const CHECK_LABELS: Record<string, string> = {
   description: 'No workspace description',
   capacity: 'No dedicated capacity assigned',
   domain: 'No domain assigned',
-  git: 'Git integration not configured',
+  workspaceIdentity: 'No workspace identity (SPN)',
   naming: 'Naming convention violation',
   activeItems: 'Workspace has no active items',
   dataLayer: 'No data layer (Lakehouse or Warehouse)',
   reasonableCount: 'Excessive item count',
-  identity: 'No workspace identity (SPN)',
   tagCoverage: 'Low tag coverage on items',
 };
 
@@ -46,12 +44,11 @@ const CHECK_FIX_LABELS: Record<string, string> = {
   description: 'Add a description to explain the workspace purpose',
   capacity: 'Assign a dedicated capacity to avoid shared resource contention',
   domain: 'Assign a domain for governance and discoverability',
-  git: 'Configure Git integration for version control',
+  workspaceIdentity: 'Configure workspace identity (SPN) to enable Git integration and automation',
   naming: 'Rename workspaces to follow the naming convention',
   activeItems: 'Add content or archive empty workspaces',
   dataLayer: 'Add a Lakehouse or Warehouse as a data foundation',
   reasonableCount: 'Split large workspaces to stay within the recommended limit',
-  identity: 'Configure workspace identity (service principal)',
   tagCoverage: 'Apply tags to at least 80% of items for discoverability',
 };
 

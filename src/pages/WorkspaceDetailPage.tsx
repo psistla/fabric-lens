@@ -23,7 +23,7 @@ import type { Item } from '@/api/types/item';
 function CopyText({ text }: { text: string }) {
   return (
     <span className="group inline-flex items-center gap-1.5">
-      <code className="rounded bg-[var(--surface-secondary)] px-2 py-0.5 text-xs text-[var(--m-text-secondary)]">
+      <code className="rounded bg-[var(--m-surface)] px-2 py-0.5 text-xs text-[var(--m-text-secondary)]">
         {text}
       </code>
       <button
@@ -179,7 +179,7 @@ export function WorkspaceDetailPage() {
           </span>
           <StateBadge state={workspace.state} />
           {capacity && (
-            <span className="inline-flex rounded-full bg-[#EEF2FF] px-2.5 py-0.5 text-[11px] font-semibold text-[#4F46E5] dark:bg-[#312E81]/40 dark:text-[#818CF8]">
+            <span className="inline-flex rounded-full bg-[var(--m-primary-subtle)] px-2.5 py-0.5 text-[11px] font-semibold text-[var(--m-primary)]">
               {capacity.displayName} ({capacity.sku})
             </span>
           )}
@@ -289,7 +289,7 @@ export function WorkspaceDetailPage() {
                 <span className="text-sm text-[var(--m-text-secondary)]">
                   {type}
                 </span>
-                <span className="rounded-full bg-[var(--surface-secondary)] px-1.5 py-0.5 text-xs font-medium text-[var(--m-text-secondary)]">
+                <span className="rounded-full bg-[var(--m-surface)] px-1.5 py-0.5 text-xs font-medium text-[var(--m-text-secondary)]">
                   {count}
                 </span>
               </div>

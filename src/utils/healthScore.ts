@@ -77,16 +77,19 @@ export function calculateWorkspaceHealth(
       : 'Assign a domain for better governance and discoverability',
   });
 
-  // Git integration
-  const hasGit = !!workspace.workspaceIdentity;
+  // Workspace identity — SPN configuration enables both Git integration and automation
+  // The Fabric API returns workspaceIdentity as a unit: present with a non-empty
+  // servicePrincipalId, or absent entirely. Merging these into one 25-pt check
+  // (was separate git:15 + identity:10) reflects what the API actually exposes.
+  const hasIdentity = !!workspace.workspaceIdentity?.servicePrincipalId;
   checks.push({
-    name: 'Git integration',
-    passed: hasGit,
-    points: hasGit ? w.git : 0,
-    maxPoints: w.git,
-    detail: hasGit
-      ? 'Workspace identity is configured for Git integration'
-      : 'Configure workspace identity to enable Git integration',
+    name: 'Workspace identity',
+    passed: hasIdentity,
+    points: hasIdentity ? w.workspaceIdentity : 0,
+    maxPoints: w.workspaceIdentity,
+    detail: hasIdentity
+      ? 'Service principal configured — enables Git integration and automation'
+      : 'No workspace identity — configure SPN to enable Git integration and automation',
   });
 
   // Naming convention
@@ -139,17 +142,6 @@ export function calculateWorkspaceHealth(
       : `${items.length} items exceeds recommended limit of ${MAX_REASONABLE_ITEM_COUNT} — consider splitting`,
   });
 
-  // Workspace identity
-  const hasSpn = !!workspace.workspaceIdentity?.servicePrincipalId;
-  checks.push({
-    name: 'Workspace identity',
-    passed: hasSpn,
-    points: hasSpn ? w.identity : 0,
-    maxPoints: w.identity,
-    detail: hasSpn
-      ? 'Service principal is configured'
-      : 'No service principal — configure workspace identity (SPN)',
-  });
 
   // Tag coverage — skip when workspace has no items (neutral, not penalizing)
   if (items.length > 0) {

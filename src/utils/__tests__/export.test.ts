@@ -16,7 +16,7 @@ beforeEach(() => {
   console.error = () => undefined;
 
   vi.stubGlobal('Blob', class MockBlob {
-    constructor(parts?: BlobPart[], _options?: BlobPropertyBag) {
+    constructor(parts?: BlobPart[]) {
       capturedContent = (parts ?? []).map(String).join('');
     }
   });

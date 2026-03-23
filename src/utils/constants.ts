@@ -86,7 +86,7 @@ export const CHART_TOOLTIP_STYLE: CSSProperties = {
 // -- Governance --
 
 /** Health check IDs classified as critical severity in governance panels. */
-export const CRITICAL_HEALTH_CHECKS = ['capacity', 'description', 'git'] as const;
+export const CRITICAL_HEALTH_CHECKS = ['capacity', 'description', 'workspaceIdentity'] as const;
 
 // -- Health scoring --
 
@@ -101,12 +101,11 @@ export const HEALTH_SCORE_WEIGHTS = {
   description: 10,
   capacity: 15,
   domain: 10,
-  git: 15,
+  workspaceIdentity: 25, // merged: SPN configuration enables both identity and Git integration
   naming: 10,
   activeItems: 10,
   dataLayer: 10,
   reasonableCount: 10,
-  identity: 10,
   tagCoverage: 10,
 } as const;
 

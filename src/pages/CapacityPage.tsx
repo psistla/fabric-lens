@@ -311,7 +311,7 @@ function CapacityDetail({
 
   return (
     <tr>
-      <td colSpan={5} className="bg-[var(--surface-secondary)] px-4 py-4">
+      <td colSpan={5} className="bg-[var(--m-surface)] px-4 py-4">
         <div className="space-y-4">
           {/* SKU specs */}
           {spec && (
@@ -356,12 +356,12 @@ function CapacityDetail({
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[var(--border-default)]">
+                <tbody className="divide-y divide-[var(--m-border)]">
                   {assigned.map((ws) => (
                     <tr
                       key={ws.id}
                       onClick={() => void navigate(`/workspaces/${ws.id}`)}
-                      className="cursor-pointer hover:bg-[var(--surface-tertiary)]"
+                      className="cursor-pointer hover:bg-[var(--m-surface-hover)]"
                     >
                       <td className="px-3 py-2 font-medium text-[var(--m-primary)]">
                         {ws.displayName}
@@ -523,7 +523,7 @@ export function CapacityPage() {
                   <tr key={i}>
                     {Array.from({ length: 5 }).map((_, j) => (
                       <td key={j} className="px-4 py-3">
-                        <div className="h-4 w-3/4 animate-pulse rounded bg-[var(--surface-secondary)]" />
+                        <div className="h-4 w-3/4 animate-pulse rounded bg-[var(--m-surface)]" />
                       </td>
                     ))}
                   </tr>
@@ -549,7 +549,7 @@ export function CapacityPage() {
                       onClick={() =>
                         setExpandedId(isExpanded ? null : cap.id)
                       }
-                      className="cursor-pointer hover:bg-[var(--surface-tertiary)]"
+                      className="cursor-pointer hover:bg-[var(--m-surface-hover)]"
                     >
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">

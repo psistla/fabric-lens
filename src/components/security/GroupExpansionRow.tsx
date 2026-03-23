@@ -18,7 +18,7 @@ export function GroupBadge({ group, expanded, onToggle }: BadgeProps) {
         e.stopPropagation();
         onToggle();
       }}
-      className="inline-flex items-center gap-1 rounded-lg px-1.5 py-0.5 text-xs text-[var(--m-text-secondary)] transition-colors hover:bg-[var(--surface-tertiary)]"
+      className="inline-flex items-center gap-1 rounded-lg px-1.5 py-0.5 text-xs text-[var(--m-text-secondary)] transition-colors hover:bg-[var(--m-surface-hover)]"
     >
       <ChevronRight
         className="h-3 w-3 transition-transform"

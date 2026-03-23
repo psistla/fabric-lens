@@ -30,8 +30,7 @@ export function AppShell({ children }: Props) {
       <Sidebar />
       <div className="flex flex-1 flex-col overflow-hidden">
         {isDemoMode && (
-          // #FBBF24 bg (accent-vivid, decorative) with #78350F text (accent-900, 6.6:1 contrast ✓ AA)
-          <div className="flex items-center justify-center gap-2 bg-[#FBBF24] px-4 py-1 text-xs font-semibold text-[#78350F]">
+          <div className="flex items-center justify-center gap-2 bg-[var(--m-accent-400)] px-4 py-1 text-xs font-semibold text-[var(--m-accent-900)]">
             DEMO MODE — Exploring with sample data. Sign in to connect your Fabric tenant.
           </div>
         )}

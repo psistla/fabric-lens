@@ -38,13 +38,13 @@ function AuthStatusSection() {
           Authentication Status
         </h2>
       </div>
-      <div className="divide-y divide-[var(--border-default)]">
+      <div className="divide-y divide-[var(--m-border)]">
         <div className="flex items-center justify-between px-5 py-3">
           <span className="text-sm text-[var(--m-text-secondary)]">
             Status
           </span>
           {isDemoMode ? (
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FBBF24] px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-[#78350F]">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--m-accent-400)] px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-[var(--m-accent-900)]">
               Demo Mode
             </span>
           ) : isAuthenticated ? (
@@ -119,7 +119,7 @@ interface PermissionRow {
 function PermissionStatusBadge({ granted }: { granted: boolean | null }) {
   if (isDemoMode) {
     return (
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FBBF24] px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-[#78350F]">
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--m-accent-400)] px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-[var(--m-accent-900)]">
         Demo Mode
       </span>
     );
@@ -293,7 +293,7 @@ function HealthConfigSection() {
             className="w-32 rounded-lg border border-[var(--m-border)] bg-[var(--m-bg)] px-3 py-2 text-sm text-[var(--m-text)]"
           />
           <p className="mt-1 text-xs text-[var(--m-text-tertiary)]">
-            Items not modified within this period are considered stale ({HEALTH_SCORE_WEIGHTS.activeItems} pts).
+            Items not modified within this period are considered stale (informational — does not affect health score).
           </p>
         </div>
 
@@ -306,13 +306,13 @@ function HealthConfigSection() {
               ['Has description', HEALTH_SCORE_WEIGHTS.description],
               ['Assigned to capacity', HEALTH_SCORE_WEIGHTS.capacity],
               ['Assigned to domain', HEALTH_SCORE_WEIGHTS.domain],
-              ['Git integration', HEALTH_SCORE_WEIGHTS.git],
+              ['Workspace identity (SPN + Git)', HEALTH_SCORE_WEIGHTS.workspaceIdentity],
               ['Naming convention', HEALTH_SCORE_WEIGHTS.naming],
-              ['No stale items', HEALTH_SCORE_WEIGHTS.activeItems],
+              ['Has active items', HEALTH_SCORE_WEIGHTS.activeItems],
               ['Data layer present', HEALTH_SCORE_WEIGHTS.dataLayer],
               ['Reasonable item count', HEALTH_SCORE_WEIGHTS.reasonableCount],
-              ['Workspace identity (SPN)', HEALTH_SCORE_WEIGHTS.identity],
-            ] as const).map(([label, pts]) => (
+              ['Tag coverage (≥80%)', HEALTH_SCORE_WEIGHTS.tagCoverage],
+            ] as [string, number][]).map(([label, pts]) => (
               <span key={label} className="contents">
                 <span>{label}</span>
                 <span className="text-right font-medium">{pts} pts</span>
@@ -354,7 +354,7 @@ function ThemeSection() {
               className={`flex items-center gap-2 rounded-lg border-2 px-4 py-3 text-sm font-medium transition-colors ${
                 theme === opt.value
                   ? 'border-[var(--m-primary)] bg-[var(--m-primary-subtle)] text-[var(--m-primary)]'
-                  : 'border-[var(--m-border)] text-[var(--m-text-secondary)] hover:border-[var(--text-tertiary)] hover:bg-[var(--m-surface)]'
+                  : 'border-[var(--m-border)] text-[var(--m-text-secondary)] hover:border-[var(--m-text-tertiary)] hover:bg-[var(--m-surface)]'
               }`}
             >
               <opt.icon className="h-4 w-4" />
