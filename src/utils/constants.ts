@@ -83,6 +83,11 @@ export const CHART_TOOLTIP_STYLE: CSSProperties = {
   color: 'var(--m-neutral-0, #FFFFFF)',
 };
 
+// -- Governance --
+
+/** Health check IDs classified as critical severity in governance panels. */
+export const CRITICAL_HEALTH_CHECKS = ['capacity', 'description', 'git'] as const;
+
 // -- Health scoring --
 
 /** Default naming convention regex for workspace health checks. */

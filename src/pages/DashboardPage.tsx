@@ -13,7 +13,8 @@ import { useUiStore } from '@/store/uiStore';
 import { StatCard } from '@/components/shared/StatCard';
 import { ItemsByTypeChart } from '@/components/charts/ItemsByTypeChart';
 import { WorkspacesByCapacityChart } from '@/components/charts/WorkspacesByCapacityChart';
-import { GovernanceIssues } from '@/components/workspace/GovernanceIssues';
+import { GovernanceIssuesPanel } from '@/components/dashboard/GovernanceIssuesPanel';
+import { aggregateGovernanceIssues } from '@/utils/governanceIssues';
 import { calculateWorkspaceHealth } from '@/utils/healthScore';
 import { ExportButton } from '@/components/shared/ExportButton';
 import { HealthGrid } from '@/components/dashboard/HealthGrid';
@@ -121,7 +122,7 @@ export function DashboardPage() {
     [workspaces, allItemsByWorkspace],
   );
 
-  // Governance issue counts
+  // Governance — flat stats for StatCards
   const governance = useMemo(() => {
     let noCapacity = 0;
     let noDescription = 0;
@@ -135,6 +136,22 @@ export function DashboardPage() {
     }
     return { noCapacity, noDescription, noGitIntegration, personalWorkspaces };
   }, [workspaces]);
+
+  // Aggregated governance issues for the panel
+  const healthResultsMap = useMemo(() => {
+    const map = new Map(
+      workspaces.map((ws) => {
+        const wsItems = allItemsByWorkspace[ws.id] ?? [];
+        return [ws.id, calculateWorkspaceHealth(ws, wsItems)];
+      }),
+    );
+    return map;
+  }, [workspaces, allItemsByWorkspace]);
+
+  const aggregatedIssues = useMemo(
+    () => aggregateGovernanceIssues(workspaces, healthResultsMap),
+    [workspaces, healthResultsMap],
+  );
 
   const handleExport = useCallback(() => {
     const snapshot = {
@@ -329,12 +346,10 @@ export function DashboardPage() {
         />
       )}
 
-      {/* Governance Issues */}
-      <GovernanceIssues
-        noCapacity={governance.noCapacity}
-        noDescription={governance.noDescription}
-        noGitIntegration={governance.noGitIntegration}
-        personalWorkspaces={governance.personalWorkspaces}
+      {/* Governance Issues Panel */}
+      <GovernanceIssuesPanel
+        issues={aggregatedIssues}
+        workspaces={workspaces}
       />
     </div>
   );
