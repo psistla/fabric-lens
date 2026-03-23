@@ -1,16 +1,16 @@
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router';
-import { Users, ShieldAlert, Server, UsersRound, ArrowRight, ShieldCheck, Loader2 } from 'lucide-react';
+import { Users, ShieldAlert, Bot, AlertTriangle, ArrowRight, ShieldCheck, Loader2 } from 'lucide-react';
 import { useSecurityStore } from '@/store/securityStore';
 import { useWorkspaceStore } from '@/store/workspaceStore';
 import { ADMIN_ROLE_WARNING_THRESHOLD } from '@/utils/constants';
+import { computeSecurityPosture } from '@/utils/securityFindings';
 
 interface SecuritySummary {
   totalUniqueUsers: number;
   overPermissionedCount: number;
-  spnConfiguredCount: number;
-  totalWorkspaces: number;
-  resolvedGroupCount: number;
+  spofCount: number;
+  spnAdminCount: number;
 }
 
 export function SecurityQuickView() {
@@ -20,37 +20,65 @@ export function SecurityQuickView() {
 
   const hasData = Object.keys(workspaceUsers).length > 0;
 
-  const summary = useMemo<SecuritySummary>(() => {
-    const totalWorkspaces = workspaces.length;
-    const spnConfiguredCount = workspaces.filter((ws) => ws.workspaceIdentity != null).length;
-    const resolvedGroupCount = Object.keys(resolvedGroups).length;
-
-    if (!hasData) {
-      return { totalUniqueUsers: 0, overPermissionedCount: 0, spnConfiguredCount, totalWorkspaces, resolvedGroupCount };
+  const userSummaries = useMemo((): import('@/utils/effectiveAccess').UserSummary[] => {
+    if (!hasData) return [];
+    const map = new Map<string, import('@/utils/effectiveAccess').UserSummary>();
+    for (const [wsId, users] of Object.entries(workspaceUsers)) {
+      const wsName = workspaces.find((w) => w.id === wsId)?.displayName ?? wsId;
+      for (const u of users) {
+        const email = u.userDetails.userPrincipalName;
+        const pType = u.userDetails.principalType ?? 'User';
+        let s = map.get(email);
+        if (!s) {
+          s = { displayName: u.userDetails.displayName, email, principalType: pType, assignments: [] };
+          map.set(email, s);
+        }
+        s.assignments.push({ workspaceId: wsId, workspaceName: wsName, role: u.workspaceAccessDetails.workspaceRole });
+      }
     }
+    return [...map.values()];
+  }, [workspaceUsers, workspaces, hasData]);
+
+  const posture = useMemo(
+    () => (hasData ? computeSecurityPosture(userSummaries, resolvedGroups) : null),
+    [userSummaries, resolvedGroups, hasData],
+  );
+
+  const summary = useMemo<SecuritySummary>(() => {
+    if (!hasData) return { totalUniqueUsers: 0, overPermissionedCount: 0, spofCount: 0, spnAdminCount: 0 };
 
     const uniqueUpns = new Set<string>();
     const adminCountByUpn = new Map<string, number>();
+    const adminCountByWs = new Map<string, number>();
 
-    for (const users of Object.values(workspaceUsers)) {
+    for (const [wsId, users] of Object.entries(workspaceUsers)) {
       for (const user of users) {
-        if (user.principalType === 'Group' || user.principalType === 'ServicePrincipal' || user.principalType === 'ServicePrincipalProfile') {
-          continue;
+        const pType = user.userDetails.principalType ?? 'User';
+        if (pType === 'User') {
+          const upn = user.userDetails.userPrincipalName;
+          uniqueUpns.add(upn);
+          if (user.workspaceAccessDetails.workspaceRole === 'Admin') {
+            adminCountByUpn.set(upn, (adminCountByUpn.get(upn) ?? 0) + 1);
+          }
         }
-        const upn = user.userDetails.userPrincipalName;
-        uniqueUpns.add(upn);
         if (user.workspaceAccessDetails.workspaceRole === 'Admin') {
-          adminCountByUpn.set(upn, (adminCountByUpn.get(upn) ?? 0) + 1);
+          adminCountByWs.set(wsId, (adminCountByWs.get(wsId) ?? 0) + 1);
         }
       }
     }
 
     const overPermissionedCount = [...adminCountByUpn.values()].filter(
-      (count) => count >= ADMIN_ROLE_WARNING_THRESHOLD,
+      (c) => c >= ADMIN_ROLE_WARNING_THRESHOLD,
+    ).length;
+    const spofCount = [...adminCountByWs.values()].filter((c) => c === 1).length;
+    const spnAdminCount = userSummaries.filter(
+      (u) =>
+        (u.principalType === 'ServicePrincipal' || u.principalType === 'ServicePrincipalProfile') &&
+        u.assignments.some((a) => a.role === 'Admin'),
     ).length;
 
-    return { totalUniqueUsers: uniqueUpns.size, overPermissionedCount, spnConfiguredCount, totalWorkspaces, resolvedGroupCount };
-  }, [workspaceUsers, resolvedGroups, workspaces, hasData]);
+    return { totalUniqueUsers: uniqueUpns.size, overPermissionedCount, spofCount, spnAdminCount };
+  }, [workspaceUsers, userSummaries, hasData]);
 
   const handleLoad = () => {
     void fetchAllWorkspaceUsers(workspaces.map((ws) => ws.id));
@@ -66,6 +94,16 @@ export function SecurityQuickView() {
             Security Overview
           </h2>
         </div>
+        {posture && (
+          <span className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${
+            posture.grade === 'A' ? 'bg-[var(--m-success-bg)] text-[var(--m-success)]' :
+            posture.grade === 'B' ? 'bg-[var(--m-primary-subtle)] text-[var(--m-primary)]' :
+            posture.grade === 'C' ? 'bg-[var(--m-accent-subtle)] text-[var(--m-accent)]' :
+            'bg-[var(--m-error-bg)] text-[var(--m-error-text)]'
+          }`}>
+            Posture {posture.grade}
+          </span>
+        )}
       </div>
 
       {/* No data CTA */}
@@ -113,14 +151,16 @@ export function SecurityQuickView() {
             alert={summary.overPermissionedCount > 0}
           />
           <MetricRow
-            icon={Server}
-            label="Workspaces with SPN configured"
-            value={`${summary.spnConfiguredCount} / ${summary.totalWorkspaces}`}
+            icon={AlertTriangle}
+            label="Single-admin workspaces (SPOF)"
+            value={String(summary.spofCount)}
+            alert={summary.spofCount > 0}
           />
           <MetricRow
-            icon={UsersRound}
-            label="Security groups resolved"
-            value={String(summary.resolvedGroupCount)}
+            icon={Bot}
+            label="Service principals with Admin role"
+            value={String(summary.spnAdminCount)}
+            alert={summary.spnAdminCount > 0}
           />
         </div>
       )}
@@ -148,24 +188,14 @@ interface MetricRowProps {
 
 function MetricRow({ icon: Icon, label, value, alert = false }: MetricRowProps) {
   return (
-    <div
-      className={`flex items-center gap-3 px-4 py-3 ${
-        alert ? 'bg-red-50 dark:bg-red-950/30' : ''
-      }`}
-    >
+    <div className={`flex items-center gap-3 px-4 py-3 ${alert ? 'bg-[var(--m-error-bg)]' : ''}`}>
       <Icon
-        className={`h-4 w-4 shrink-0 ${
-          alert ? 'text-red-600 dark:text-red-400' : 'text-[var(--m-text-secondary)]'
-        }`}
+        className={`h-4 w-4 shrink-0 ${alert ? 'text-[var(--m-error)]' : 'text-[var(--m-text-secondary)]'}`}
       />
-      <span className={`min-w-0 flex-1 text-sm ${alert ? 'text-red-700 dark:text-red-300' : 'text-[var(--m-text-secondary)]'}`}>
+      <span className={`min-w-0 flex-1 text-sm ${alert ? 'text-[var(--m-error-text)]' : 'text-[var(--m-text-secondary)]'}`}>
         {label}
       </span>
-      <span
-        className={`shrink-0 font-mono text-sm font-semibold ${
-          alert ? 'text-red-700 dark:text-red-300' : 'text-[var(--m-text)]'
-        }`}
-      >
+      <span className={`shrink-0 font-mono text-sm font-semibold ${alert ? 'text-[var(--m-error-text)]' : 'text-[var(--m-text)]'}`}>
         {value}
       </span>
     </div>
