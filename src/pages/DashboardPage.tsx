@@ -63,13 +63,15 @@ export function DashboardPage() {
     [capacities],
   );
 
-  const avgHealthScore = useMemo(() => {
-    if (workspaces.length === 0) return 0;
+  const { avgHealthScore, lowHealthCount } = useMemo(() => {
+    if (workspaces.length === 0) return { avgHealthScore: 0, lowHealthCount: 0 };
     const scores = workspaces.map((ws) => {
       const wsItems = allItemsByWorkspace[ws.id] ?? [];
       return calculateWorkspaceHealth(ws, wsItems).percentage;
     });
-    return Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+    const avg = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+    const low = scores.filter((s) => s < 65).length;
+    return { avgHealthScore: avg, lowHealthCount: low };
   }, [workspaces, allItemsByWorkspace]);
 
   // Items by type chart data
@@ -237,21 +239,47 @@ export function DashboardPage() {
           label="Total Workspaces"
           value={workspaces.length}
           icon={FolderOpen}
+          signal={
+            governance.noCapacity > 0
+              ? `${governance.noCapacity} at risk — no capacity`
+              : 'All assigned to capacity'
+          }
+          signalColor={governance.noCapacity > 0 ? 'var(--m-error)' : undefined}
         />
         <StatCard
           label="Total Items"
           value={allItems.length}
           icon={Package}
+          signal={
+            governance.noDescription > 0
+              ? `${governance.noDescription} at risk — no description`
+              : 'All workspaces described'
+          }
+          signalColor={governance.noDescription > 0 ? 'var(--m-warning)' : undefined}
         />
         <StatCard
           label="Active Capacities"
           value={activeCapacityCount}
           icon={Gauge}
+          signal={
+            capacities.length - activeCapacityCount > 0
+              ? `${capacities.length - activeCapacityCount} warning — inactive`
+              : 'All capacities active'
+          }
+          signalColor={
+            capacities.length - activeCapacityCount > 0 ? 'var(--m-warning)' : undefined
+          }
         />
         <StatCard
           label="Avg Health Score"
           value={`${avgHealthScore}%`}
           icon={Heart}
+          signal={
+            lowHealthCount > 0
+              ? `${lowHealthCount} at risk — grade D or F`
+              : 'All workspaces grade C+'
+          }
+          signalColor={lowHealthCount > 0 ? 'var(--m-error)' : undefined}
         />
       </div>
 
