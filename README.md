@@ -199,12 +199,11 @@ Each workspace is scored across ten governance checks. When items are present, t
 | Has description | 10 | Workspace has a non-empty description |
 | Assigned to capacity | 15 | Workspace is linked to a Fabric capacity |
 | Assigned to domain | 10 | Workspace belongs to a defined domain |
-| Git integration | 15 | Workspace is connected to a Git repository |
+| Workspace identity (SPN + Git) | 25 | SPN configured — enables Git integration and automation |
 | Naming convention | 10 | Name follows the configured pattern |
 | Active items | 10 | Workspace contains at least one item |
 | Data layer present | 10 | Contains at least one Lakehouse or Warehouse |
 | Reasonable item count | 10 | Fewer than 100 items |
-| Workspace identity | 10 | Service principal identity configured |
 | Tag coverage | 10 | ≥80% of items tagged (full); ≥50% (half credit); skipped if no items |
 
 **Grades:** A (≥90%) · B (≥80%) · C (≥65%) · D (≥50%) · F (<50%)
