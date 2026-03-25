@@ -1,61 +1,45 @@
 import puppeteer from 'puppeteer';
-import { setTimeout } from 'timers/promises';
+import { mkdirSync } from 'fs';
 
-const BASE = 'http://localhost:5173';
-const DIR = 'docs/screenshots';
-const WIDTH = 1440;
-const HEIGHT = 900;
+mkdirSync('./docs/screenshots', { recursive: true });
 
-async function main() {
-  const browser = await puppeteer.launch({ headless: true });
+const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
+
+async function capture(url, file, { wait = 1500, scanAll = false } = {}) {
   const page = await browser.newPage();
-  await page.setViewport({ width: WIDTH, height: HEIGHT });
-
-  // Helper: navigate, wait for network idle, take screenshot
-  async function capture(path, filename, setup) {
-    await page.goto(`${BASE}${path}`, { waitUntil: 'networkidle0', timeout: 15000 });
-    if (setup) await setup();
-    await setTimeout(500); // let animations settle
-    await page.screenshot({ path: `${DIR}/${filename}`, fullPage: false });
-    console.log(`  ✓ ${filename}`);
+  await page.setViewport({ width: 1280, height: 800, deviceScaleFactor: 2 });
+  await page.goto(url, { waitUntil: 'networkidle0' });
+  await new Promise(r => setTimeout(r, wait));
+  if (scanAll) {
+    await page.evaluate(() => {
+      const btn = Array.from(document.querySelectorAll('button')).find(b => b.textContent.includes('Scan All'));
+      btn?.click();
+    });
+    await new Promise(r => setTimeout(r, 3000));
   }
-
-  console.log('Capturing screenshots...\n');
-
-  // 1. Dashboard (light mode)
-  await capture('/', 'dashboard.png');
-
-  // 2. Workspaces
-  await capture('/workspaces', 'workspaces.png');
-
-  // 3. Capacity
-  await capture('/capacity', 'capacity.png');
-
-  // 4. Security — click Scan All to load data
-  await capture('/security', 'security.png', async () => {
-    const scanBtn = await page.$('button');
-    const buttons = await page.$$('button');
-    for (const btn of buttons) {
-      const text = await btn.evaluate(el => el.textContent);
-      if (text?.includes('Scan All')) {
-        await btn.click();
-        await setTimeout(2000); // wait for mock scan to complete
-        break;
-      }
-    }
-  });
-
-  // 5. Dashboard dark mode
-  await capture('/', 'dashboard-dark.png', async () => {
-    await page.evaluate(() => document.documentElement.classList.add('dark'));
-    await setTimeout(300);
-  });
-
-  console.log('\nDone! Screenshots saved to docs/screenshots/');
-  await browser.close();
+  await page.screenshot({ path: `./docs/screenshots/${file}`, type: 'png' });
+  await page.close();
+  console.log(`Captured ${file}`);
 }
 
-main().catch(err => {
-  console.error('Error:', err.message);
-  process.exit(1);
-});
+try {
+  await capture('http://localhost:5173/', 'dashboard.png');
+  await capture('http://localhost:5173/workspaces', 'workspaces.png');
+  await capture('http://localhost:5173/capacity', 'capacity.png', { wait: 2500 });
+  await capture('http://localhost:5173/security', 'security.png', { scanAll: true });
+
+  // Dark mode dashboard
+  const darkPage = await browser.newPage();
+  await darkPage.setViewport({ width: 1280, height: 800, deviceScaleFactor: 2 });
+  await darkPage.goto('http://localhost:5173/', { waitUntil: 'networkidle0' });
+  await new Promise(r => setTimeout(r, 1000));
+  await darkPage.evaluate(() => document.documentElement.classList.add('dark'));
+  await new Promise(r => setTimeout(r, 500));
+  await darkPage.screenshot({ path: './docs/screenshots/dashboard-dark.png', type: 'png' });
+  await darkPage.close();
+  console.log('Captured dashboard-dark.png');
+
+} finally {
+  await browser.close();
+}
+console.log('All screenshots done.');
