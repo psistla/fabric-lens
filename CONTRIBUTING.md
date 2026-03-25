@@ -144,7 +144,7 @@ interface Props {
 
 export function PipelineList({ pipelines, loading }: Props) {
   if (loading) {
-    return <div className="animate-pulse space-y-2">Loading...</div>;
+    return <div className="m-skeleton h-32 rounded-xl" />;
   }
 
   return (
@@ -189,7 +189,7 @@ export function PipelinesPage() {
         Pipelines
       </h1>
       {error && (
-        <div className="rounded-md bg-red-50 p-4 text-red-700 dark:bg-red-900/20 dark:text-red-400">
+        <div className="rounded-xl border border-[var(--m-error)] bg-[var(--m-error-bg)] px-4 py-3 text-[var(--m-error-text)]">
           {error}
         </div>
       )}
@@ -255,11 +255,17 @@ const StatCard: React.FC<Props> = ({ title, count }) => { ... };
 ### Styling
 
 - Use **Tailwind CSS utility classes**. Avoid writing custom CSS unless absolutely necessary.
+- Use the **`--m-*` semantic token system** for all colors — never raw hex values or `gray-*` / `slate-*` scales in components. Tokens automatically resolve for both light and dark mode.
 - Use **Radix UI primitives** with **class-variance-authority** and **tailwind-merge** for all interactive elements (buttons, dialogs, dropdowns, etc.).
-- Support dark mode with Tailwind `dark:` prefix variants on every visual element.
+- Use `.m-skeleton` for loading skeletons — **never** `animate-pulse`.
 
 ```tsx
-// Example: dark mode support
+// Correct — semantic tokens, automatic dark mode
+<div className="bg-[var(--m-bg)] text-[var(--m-text)]">
+  <p className="text-[var(--m-text-secondary)]">Subtitle</p>
+</div>
+
+// Incorrect — raw color scales, manual dark: variants
 <div className="bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100">
   <p className="text-gray-500 dark:text-gray-400">Subtitle</p>
 </div>

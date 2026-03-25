@@ -5,7 +5,7 @@ fabric-lens is a standalone React SPA providing governance, health intelligence,
 
 ## Tech Stack
 - **Framework:** React 19 + TypeScript (strict)
-- **Build:** Vite 7
+- **Build:** Vite 8
 - **Styling:** Tailwind CSS v4 (via `@tailwindcss/vite` — zero-config, no `tailwind.config.ts`)
 - **UI Primitives:** Radix UI + class-variance-authority + tailwind-merge
 - **State:** Zustand 5

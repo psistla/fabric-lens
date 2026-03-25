@@ -24,8 +24,6 @@ Fabric Lens is a standalone React SPA that connects directly to Microsoft Fabric
 |-----------------|----------------|
 | ![Capacity](docs/screenshots/capacity.png) | ![Security](docs/screenshots/security.png) |
 
-> **TODO:** Screenshots to be updated after v2.0 design migration.
-
 <details>
 <summary>Dark Mode</summary>
 
@@ -49,7 +47,7 @@ Fabric Lens is a standalone React SPA that connects directly to Microsoft Fabric
 | **CSV Export** | Export workspace inventories and security audit data for offline analysis |
 | **Dark Mode** | Deep dark base (`#0D0F12`) with full semantic token support — not pure black, creates depth without blue-navy tint |
 | **Design System** | Semantic CSS custom property token system (`--m-*`) for surfaces, text, borders, and brand colors. Manrope + JetBrains Mono typography, self-hosted |
-| **Demo Mode** | Realistic mock data — 3 capacities, 15 workspaces, 54+ items across all 18+ item types, 6 users — no Azure credentials needed |
+| **Demo Mode** | Realistic mock data — 3 capacities, 35 workspaces, 200+ items across all 19 item types, 8 users, 4 groups — no Azure credentials needed |
 
 ---
 
@@ -170,8 +168,8 @@ For production deployments on Azure Static Web Apps, set these as Application Se
 │  ┌───────────────────┼────┼───┼─────────────────────────┐    │
 │  │   Demo Mode       │    │   │   (mock data layer)     │    │
 │  │   isDemoMode ──►  │    │   │   3 capacities,         │    │
-│  │   bypass auth     │    │   │   15 workspaces,        │    │
-│  │   serve mocks     │    │   │   54+ items, 6 users    │    │
+│  │   bypass auth     │    │   │   35 workspaces,        │    │
+│  │   serve mocks     │    │   │   200+ items, 8 users   │    │
 │  └───────────────────┼────┼───┼─────────────────────────┘    │
 └──────────────────────┼────┼───┼──────────────────────────────┘
                        │    │   │
@@ -252,7 +250,7 @@ src/
 | | Technology |
 |--|-----------|
 | Framework | React 19 + TypeScript (strict) |
-| Build | Vite 7 |
+| Build | Vite 8 |
 | Styling | Tailwind CSS v4 (`@tailwindcss/vite`) + Meridian `--m-*` CSS tokens |
 | Typography | Manrope variable (UI) + JetBrains Mono variable (code/IDs) — self-hosted |
 | UI Primitives | Radix UI + class-variance-authority + tailwind-merge |
