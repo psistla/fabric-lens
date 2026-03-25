@@ -7,10 +7,10 @@ Fabric Lens is a standalone React SPA that connects directly to Microsoft Fabric
 [![MIT License](https://img.shields.io/badge/license-MIT-4F46E5.svg)](LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-4F46E5.svg)](tsconfig.app.json)
 [![React](https://img.shields.io/badge/React-19-4F46E5.svg)](package.json)
-[![Live Demo](https://img.shields.io/badge/demo-live-4F46E5.svg)](https://lively-grass-0fa393e10.2.azurestaticapps.net)
+[![Live Demo](https://img.shields.io/badge/demo-live-4F46E5.svg)](https://fabric-lens.com)
 [![Security Policy](https://img.shields.io/badge/security-policy-4F46E5.svg)](SECURITY.md)
 
-> **[Try the live demo](https://lively-grass-0fa393e10.2.azurestaticapps.net)** — Explore with sample data in your browser, no setup required.
+> **[Try the live demo](https://fabric-lens.com)** — Explore with sample data in your browser, no setup required.
 
 ---
 
@@ -57,7 +57,7 @@ Fabric Lens is a standalone React SPA that connects directly to Microsoft Fabric
 
 The fastest way to connect your Fabric tenant — no installation, no configuration, no app registration required.
 
-1. Visit [fabric-lens](https://lively-grass-0fa393e10.2.azurestaticapps.net)
+1. Visit [fabric-lens.com](https://fabric-lens.com)
 2. Click **Sign in with Microsoft**
 3. Authenticate with your Azure AD account
 4. Your tenant admin approves the one-time consent prompt
