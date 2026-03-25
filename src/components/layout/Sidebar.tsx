@@ -73,14 +73,14 @@ export function Sidebar() {
             end={item.path === '/'}
             title={collapsed ? item.label : undefined}
             className={({ isActive }) =>
-              `group flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors duration-[120ms] ${
+              `flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors duration-[120ms] ${
                 isActive
-                  ? 'border-l-2 border-[var(--m-primary)] bg-[var(--m-primary-subtle)] font-semibold text-[var(--m-primary)]'
-                  : 'border-l-2 border-transparent text-[var(--m-text-secondary)] hover:bg-[var(--m-surface-hover)] hover:text-[var(--m-text)]'
+                  ? 'bg-[var(--m-primary-subtle)] font-semibold text-[var(--m-primary)]'
+                  : 'text-[var(--m-text-secondary)] hover:bg-[var(--m-surface-hover)] hover:text-[var(--m-text)]'
               } ${collapsed ? 'justify-center px-0' : ''}`
             }
           >
-            <item.icon className="h-4 w-4 shrink-0" />
+            <item.icon className="h-5 w-5 shrink-0" />
             {!collapsed && <span>{item.label}</span>}
           </NavLink>
         ))}
