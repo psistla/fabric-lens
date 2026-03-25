@@ -41,3 +41,6 @@ SECURITY_AUDIT.md
 
 # Local planning docs
 SECURITY_PAGE_PLAN.md
+
+# Local dev scripts
+scripts/
