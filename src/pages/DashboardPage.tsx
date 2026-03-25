@@ -283,7 +283,7 @@ export function DashboardPage() {
     <div className="space-y-8 p-6">
       {/* Error banner */}
       {healthError && (
-        <div className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-2.5 text-sm text-red-700 dark:border-red-800 dark:bg-red-950/40 dark:text-red-400">
+        <div className="flex items-center gap-2 rounded-xl border border-[var(--m-error)] bg-[var(--m-error-bg)] px-4 py-3 text-sm text-[var(--m-error-text)]">
           <AlertCircle className="h-4 w-4 shrink-0" />
           Health score computation encountered an error: {healthError}
         </div>
@@ -372,7 +372,7 @@ export function DashboardPage() {
       {/* Section 4: Health Grade Distribution + Security Quick View */}
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)] p-4">
-          <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--m-text-secondary)]">
+          <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.04em] text-[var(--m-text-secondary)]">
             Health Grade Distribution
           </h2>
           {gradeDist.length > 0 ? (
@@ -420,7 +420,7 @@ export function DashboardPage() {
       {/* Section 5: Item Distribution */}
       {itemDist.length > 0 && (
         <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)] p-4">
-          <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--m-text-secondary)]">
+          <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.04em] text-[var(--m-text-secondary)]">
             Item Distribution
           </h2>
           <div className="flex flex-wrap gap-2">

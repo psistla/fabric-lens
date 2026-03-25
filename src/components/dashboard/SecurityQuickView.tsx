@@ -90,7 +90,7 @@ export function SecurityQuickView() {
       <div className="flex items-center justify-between border-b border-[var(--m-border)] px-4 py-3">
         <div className="flex items-center gap-2">
           <ShieldCheck className="h-4 w-4 text-[var(--m-text-secondary)]" />
-          <h2 className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--m-text-secondary)]">
+          <h2 className="text-[11px] font-semibold uppercase tracking-[0.04em] text-[var(--m-text-secondary)]">
             Security Overview
           </h2>
         </div>
