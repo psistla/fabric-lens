@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import { Info } from 'lucide-react';
 import { ScoreRing } from '@/components/dashboard/ScoreRing';
 import type { SecurityPosture } from '@/utils/securityFindings';
 
@@ -48,7 +50,7 @@ function CheckRow({
         <p className="text-[11px] text-[var(--m-text-secondary)]">{status}</p>
       </div>
       <span className={`shrink-0 font-mono text-[11px] font-semibold tabular-nums ${pointsColor}`}>
-        {failed ? '0' : `+${earned}`}
+        {failed ? '0' : earned}
         <span className="font-normal text-[var(--m-text-tertiary)]">/{max}</span>
       </span>
     </div>
@@ -57,6 +59,7 @@ function CheckRow({
 
 export function SecurityPostureCard({ posture }: Props) {
   const description = GRADE_DESCRIPTIONS[posture.grade] ?? '';
+  const [showTooltip, setShowTooltip] = useState(false);
 
   return (
     <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)] p-4">
@@ -71,9 +74,32 @@ export function SecurityPostureCard({ posture }: Props) {
 
         {/* Check breakdown */}
         <div className="min-w-0 flex-1">
-          <div className="mb-2 flex items-baseline gap-2">
+          <div className="mb-2 flex items-center gap-2">
             <h2 className="text-sm font-medium text-[var(--m-text)]">Security Posture</h2>
             <p className="text-xs text-[var(--m-text-secondary)]">{description}</p>
+            <div className="relative ml-auto">
+              <button
+                onMouseEnter={() => setShowTooltip(true)}
+                onMouseLeave={() => setShowTooltip(false)}
+                onFocus={() => setShowTooltip(true)}
+                onBlur={() => setShowTooltip(false)}
+                className="flex items-center text-[var(--m-text-tertiary)] transition-colors hover:text-[var(--m-text-secondary)]"
+                aria-label="How scoring works"
+              >
+                <Info className="h-3.5 w-3.5" />
+              </button>
+              {showTooltip && (
+                <div className="absolute right-0 top-5 z-10 w-64 rounded-lg border border-[var(--m-border)] bg-[var(--m-bg)] p-3 shadow-lg">
+                  <p className="text-[11px] font-semibold text-[var(--m-text)]">How scoring works</p>
+                  <p className="mt-1 text-[11px] leading-relaxed text-[var(--m-text-secondary)]">
+                    Each check awards points toward a 100-point posture score. Points are prorated by how many workspaces pass — e.g. 24 of 25 safe workspaces earns partial credit.
+                  </p>
+                  <p className="mt-1.5 text-[11px] text-[var(--m-text-tertiary)]">
+                    The score drives the posture grade (A–F).
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="divide-y divide-[var(--m-border)]">
