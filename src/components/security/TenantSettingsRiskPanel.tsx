@@ -170,7 +170,7 @@ export function TenantSettingsRiskPanel({ settings, loading, error, onRetry }: P
         <a
           href={FABRIC_ADMIN_PORTAL_SETTINGS_URL}
           target="_blank"
-          rel="noreferrer"
+          rel="noopener noreferrer"
           className="ml-4 shrink-0 text-[var(--m-primary)] hover:underline"
         >
           Open Admin Portal
