@@ -32,6 +32,8 @@ export const POWERBI_ADMIN_API_BASE = 'https://api.powerbi.com/v1.0/myorg';
  *  MSAL will fire acquireTokenPopup automatically on first use if not yet consented. */
 export const POWERBI_SCOPES = ['https://analysis.windows.net/powerbi/api/.default'];
 
+// -- Ghost workspaces --
+
 /** Number of days of inactivity after which a workspace is considered a ghost workspace. */
 export const GHOST_WORKSPACE_THRESHOLD_DAYS = 90;
 

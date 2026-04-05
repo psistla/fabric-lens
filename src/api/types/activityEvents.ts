@@ -1,3 +1,4 @@
+/** A single activity event record from the Power BI activity log API. */
 export interface ActivityEvent {
   id: string;
   creationTime: string;
@@ -12,13 +13,13 @@ export interface ActivityEvent {
 export interface ActivityEventsResponse {
   activityEventEntities: ActivityEvent[];
   continuationUri?: string;
-  continuationToken?: string;
+  continuationToken?: string; // defensive — primary pagination uses continuationUri
 }
 
 /** Derived summary of activity for a single workspace, computed from ActivityEvent records. */
 export interface WorkspaceActivity {
   workspaceId: string;
-  workspaceName: string;
+  workspaceName: string; // denormalized for display convenience
   lastActivityDate: Date;
   eventCount: number;
 }
