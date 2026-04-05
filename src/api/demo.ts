@@ -4,6 +4,7 @@ import type { Capacity } from './types/capacity';
 import type { WorkspaceUser, GroupMember, ResolvedGroup } from './types/admin';
 import type { TenantSetting } from './types/tenantSettings';
 import type { WidelySharedArtifact } from './types/widelyShared';
+import type { ActivityEvent } from './types/activityEvents';
 
 export const isDemoMode =
   !import.meta.env.VITE_MSAL_CLIENT_ID ||
@@ -1352,7 +1353,282 @@ export function getMockWidelySharedArtifacts(): WidelySharedArtifact[] {
   ];
 }
 
-/** Stub — replaced in Task 1g with realistic mock activity events. */
-export function getMockWorkspaceActivity(): import('./types/activityEvents').ActivityEvent[] {
-  return [];
+/**
+ * Returns ~200 realistic mock activity events for demo mode.
+ *
+ * Ghost workspaces (Grade D — daysInactive 95-180):
+ *   ws-6  (My Workspace), ws-7  (Legacy Reports),
+ *   ws-32 (Field Operations), ws-33 (Partner Analytics)
+ *
+ * No-event workspaces (Grade F — 0 events, not visible in 30-day live lookback
+ * but still ghost candidates because daysInactive is effectively ∞):
+ *   ws-5  (HR Dashboard), ws-34 (Temp Workspace), ws-35 (Archive Q3 2024)
+ *
+ * Active workspaces (daysInactive 1-14, not ghosts): all remaining 28 workspaces.
+ */
+export function getMockWorkspaceActivity(): ActivityEvent[] {
+  const DAY_MS = 24 * 60 * 60 * 1000;
+  const now = Date.now();
+
+  function daysAgo(n: number): string {
+    return new Date(now - n * DAY_MS).toISOString();
+  }
+
+  const events: ActivityEvent[] = [
+    // ------------------------------------------------------------------
+    // Grade A workspaces — 6-10 events each, recent (1-7 days)
+    // ------------------------------------------------------------------
+
+    // ws-1: Sales Analytics (8 events)
+    { id: 'evt-001', creationTime: daysAgo(1),  activity: 'ViewReport',      workspaceId: 'ws-1',  workspaceName: 'Sales Analytics',           userId: 'usr-001' },
+    { id: 'evt-002', creationTime: daysAgo(1),  activity: 'RefreshDataset',  workspaceId: 'ws-1',  workspaceName: 'Sales Analytics',           userId: 'usr-002' },
+    { id: 'evt-003', creationTime: daysAgo(2),  activity: 'ViewDashboard',   workspaceId: 'ws-1',  workspaceName: 'Sales Analytics',           userId: 'usr-003' },
+    { id: 'evt-004', creationTime: daysAgo(2),  activity: 'EditDataset',     workspaceId: 'ws-1',  workspaceName: 'Sales Analytics',           userId: 'usr-001' },
+    { id: 'evt-005', creationTime: daysAgo(3),  activity: 'RunPipeline',     workspaceId: 'ws-1',  workspaceName: 'Sales Analytics',           userId: 'usr-004' },
+    { id: 'evt-006', creationTime: daysAgo(4),  activity: 'EditReport',      workspaceId: 'ws-1',  workspaceName: 'Sales Analytics',           userId: 'usr-002' },
+    { id: 'evt-007', creationTime: daysAgo(5),  activity: 'ViewReport',      workspaceId: 'ws-1',  workspaceName: 'Sales Analytics',           userId: 'usr-005' },
+    { id: 'evt-008', creationTime: daysAgo(6),  activity: 'RefreshDataset',  workspaceId: 'ws-1',  workspaceName: 'Sales Analytics',           userId: 'usr-001' },
+
+    // ws-8: Customer Support (6 events)
+    { id: 'evt-010', creationTime: daysAgo(1),  activity: 'ViewReport',      workspaceId: 'ws-8',  workspaceName: 'Customer Support',          userId: 'usr-003' },
+    { id: 'evt-011', creationTime: daysAgo(2),  activity: 'ViewDashboard',   workspaceId: 'ws-8',  workspaceName: 'Customer Support',          userId: 'usr-006' },
+    { id: 'evt-012', creationTime: daysAgo(2),  activity: 'RefreshDataset',  workspaceId: 'ws-8',  workspaceName: 'Customer Support',          userId: 'usr-002' },
+    { id: 'evt-013', creationTime: daysAgo(4),  activity: 'EditReport',      workspaceId: 'ws-8',  workspaceName: 'Customer Support',          userId: 'usr-003' },
+    { id: 'evt-014', creationTime: daysAgo(5),  activity: 'RunPipeline',     workspaceId: 'ws-8',  workspaceName: 'Customer Support',          userId: 'usr-004' },
+    { id: 'evt-015', creationTime: daysAgo(7),  activity: 'ViewReport',      workspaceId: 'ws-8',  workspaceName: 'Customer Support',          userId: 'usr-007' },
+
+    // ws-9: Data Science Lab (7 events)
+    { id: 'evt-020', creationTime: daysAgo(1),  activity: 'CreateItem',      workspaceId: 'ws-9',  workspaceName: 'Data Science Lab',          userId: 'usr-001' },
+    { id: 'evt-021', creationTime: daysAgo(1),  activity: 'EditDataset',     workspaceId: 'ws-9',  workspaceName: 'Data Science Lab',          userId: 'usr-005' },
+    { id: 'evt-022', creationTime: daysAgo(2),  activity: 'RunPipeline',     workspaceId: 'ws-9',  workspaceName: 'Data Science Lab',          userId: 'usr-001' },
+    { id: 'evt-023', creationTime: daysAgo(3),  activity: 'ViewReport',      workspaceId: 'ws-9',  workspaceName: 'Data Science Lab',          userId: 'usr-002' },
+    { id: 'evt-024', creationTime: daysAgo(3),  activity: 'EditReport',      workspaceId: 'ws-9',  workspaceName: 'Data Science Lab',          userId: 'usr-005' },
+    { id: 'evt-025', creationTime: daysAgo(5),  activity: 'RefreshDataset',  workspaceId: 'ws-9',  workspaceName: 'Data Science Lab',          userId: 'usr-003' },
+    { id: 'evt-026', creationTime: daysAgo(7),  activity: 'ViewDashboard',   workspaceId: 'ws-9',  workspaceName: 'Data Science Lab',          userId: 'usr-006' },
+
+    // ws-12: Product Analytics (6 events)
+    { id: 'evt-030', creationTime: daysAgo(1),  activity: 'ViewDashboard',   workspaceId: 'ws-12', workspaceName: 'Product Analytics',         userId: 'usr-004' },
+    { id: 'evt-031', creationTime: daysAgo(2),  activity: 'RefreshDataset',  workspaceId: 'ws-12', workspaceName: 'Product Analytics',         userId: 'usr-004' },
+    { id: 'evt-032', creationTime: daysAgo(3),  activity: 'EditDataset',     workspaceId: 'ws-12', workspaceName: 'Product Analytics',         userId: 'usr-001' },
+    { id: 'evt-033', creationTime: daysAgo(4),  activity: 'ViewReport',      workspaceId: 'ws-12', workspaceName: 'Product Analytics',         userId: 'usr-003' },
+    { id: 'evt-034', creationTime: daysAgo(5),  activity: 'RunPipeline',     workspaceId: 'ws-12', workspaceName: 'Product Analytics',         userId: 'usr-002' },
+    { id: 'evt-035', creationTime: daysAgo(7),  activity: 'EditReport',      workspaceId: 'ws-12', workspaceName: 'Product Analytics',         userId: 'usr-005' },
+
+    // ws-15: IoT Telemetry (8 events)
+    { id: 'evt-040', creationTime: daysAgo(1),  activity: 'RunPipeline',     workspaceId: 'ws-15', workspaceName: 'IoT Telemetry',             userId: 'usr-006' },
+    { id: 'evt-041', creationTime: daysAgo(1),  activity: 'RefreshDataset',  workspaceId: 'ws-15', workspaceName: 'IoT Telemetry',             userId: 'usr-006' },
+    { id: 'evt-042', creationTime: daysAgo(2),  activity: 'ViewDashboard',   workspaceId: 'ws-15', workspaceName: 'IoT Telemetry',             userId: 'usr-007' },
+    { id: 'evt-043', creationTime: daysAgo(2),  activity: 'ViewReport',      workspaceId: 'ws-15', workspaceName: 'IoT Telemetry',             userId: 'usr-001' },
+    { id: 'evt-044', creationTime: daysAgo(3),  activity: 'EditDataset',     workspaceId: 'ws-15', workspaceName: 'IoT Telemetry',             userId: 'usr-006' },
+    { id: 'evt-045', creationTime: daysAgo(4),  activity: 'CreateItem',      workspaceId: 'ws-15', workspaceName: 'IoT Telemetry',             userId: 'usr-008' },
+    { id: 'evt-046', creationTime: daysAgo(5),  activity: 'RunPipeline',     workspaceId: 'ws-15', workspaceName: 'IoT Telemetry',             userId: 'usr-006' },
+    { id: 'evt-047', creationTime: daysAgo(6),  activity: 'RefreshDataset',  workspaceId: 'ws-15', workspaceName: 'IoT Telemetry',             userId: 'usr-006' },
+
+    // ws-16: Data Platform Hub (10 events)
+    { id: 'evt-050', creationTime: daysAgo(1),  activity: 'RunPipeline',     workspaceId: 'ws-16', workspaceName: 'Data Platform Hub',         userId: 'usr-008' },
+    { id: 'evt-051', creationTime: daysAgo(1),  activity: 'RefreshDataset',  workspaceId: 'ws-16', workspaceName: 'Data Platform Hub',         userId: 'usr-008' },
+    { id: 'evt-052', creationTime: daysAgo(2),  activity: 'ViewReport',      workspaceId: 'ws-16', workspaceName: 'Data Platform Hub',         userId: 'usr-002' },
+    { id: 'evt-053', creationTime: daysAgo(2),  activity: 'EditDataset',     workspaceId: 'ws-16', workspaceName: 'Data Platform Hub',         userId: 'usr-008' },
+    { id: 'evt-054', creationTime: daysAgo(3),  activity: 'RunPipeline',     workspaceId: 'ws-16', workspaceName: 'Data Platform Hub',         userId: 'usr-008' },
+    { id: 'evt-055', creationTime: daysAgo(3),  activity: 'ViewDashboard',   workspaceId: 'ws-16', workspaceName: 'Data Platform Hub',         userId: 'usr-001' },
+    { id: 'evt-056', creationTime: daysAgo(4),  activity: 'EditReport',      workspaceId: 'ws-16', workspaceName: 'Data Platform Hub',         userId: 'usr-003' },
+    { id: 'evt-057', creationTime: daysAgo(5),  activity: 'CreateItem',      workspaceId: 'ws-16', workspaceName: 'Data Platform Hub',         userId: 'usr-008' },
+    { id: 'evt-058', creationTime: daysAgo(6),  activity: 'RefreshDataset',  workspaceId: 'ws-16', workspaceName: 'Data Platform Hub',         userId: 'usr-008' },
+    { id: 'evt-059', creationTime: daysAgo(7),  activity: 'RunPipeline',     workspaceId: 'ws-16', workspaceName: 'Data Platform Hub',         userId: 'usr-008' },
+
+    // ws-17: Risk Analytics (7 events)
+    { id: 'evt-060', creationTime: daysAgo(1),  activity: 'ViewReport',      workspaceId: 'ws-17', workspaceName: 'Risk Analytics',            userId: 'usr-004' },
+    { id: 'evt-061', creationTime: daysAgo(2),  activity: 'ViewDashboard',   workspaceId: 'ws-17', workspaceName: 'Risk Analytics',            userId: 'usr-004' },
+    { id: 'evt-062', creationTime: daysAgo(3),  activity: 'RefreshDataset',  workspaceId: 'ws-17', workspaceName: 'Risk Analytics',            userId: 'usr-007' },
+    { id: 'evt-063', creationTime: daysAgo(3),  activity: 'EditDataset',     workspaceId: 'ws-17', workspaceName: 'Risk Analytics',            userId: 'usr-007' },
+    { id: 'evt-064', creationTime: daysAgo(5),  activity: 'RunPipeline',     workspaceId: 'ws-17', workspaceName: 'Risk Analytics',            userId: 'usr-008' },
+    { id: 'evt-065', creationTime: daysAgo(6),  activity: 'ViewReport',      workspaceId: 'ws-17', workspaceName: 'Risk Analytics',            userId: 'usr-002' },
+    { id: 'evt-066', creationTime: daysAgo(7),  activity: 'EditReport',      workspaceId: 'ws-17', workspaceName: 'Risk Analytics',            userId: 'usr-004' },
+
+    // ws-18: Customer Intelligence (6 events)
+    { id: 'evt-070', creationTime: daysAgo(1),  activity: 'ViewDashboard',   workspaceId: 'ws-18', workspaceName: 'Customer Intelligence',     userId: 'usr-003' },
+    { id: 'evt-071', creationTime: daysAgo(2),  activity: 'RefreshDataset',  workspaceId: 'ws-18', workspaceName: 'Customer Intelligence',     userId: 'usr-003' },
+    { id: 'evt-072', creationTime: daysAgo(3),  activity: 'EditReport',      workspaceId: 'ws-18', workspaceName: 'Customer Intelligence',     userId: 'usr-005' },
+    { id: 'evt-073', creationTime: daysAgo(4),  activity: 'RunPipeline',     workspaceId: 'ws-18', workspaceName: 'Customer Intelligence',     userId: 'usr-003' },
+    { id: 'evt-074', creationTime: daysAgo(5),  activity: 'ViewReport',      workspaceId: 'ws-18', workspaceName: 'Customer Intelligence',     userId: 'usr-001' },
+    { id: 'evt-075', creationTime: daysAgo(7),  activity: 'EditDataset',     workspaceId: 'ws-18', workspaceName: 'Customer Intelligence',     userId: 'usr-003' },
+
+    // ws-19: Operations Excellence (7 events)
+    { id: 'evt-080', creationTime: daysAgo(1),  activity: 'RunPipeline',     workspaceId: 'ws-19', workspaceName: 'Operations Excellence',     userId: 'usr-006' },
+    { id: 'evt-081', creationTime: daysAgo(2),  activity: 'ViewDashboard',   workspaceId: 'ws-19', workspaceName: 'Operations Excellence',     userId: 'usr-004' },
+    { id: 'evt-082', creationTime: daysAgo(2),  activity: 'RefreshDataset',  workspaceId: 'ws-19', workspaceName: 'Operations Excellence',     userId: 'usr-006' },
+    { id: 'evt-083', creationTime: daysAgo(3),  activity: 'ViewReport',      workspaceId: 'ws-19', workspaceName: 'Operations Excellence',     userId: 'usr-002' },
+    { id: 'evt-084', creationTime: daysAgo(5),  activity: 'EditDataset',     workspaceId: 'ws-19', workspaceName: 'Operations Excellence',     userId: 'usr-006' },
+    { id: 'evt-085', creationTime: daysAgo(6),  activity: 'EditReport',      workspaceId: 'ws-19', workspaceName: 'Operations Excellence',     userId: 'usr-005' },
+    { id: 'evt-086', creationTime: daysAgo(7),  activity: 'RunPipeline',     workspaceId: 'ws-19', workspaceName: 'Operations Excellence',     userId: 'usr-006' },
+
+    // ws-20: Finance Data Warehouse (8 events)
+    { id: 'evt-090', creationTime: daysAgo(1),  activity: 'ViewReport',      workspaceId: 'ws-20', workspaceName: 'Finance Data Warehouse',    userId: 'usr-007' },
+    { id: 'evt-091', creationTime: daysAgo(1),  activity: 'RefreshDataset',  workspaceId: 'ws-20', workspaceName: 'Finance Data Warehouse',    userId: 'usr-008' },
+    { id: 'evt-092', creationTime: daysAgo(2),  activity: 'RunPipeline',     workspaceId: 'ws-20', workspaceName: 'Finance Data Warehouse',    userId: 'usr-008' },
+    { id: 'evt-093', creationTime: daysAgo(3),  activity: 'ViewDashboard',   workspaceId: 'ws-20', workspaceName: 'Finance Data Warehouse',    userId: 'usr-004' },
+    { id: 'evt-094', creationTime: daysAgo(4),  activity: 'EditDataset',     workspaceId: 'ws-20', workspaceName: 'Finance Data Warehouse',    userId: 'usr-007' },
+    { id: 'evt-095', creationTime: daysAgo(5),  activity: 'ViewReport',      workspaceId: 'ws-20', workspaceName: 'Finance Data Warehouse',    userId: 'usr-002' },
+    { id: 'evt-096', creationTime: daysAgo(6),  activity: 'EditReport',      workspaceId: 'ws-20', workspaceName: 'Finance Data Warehouse',    userId: 'usr-007' },
+    { id: 'evt-097', creationTime: daysAgo(7),  activity: 'RefreshDataset',  workspaceId: 'ws-20', workspaceName: 'Finance Data Warehouse',    userId: 'usr-008' },
+
+    // ------------------------------------------------------------------
+    // Grade B workspaces — 5-7 events each, recent (2-10 days)
+    // ------------------------------------------------------------------
+
+    // ws-2: Finance Reporting (6 events)
+    { id: 'evt-100', creationTime: daysAgo(2),  activity: 'ViewReport',      workspaceId: 'ws-2',  workspaceName: 'Finance Reporting',         userId: 'usr-007' },
+    { id: 'evt-101', creationTime: daysAgo(3),  activity: 'RefreshDataset',  workspaceId: 'ws-2',  workspaceName: 'Finance Reporting',         userId: 'usr-007' },
+    { id: 'evt-102', creationTime: daysAgo(4),  activity: 'EditReport',      workspaceId: 'ws-2',  workspaceName: 'Finance Reporting',         userId: 'usr-004' },
+    { id: 'evt-103', creationTime: daysAgo(5),  activity: 'ViewDashboard',   workspaceId: 'ws-2',  workspaceName: 'Finance Reporting',         userId: 'usr-002' },
+    { id: 'evt-104', creationTime: daysAgo(7),  activity: 'EditDataset',     workspaceId: 'ws-2',  workspaceName: 'Finance Reporting',         userId: 'usr-007' },
+    { id: 'evt-105', creationTime: daysAgo(9),  activity: 'RunPipeline',     workspaceId: 'ws-2',  workspaceName: 'Finance Reporting',         userId: 'usr-008' },
+
+    // ws-4: Marketing Insights (5 events)
+    { id: 'evt-110', creationTime: daysAgo(2),  activity: 'ViewDashboard',   workspaceId: 'ws-4',  workspaceName: 'Marketing Insights',        userId: 'usr-003' },
+    { id: 'evt-111', creationTime: daysAgo(3),  activity: 'ViewReport',      workspaceId: 'ws-4',  workspaceName: 'Marketing Insights',        userId: 'usr-005' },
+    { id: 'evt-112', creationTime: daysAgo(5),  activity: 'EditReport',      workspaceId: 'ws-4',  workspaceName: 'Marketing Insights',        userId: 'usr-003' },
+    { id: 'evt-113', creationTime: daysAgo(7),  activity: 'RefreshDataset',  workspaceId: 'ws-4',  workspaceName: 'Marketing Insights',        userId: 'usr-005' },
+    { id: 'evt-114', creationTime: daysAgo(10), activity: 'EditDataset',     workspaceId: 'ws-4',  workspaceName: 'Marketing Insights',        userId: 'usr-003' },
+
+    // ws-11: Executive Dashboards (5 events)
+    { id: 'evt-120', creationTime: daysAgo(3),  activity: 'ViewDashboard',   workspaceId: 'ws-11', workspaceName: 'Executive Dashboards',      userId: 'usr-001' },
+    { id: 'evt-121', creationTime: daysAgo(4),  activity: 'ViewReport',      workspaceId: 'ws-11', workspaceName: 'Executive Dashboards',      userId: 'usr-002' },
+    { id: 'evt-122', creationTime: daysAgo(6),  activity: 'RefreshDataset',  workspaceId: 'ws-11', workspaceName: 'Executive Dashboards',      userId: 'usr-008' },
+    { id: 'evt-123', creationTime: daysAgo(8),  activity: 'EditReport',      workspaceId: 'ws-11', workspaceName: 'Executive Dashboards',      userId: 'usr-004' },
+    { id: 'evt-124', creationTime: daysAgo(10), activity: 'ViewDashboard',   workspaceId: 'ws-11', workspaceName: 'Executive Dashboards',      userId: 'usr-006' },
+
+    // ws-13: Compliance Monitoring (5 events)
+    { id: 'evt-130', creationTime: daysAgo(3),  activity: 'ViewReport',      workspaceId: 'ws-13', workspaceName: 'Compliance Monitoring',     userId: 'usr-004' },
+    { id: 'evt-131', creationTime: daysAgo(5),  activity: 'EditDataset',     workspaceId: 'ws-13', workspaceName: 'Compliance Monitoring',     userId: 'usr-004' },
+    { id: 'evt-132', creationTime: daysAgo(7),  activity: 'RefreshDataset',  workspaceId: 'ws-13', workspaceName: 'Compliance Monitoring',     userId: 'usr-007' },
+    { id: 'evt-133', creationTime: daysAgo(9),  activity: 'RunPipeline',     workspaceId: 'ws-13', workspaceName: 'Compliance Monitoring',     userId: 'usr-008' },
+    { id: 'evt-134', creationTime: daysAgo(11), activity: 'ViewReport',      workspaceId: 'ws-13', workspaceName: 'Compliance Monitoring',     userId: 'usr-004' },
+
+    // ws-21: Digital Transformation (5 events)
+    { id: 'evt-140', creationTime: daysAgo(2),  activity: 'ViewReport',      workspaceId: 'ws-21', workspaceName: 'Digital Transformation',    userId: 'usr-002' },
+    { id: 'evt-141', creationTime: daysAgo(4),  activity: 'EditReport',      workspaceId: 'ws-21', workspaceName: 'Digital Transformation',    userId: 'usr-005' },
+    { id: 'evt-142', creationTime: daysAgo(6),  activity: 'ViewDashboard',   workspaceId: 'ws-21', workspaceName: 'Digital Transformation',    userId: 'usr-001' },
+    { id: 'evt-143', creationTime: daysAgo(8),  activity: 'RefreshDataset',  workspaceId: 'ws-21', workspaceName: 'Digital Transformation',    userId: 'usr-003' },
+    { id: 'evt-144', creationTime: daysAgo(10), activity: 'EditDataset',     workspaceId: 'ws-21', workspaceName: 'Digital Transformation',    userId: 'usr-002' },
+
+    // ws-22: Legal Compliance (5 events)
+    { id: 'evt-150', creationTime: daysAgo(3),  activity: 'ViewReport',      workspaceId: 'ws-22', workspaceName: 'Legal Compliance',          userId: 'usr-007' },
+    { id: 'evt-151', creationTime: daysAgo(5),  activity: 'EditDataset',     workspaceId: 'ws-22', workspaceName: 'Legal Compliance',          userId: 'usr-004' },
+    { id: 'evt-152', creationTime: daysAgo(7),  activity: 'RefreshDataset',  workspaceId: 'ws-22', workspaceName: 'Legal Compliance',          userId: 'usr-007' },
+    { id: 'evt-153', creationTime: daysAgo(9),  activity: 'ViewDashboard',   workspaceId: 'ws-22', workspaceName: 'Legal Compliance',          userId: 'usr-002' },
+    { id: 'evt-154', creationTime: daysAgo(12), activity: 'EditReport',      workspaceId: 'ws-22', workspaceName: 'Legal Compliance',          userId: 'usr-004' },
+
+    // ws-23: Strategic Planning (5 events)
+    { id: 'evt-160', creationTime: daysAgo(4),  activity: 'ViewReport',      workspaceId: 'ws-23', workspaceName: 'Strategic Planning',        userId: 'usr-001' },
+    { id: 'evt-161', creationTime: daysAgo(6),  activity: 'EditReport',      workspaceId: 'ws-23', workspaceName: 'Strategic Planning',        userId: 'usr-005' },
+    { id: 'evt-162', creationTime: daysAgo(8),  activity: 'ViewDashboard',   workspaceId: 'ws-23', workspaceName: 'Strategic Planning',        userId: 'usr-002' },
+    { id: 'evt-163', creationTime: daysAgo(10), activity: 'RefreshDataset',  workspaceId: 'ws-23', workspaceName: 'Strategic Planning',        userId: 'usr-008' },
+    { id: 'evt-164', creationTime: daysAgo(12), activity: 'EditDataset',     workspaceId: 'ws-23', workspaceName: 'Strategic Planning',        userId: 'usr-001' },
+
+    // ws-24: Treasury Analytics (5 events)
+    { id: 'evt-170', creationTime: daysAgo(3),  activity: 'ViewReport',      workspaceId: 'ws-24', workspaceName: 'Treasury Analytics',        userId: 'usr-007' },
+    { id: 'evt-171', creationTime: daysAgo(5),  activity: 'RefreshDataset',  workspaceId: 'ws-24', workspaceName: 'Treasury Analytics',        userId: 'usr-007' },
+    { id: 'evt-172', creationTime: daysAgo(7),  activity: 'ViewDashboard',   workspaceId: 'ws-24', workspaceName: 'Treasury Analytics',        userId: 'usr-004' },
+    { id: 'evt-173', creationTime: daysAgo(9),  activity: 'EditDataset',     workspaceId: 'ws-24', workspaceName: 'Treasury Analytics',        userId: 'usr-007' },
+    { id: 'evt-174', creationTime: daysAgo(11), activity: 'RunPipeline',     workspaceId: 'ws-24', workspaceName: 'Treasury Analytics',        userId: 'usr-008' },
+
+    // ws-25: Customer Experience (5 events)
+    { id: 'evt-180', creationTime: daysAgo(2),  activity: 'ViewDashboard',   workspaceId: 'ws-25', workspaceName: 'Customer Experience',       userId: 'usr-003' },
+    { id: 'evt-181', creationTime: daysAgo(4),  activity: 'ViewReport',      workspaceId: 'ws-25', workspaceName: 'Customer Experience',       userId: 'usr-005' },
+    { id: 'evt-182', creationTime: daysAgo(6),  activity: 'RefreshDataset',  workspaceId: 'ws-25', workspaceName: 'Customer Experience',       userId: 'usr-003' },
+    { id: 'evt-183', creationTime: daysAgo(9),  activity: 'EditReport',      workspaceId: 'ws-25', workspaceName: 'Customer Experience',       userId: 'usr-005' },
+    { id: 'evt-184', creationTime: daysAgo(12), activity: 'EditDataset',     workspaceId: 'ws-25', workspaceName: 'Customer Experience',       userId: 'usr-003' },
+
+    // ------------------------------------------------------------------
+    // Grade C workspaces — 3-5 events each, less recent (5-14 days)
+    // ------------------------------------------------------------------
+
+    // ws-3: Engineering Metrics (5 events)
+    { id: 'evt-200', creationTime: daysAgo(5),  activity: 'ViewReport',      workspaceId: 'ws-3',  workspaceName: 'Engineering Metrics',       userId: 'usr-006' },
+    { id: 'evt-201', creationTime: daysAgo(6),  activity: 'EditReport',      workspaceId: 'ws-3',  workspaceName: 'Engineering Metrics',       userId: 'usr-001' },
+    { id: 'evt-202', creationTime: daysAgo(8),  activity: 'RefreshDataset',  workspaceId: 'ws-3',  workspaceName: 'Engineering Metrics',       userId: 'usr-006' },
+    { id: 'evt-203', creationTime: daysAgo(11), activity: 'RunPipeline',     workspaceId: 'ws-3',  workspaceName: 'Engineering Metrics',       userId: 'usr-006' },
+    { id: 'evt-204', creationTime: daysAgo(14), activity: 'ViewDashboard',   workspaceId: 'ws-3',  workspaceName: 'Engineering Metrics',       userId: 'usr-002' },
+
+    // ws-10: Supply Chain (4 events)
+    { id: 'evt-210', creationTime: daysAgo(6),  activity: 'ViewReport',      workspaceId: 'ws-10', workspaceName: 'Supply Chain',             userId: 'usr-005' },
+    { id: 'evt-211', creationTime: daysAgo(8),  activity: 'RefreshDataset',  workspaceId: 'ws-10', workspaceName: 'Supply Chain',             userId: 'usr-004' },
+    { id: 'evt-212', creationTime: daysAgo(11), activity: 'RunPipeline',     workspaceId: 'ws-10', workspaceName: 'Supply Chain',             userId: 'usr-005' },
+    { id: 'evt-213', creationTime: daysAgo(14), activity: 'ViewDashboard',   workspaceId: 'ws-10', workspaceName: 'Supply Chain',             userId: 'usr-003' },
+
+    // ws-14: Dev Sandbox (3 events)
+    { id: 'evt-220', creationTime: daysAgo(7),  activity: 'CreateItem',      workspaceId: 'ws-14', workspaceName: 'Dev Sandbox',              userId: 'usr-006' },
+    { id: 'evt-221', creationTime: daysAgo(10), activity: 'EditDataset',     workspaceId: 'ws-14', workspaceName: 'Dev Sandbox',              userId: 'usr-001' },
+    { id: 'evt-222', creationTime: daysAgo(13), activity: 'ViewReport',      workspaceId: 'ws-14', workspaceName: 'Dev Sandbox',              userId: 'usr-006' },
+
+    // ws-26: Supplier Analytics (4 events)
+    { id: 'evt-230', creationTime: daysAgo(7),  activity: 'ViewReport',      workspaceId: 'ws-26', workspaceName: 'Supplier Analytics',       userId: 'usr-004' },
+    { id: 'evt-231', creationTime: daysAgo(9),  activity: 'RefreshDataset',  workspaceId: 'ws-26', workspaceName: 'Supplier Analytics',       userId: 'usr-005' },
+    { id: 'evt-232', creationTime: daysAgo(12), activity: 'EditReport',      workspaceId: 'ws-26', workspaceName: 'Supplier Analytics',       userId: 'usr-004' },
+    { id: 'evt-233', creationTime: daysAgo(14), activity: 'RunPipeline',     workspaceId: 'ws-26', workspaceName: 'Supplier Analytics',       userId: 'usr-003' },
+
+    // ws-27: Workforce Analytics (4 events)
+    { id: 'evt-240', creationTime: daysAgo(8),  activity: 'ViewDashboard',   workspaceId: 'ws-27', workspaceName: 'Workforce Analytics',      userId: 'usr-002' },
+    { id: 'evt-241', creationTime: daysAgo(9),  activity: 'ViewReport',      workspaceId: 'ws-27', workspaceName: 'Workforce Analytics',      userId: 'usr-005' },
+    { id: 'evt-242', creationTime: daysAgo(12), activity: 'RefreshDataset',  workspaceId: 'ws-27', workspaceName: 'Workforce Analytics',      userId: 'usr-002' },
+    { id: 'evt-243', creationTime: daysAgo(14), activity: 'EditDataset',     workspaceId: 'ws-27', workspaceName: 'Workforce Analytics',      userId: 'usr-003' },
+
+    // ws-28: Quality Management (4 events)
+    { id: 'evt-250', creationTime: daysAgo(6),  activity: 'ViewReport',      workspaceId: 'ws-28', workspaceName: 'Quality Management',       userId: 'usr-006' },
+    { id: 'evt-251', creationTime: daysAgo(9),  activity: 'RefreshDataset',  workspaceId: 'ws-28', workspaceName: 'Quality Management',       userId: 'usr-007' },
+    { id: 'evt-252', creationTime: daysAgo(11), activity: 'RunPipeline',     workspaceId: 'ws-28', workspaceName: 'Quality Management',       userId: 'usr-006' },
+    { id: 'evt-253', creationTime: daysAgo(14), activity: 'ViewDashboard',   workspaceId: 'ws-28', workspaceName: 'Quality Management',       userId: 'usr-004' },
+
+    // ws-29: Retail Analytics (4 events)
+    { id: 'evt-260', creationTime: daysAgo(7),  activity: 'ViewReport',      workspaceId: 'ws-29', workspaceName: 'Retail Analytics',         userId: 'usr-005' },
+    { id: 'evt-261', creationTime: daysAgo(9),  activity: 'EditReport',      workspaceId: 'ws-29', workspaceName: 'Retail Analytics',         userId: 'usr-003' },
+    { id: 'evt-262', creationTime: daysAgo(11), activity: 'RefreshDataset',  workspaceId: 'ws-29', workspaceName: 'Retail Analytics',         userId: 'usr-005' },
+    { id: 'evt-263', creationTime: daysAgo(13), activity: 'ViewDashboard',   workspaceId: 'ws-29', workspaceName: 'Retail Analytics',         userId: 'usr-001' },
+
+    // ws-30: Claims Processing (4 events)
+    { id: 'evt-270', creationTime: daysAgo(8),  activity: 'ViewReport',      workspaceId: 'ws-30', workspaceName: 'Claims Processing',        userId: 'usr-004' },
+    { id: 'evt-271', creationTime: daysAgo(10), activity: 'RefreshDataset',  workspaceId: 'ws-30', workspaceName: 'Claims Processing',        userId: 'usr-004' },
+    { id: 'evt-272', creationTime: daysAgo(12), activity: 'RunPipeline',     workspaceId: 'ws-30', workspaceName: 'Claims Processing',        userId: 'usr-007' },
+    { id: 'evt-273', creationTime: daysAgo(14), activity: 'ViewDashboard',   workspaceId: 'ws-30', workspaceName: 'Claims Processing',        userId: 'usr-002' },
+
+    // ws-31: Vendor Management (3 events)
+    { id: 'evt-280', creationTime: daysAgo(9),  activity: 'ViewReport',      workspaceId: 'ws-31', workspaceName: 'Vendor Management',        userId: 'usr-005' },
+    { id: 'evt-281', creationTime: daysAgo(11), activity: 'RefreshDataset',  workspaceId: 'ws-31', workspaceName: 'Vendor Management',        userId: 'usr-003' },
+    { id: 'evt-282', creationTime: daysAgo(14), activity: 'EditDataset',     workspaceId: 'ws-31', workspaceName: 'Vendor Management',        userId: 'usr-005' },
+
+    // ------------------------------------------------------------------
+    // Grade D workspaces — GHOST: 2-3 events each, 95-180 days ago
+    // ------------------------------------------------------------------
+
+    // ws-6: My Workspace (last active 110 days ago → ghost)
+    { id: 'evt-300', creationTime: daysAgo(95),  activity: 'ViewReport',     workspaceId: 'ws-6',  workspaceName: 'My Workspace',             userId: 'usr-002' },
+    { id: 'evt-301', creationTime: daysAgo(108), activity: 'EditDataset',    workspaceId: 'ws-6',  workspaceName: 'My Workspace',             userId: 'usr-002' },
+    { id: 'evt-302', creationTime: daysAgo(110), activity: 'ViewDashboard',  workspaceId: 'ws-6',  workspaceName: 'My Workspace',             userId: 'usr-002' },
+
+    // ws-7: Legacy Reports (last active 145 days ago → ghost)
+    { id: 'evt-310', creationTime: daysAgo(130), activity: 'ViewReport',     workspaceId: 'ws-7',  workspaceName: 'Legacy Reports',           userId: 'usr-001' },
+    { id: 'evt-311', creationTime: daysAgo(142), activity: 'ViewDashboard',  workspaceId: 'ws-7',  workspaceName: 'Legacy Reports',           userId: 'usr-003' },
+    { id: 'evt-312', creationTime: daysAgo(145), activity: 'RefreshDataset', workspaceId: 'ws-7',  workspaceName: 'Legacy Reports',           userId: 'usr-007' },
+
+    // ws-32: Field Operations (last active 120 days ago → ghost)
+    { id: 'evt-320', creationTime: daysAgo(105), activity: 'RunPipeline',    workspaceId: 'ws-32', workspaceName: 'Field Operations',         userId: 'usr-006' },
+    { id: 'evt-321', creationTime: daysAgo(115), activity: 'ViewReport',     workspaceId: 'ws-32', workspaceName: 'Field Operations',         userId: 'usr-005' },
+    { id: 'evt-322', creationTime: daysAgo(120), activity: 'EditDataset',    workspaceId: 'ws-32', workspaceName: 'Field Operations',         userId: 'usr-006' },
+
+    // ws-33: Partner Analytics (last active 180 days ago → ghost)
+    { id: 'evt-330', creationTime: daysAgo(165), activity: 'ViewReport',     workspaceId: 'ws-33', workspaceName: 'Partner Analytics',        userId: 'usr-003' },
+    { id: 'evt-331', creationTime: daysAgo(172), activity: 'EditReport',     workspaceId: 'ws-33', workspaceName: 'Partner Analytics',        userId: 'usr-005' },
+    { id: 'evt-332', creationTime: daysAgo(180), activity: 'RefreshDataset', workspaceId: 'ws-33', workspaceName: 'Partner Analytics',        userId: 'usr-004' },
+
+    // ------------------------------------------------------------------
+    // Grade F workspaces — NO EVENTS
+    // ws-5  (HR Dashboard), ws-34 (Temp Workspace), ws-35 (Archive Q3 2024)
+    // These have 0 events. In live mode (30-day lookback) they'd be invisible.
+    // In demo mode deriveGhostWorkspaces sees them via the workspace list
+    // (not via events), so they still surface as ghosts with daysInactive=∞.
+    // ------------------------------------------------------------------
+  ];
+
+  return events;
 }
