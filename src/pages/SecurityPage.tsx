@@ -20,17 +20,20 @@ import {
 import { useAuth } from '@/auth/useAuth';
 import { useSecurityStore } from '@/store/securityStore';
 import { useWorkspaceStore } from '@/store/workspaceStore';
+import { useTenantSettingsStore } from '@/store/tenantSettingsStore';
 import { ExportButton } from '@/components/shared/ExportButton';
 import { SearchBar } from '@/components/shared/SearchBar';
 import { GroupBadge, GroupExpansionRow } from '@/components/security/GroupExpansionRow';
 import { EffectiveAccessCard } from '@/components/security/EffectiveAccessCard';
 import { SecurityFindingsPanel } from '@/components/security/SecurityFindingsPanel';
+import { TenantSettingsRiskPanel } from '@/components/security/TenantSettingsRiskPanel';
 import { SecurityPostureCard } from '@/components/security/SecurityPostureCard';
 import { SpnGovernancePanel } from '@/components/security/SpnGovernancePanel';
 import { SpofWorkspacesPanel } from '@/components/security/SpofWorkspacesPanel';
 import { AccessConcentrationChart } from '@/components/security/AccessConcentrationChart';
 import { WorkspacePivotTable } from '@/components/security/WorkspacePivotTable';
 import { deriveSecurityFindings, computeSecurityPosture } from '@/utils/securityFindings';
+import { deriveRiskySettings } from '@/utils/tenantSettingRisks';
 import { exportToCSV } from '@/utils/export';
 import { isDemoMode } from '@/api/demo';
 import type { PrincipalType, EffectiveAccessSummary } from '@/api/types/admin';
@@ -193,6 +196,12 @@ export function SecurityPage() {
     fetchWorkspaces,
     loading: wsLoading,
   } = useWorkspaceStore();
+  const {
+    settings,
+    loading: settingsLoading,
+    error: settingsError,
+    fetchTenantSettings,
+  } = useTenantSettingsStore();
 
   // Incremental consent: try silent token first, then show consent card if needed.
   const [consentChecked, setConsentChecked] = useState(isDemoMode);
@@ -230,9 +239,10 @@ export function SecurityPage() {
   }, [requestAdminConsent, checkAdminAccess]);
 
   const handleScanAll = useCallback(() => {
+    void fetchTenantSettings();
     const ids = workspaces.map((w) => w.id);
     void fetchAllWorkspaceUsers(ids);
-  }, [workspaces, fetchAllWorkspaceUsers]);
+  }, [workspaces, fetchAllWorkspaceUsers, fetchTenantSettings]);
 
   const hasScanned = Object.keys(workspaceUsers).length > 0;
 
@@ -299,6 +309,11 @@ export function SecurityPage() {
   const securityPosture = useMemo(
     () => (hasScanned ? computeSecurityPosture(userSummaries, resolvedGroups) : null),
     [hasScanned, userSummaries, resolvedGroups],
+  );
+
+  const riskySettings = useMemo(
+    () => deriveRiskySettings(settings),
+    [settings],
   );
 
   // Over-permissioned users (Admin on 5+ workspaces)
@@ -635,6 +650,14 @@ export function SecurityPage() {
 
           {/* Security Findings Panel */}
           <SecurityFindingsPanel findings={securityFindings} />
+
+          {/* Tenant Settings Risk Panel */}
+          <TenantSettingsRiskPanel
+            settings={riskySettings}
+            loading={settingsLoading}
+            error={settingsError}
+            onRetry={fetchTenantSettings}
+          />
 
           {/* SPOF Workspaces Panel */}
           <SpofWorkspacesPanel workspaceUsers={workspaceUsers} workspaces={workspaces} />
