@@ -213,3 +213,32 @@ export const HEALTH_GRID_HOVER_SCALE = 1.15;
 
 /** Application version (mirrors package.json). */
 export const APP_VERSION = '1.0.0';
+
+// -- Tenant Settings Risk --
+
+/** Tenant settings that represent high-risk exposure when enabled. */
+export const TENANT_SETTINGS_HIGH_RISK: string[] = [
+  'PublishToWeb',
+  'ExternalSharingEnabled',
+  'AllowExternalDataSharing',
+  'ExportToCsv',
+  'ExportToExcel',
+  'ExportToImage',
+  'PrintDashboardsAndReports',
+  'AllowServicePrincipalsCreateAndUseProfiles',
+];
+
+// Note: BlockResourceKeyAuthentication intentionally excluded — enabling it
+// is a security-hardening control (positive signal), not a risk indicator.
+
+/** Tenant settings that represent medium-risk exposure when enabled. */
+export const TENANT_SETTINGS_MEDIUM_RISK: string[] = [
+  'EmbedContent',
+  'AllowServicePrincipalsUseReadonlyAdminApisEnabled',
+  'ServicePrincipalAccess',
+  'EnableFabricCopilot',
+];
+
+/** Deep link to the Fabric Admin Portal tenant settings page. */
+export const FABRIC_ADMIN_PORTAL_SETTINGS_URL =
+  'https://app.fabric.microsoft.com/admin-portal/tenantSettings';
