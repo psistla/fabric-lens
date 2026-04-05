@@ -1351,3 +1351,8 @@ export function getMockWidelySharedArtifacts(): WidelySharedArtifact[] {
     },
   ];
 }
+
+/** Stub — replaced in Task 1g with realistic mock activity events. */
+export function getMockWorkspaceActivity(): import('./types/activityEvents').ActivityEvent[] {
+  return [];
+}
