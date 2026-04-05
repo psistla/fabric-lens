@@ -30,4 +30,16 @@ describe('Demo mode guards', () => {
   it('getGroupMembers() throws in demo mode', async () => {
     await expect(getGroupMembers('group-1')).rejects.toThrow(DEMO_ERROR_SUBSTR);
   });
+
+  it('fabricClient.get() with explicit scopes still throws in demo mode', async () => {
+    await expect(
+      client.get('/test', ['https://analysis.windows.net/powerbi/api/.default'])
+    ).rejects.toThrow(DEMO_ERROR_SUBSTR);
+  });
+
+  it('fabricClient.post() with explicit scopes still throws in demo mode', async () => {
+    await expect(
+      client.post('/test', {}, ['https://analysis.windows.net/powerbi/api/.default'])
+    ).rejects.toThrow(DEMO_ERROR_SUBSTR);
+  });
 });

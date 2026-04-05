@@ -81,8 +81,9 @@ export class FabricClient {
     path: string,
     body?: unknown,
     retryCount = 0,
+    scopes?: string[],
   ): Promise<T> {
-    const token = await this.getToken(CORE_SCOPES);
+    const token = await this.getToken(scopes ?? CORE_SCOPES);
     const url = path.startsWith('http') ? path : `${FABRIC_API_BASE}${path}`;
 
     const headers: Record<string, string> = {
@@ -98,7 +99,7 @@ export class FabricClient {
     });
 
     if (response.status === 401) {
-      const retryToken = await this.getToken(CORE_SCOPES);
+      const retryToken = await this.getToken(scopes ?? CORE_SCOPES);
       const retryResponse = await fetch(url, {
         method,
         headers: { ...headers, Authorization: `Bearer ${retryToken}` },
@@ -126,7 +127,7 @@ export class FabricClient {
         MAX_RETRY_DELAY_MS,
       );
       await sleep(Math.max(serverWaitMs, backoffMs));
-      return this.request(method, path, body, retryCount + 1);
+      return this.request(method, path, body, retryCount + 1, scopes);
     }
 
     if (!response.ok) {
@@ -161,24 +162,24 @@ export class FabricClient {
     return new FabricApiError(response.status, userMessage, errorCode);
   }
 
-  async get<T>(path: string): Promise<T> {
+  async get<T>(path: string, scopes?: string[]): Promise<T> {
     if (isDemoMode) {
       throw new Error(
         'fabricClient: API call attempted in demo mode. ' +
         'This is a bug — demo mode should use mock data exclusively.',
       );
     }
-    return this.request<T>('GET', path);
+    return this.request<T>('GET', path, undefined, 0, scopes);
   }
 
-  async post<T>(path: string, body?: unknown): Promise<T> {
+  async post<T>(path: string, body?: unknown, scopes?: string[]): Promise<T> {
     if (isDemoMode) {
       throw new Error(
         'fabricClient: API call attempted in demo mode. ' +
         'This is a bug — demo mode should use mock data exclusively.',
       );
     }
-    return this.request<T>('POST', path, body);
+    return this.request<T>('POST', path, body, 0, scopes);
   }
 
   async listAll<T>(path: string): Promise<T[]> {
