@@ -21,12 +21,14 @@ import { useAuth } from '@/auth/useAuth';
 import { useSecurityStore } from '@/store/securityStore';
 import { useWorkspaceStore } from '@/store/workspaceStore';
 import { useTenantSettingsStore } from '@/store/tenantSettingsStore';
+import { useWidelySharedStore } from '@/store/widelySharedStore';
 import { ExportButton } from '@/components/shared/ExportButton';
 import { SearchBar } from '@/components/shared/SearchBar';
 import { GroupBadge, GroupExpansionRow } from '@/components/security/GroupExpansionRow';
 import { EffectiveAccessCard } from '@/components/security/EffectiveAccessCard';
 import { SecurityFindingsPanel } from '@/components/security/SecurityFindingsPanel';
 import { TenantSettingsRiskPanel } from '@/components/security/TenantSettingsRiskPanel';
+import { WidelySharedPanel } from '@/components/security/WidelySharedPanel';
 import { SecurityPostureCard } from '@/components/security/SecurityPostureCard';
 import { SpnGovernancePanel } from '@/components/security/SpnGovernancePanel';
 import { SpofWorkspacesPanel } from '@/components/security/SpofWorkspacesPanel';
@@ -202,6 +204,12 @@ export function SecurityPage() {
     error: settingsError,
     fetchTenantSettings,
   } = useTenantSettingsStore();
+  const {
+    artifacts,
+    loading: widelySharedLoading,
+    error: widelySharedError,
+    fetchWidelySharedArtifacts,
+  } = useWidelySharedStore();
 
   // Incremental consent: try silent token first, then show consent card if needed.
   const [consentChecked, setConsentChecked] = useState(isDemoMode);
@@ -240,9 +248,10 @@ export function SecurityPage() {
 
   const handleScanAll = useCallback(() => {
     void fetchTenantSettings();
+    void fetchWidelySharedArtifacts();
     const ids = workspaces.map((w) => w.id);
     void fetchAllWorkspaceUsers(ids);
-  }, [workspaces, fetchAllWorkspaceUsers, fetchTenantSettings]);
+  }, [workspaces, fetchAllWorkspaceUsers, fetchTenantSettings, fetchWidelySharedArtifacts]);
 
   const hasScanned = Object.keys(workspaceUsers).length > 0;
 
@@ -657,6 +666,14 @@ export function SecurityPage() {
             loading={settingsLoading}
             error={settingsError}
             onRetry={fetchTenantSettings}
+          />
+
+          {/* Widely Shared Panel */}
+          <WidelySharedPanel
+            artifacts={artifacts}
+            loading={widelySharedLoading}
+            error={widelySharedError}
+            onRetry={fetchWidelySharedArtifacts}
           />
 
           {/* SPOF Workspaces Panel */}
