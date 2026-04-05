@@ -2,6 +2,7 @@ import type { Workspace } from './types/workspace';
 import type { Item } from './types/item';
 import type { Capacity } from './types/capacity';
 import type { WorkspaceUser, GroupMember, ResolvedGroup } from './types/admin';
+import type { TenantSetting } from './types/tenantSettings';
 
 export const isDemoMode =
   !import.meta.env.VITE_MSAL_CLIENT_ID ||
@@ -1177,4 +1178,86 @@ export function getMockResolvedGroup(groupUpn: string, displayName: string): Res
     loading: false,
     error: null,
   };
+}
+
+export function getMockTenantSettings(): TenantSetting[] {
+  return [
+    // --- High risk, enabled ---
+    {
+      settingName: 'PublishToWeb',
+      enabled: true,
+      tenantSettingGroup: 'Export and sharing settings',
+      canSpecifySecurityGroups: false,
+      enabledSecurityGroups: [],
+    },
+    {
+      settingName: 'ExternalSharingEnabled',
+      enabled: true,
+      tenantSettingGroup: 'Export and sharing settings',
+      canSpecifySecurityGroups: true,
+      enabledSecurityGroups: [{ graphId: 'grp-001', name: 'External Partners' }],
+    },
+    {
+      settingName: 'ExportToExcel',
+      enabled: true,
+      tenantSettingGroup: 'Export and sharing settings',
+      canSpecifySecurityGroups: false,
+      enabledSecurityGroups: [],
+    },
+    // --- Medium risk, enabled ---
+    {
+      settingName: 'EmbedContent',
+      enabled: true,
+      tenantSettingGroup: 'Integration settings',
+      canSpecifySecurityGroups: false,
+      enabledSecurityGroups: [],
+    },
+    {
+      settingName: 'EnableFabricCopilot',
+      enabled: true,
+      tenantSettingGroup: 'Copilot and Azure OpenAI Service',
+      canSpecifySecurityGroups: true,
+      enabledSecurityGroups: [
+        { graphId: 'grp-002', name: 'AI Pilot Group' },
+        { graphId: 'grp-003', name: 'Data Science Team' },
+      ],
+    },
+    {
+      settingName: 'ServicePrincipalAccess',
+      enabled: true,
+      tenantSettingGroup: 'Developer settings',
+      canSpecifySecurityGroups: false,
+      enabledSecurityGroups: [],
+    },
+    // --- High risk, disabled ---
+    {
+      settingName: 'AllowExternalDataSharing',
+      enabled: false,
+      tenantSettingGroup: 'Export and sharing settings',
+      canSpecifySecurityGroups: false,
+      enabledSecurityGroups: [],
+    },
+    {
+      settingName: 'ExportToCsv',
+      enabled: false,
+      tenantSettingGroup: 'Export and sharing settings',
+      canSpecifySecurityGroups: false,
+      enabledSecurityGroups: [],
+    },
+    {
+      settingName: 'AllowServicePrincipalsCreateAndUseProfiles',
+      enabled: false,
+      tenantSettingGroup: 'Developer settings',
+      canSpecifySecurityGroups: false,
+      enabledSecurityGroups: [],
+    },
+    // --- Medium risk, disabled ---
+    {
+      settingName: 'AllowServicePrincipalsUseReadonlyAdminApisEnabled',
+      enabled: false,
+      tenantSettingGroup: 'Developer settings',
+      canSpecifySecurityGroups: false,
+      enabledSecurityGroups: [],
+    },
+  ];
 }
