@@ -1335,5 +1335,19 @@ export function getMockWidelySharedArtifacts(): WidelySharedArtifact[] {
         principalType: 'User',
       },
     },
+    {
+      artifactId: 'ws-art-006',
+      displayName: 'Retail Sales Dataflow',
+      artifactType: 'Dataflow',
+      accessRight: 'Read',
+      shareType: 'Link',
+      sharer: {
+        displayName: 'James Wilson',
+        emailAddress: 'james.wilson@contoso.com',
+        identifier: 'james.wilson@contoso.com',
+        graphId: 'usr-003',
+        principalType: 'User',
+      },
+    },
   ];
 }
