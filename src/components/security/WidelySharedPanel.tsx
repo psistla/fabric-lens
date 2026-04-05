@@ -15,12 +15,15 @@ interface Props {
  *  The API returns 'Dataset' where Fabric uses 'SemanticModel'. All other
  *  values (Report, PaginatedReport, Dashboard, Dataflow) are valid FabricItemType members. */
 function toItemType(raw: WidelySharedArtifact['artifactType']): FabricItemType {
-  if (raw === 'Dataset') return 'SemanticModel';
-  return raw as FabricItemType;
+  const map: Record<WidelySharedArtifact['artifactType'], FabricItemType> = {
+    Report: 'Report',
+    PaginatedReport: 'PaginatedReport',
+    Dashboard: 'Dashboard',
+    Dataset: 'SemanticModel',
+    Dataflow: 'Dataflow',
+  };
+  return map[raw];
 }
-
-const sorted = (artifacts: WidelySharedArtifact[]) =>
-  [...artifacts].sort((a, b) => a.displayName.localeCompare(b.displayName));
 
 export function WidelySharedPanel({ artifacts, loading, error, onRetry }: Props) {
   // Loading state
@@ -97,7 +100,7 @@ export function WidelySharedPanel({ artifacts, loading, error, onRetry }: Props)
     );
   }
 
-  const items = sorted(artifacts);
+  const items = [...artifacts].sort((a, b) => a.displayName.localeCompare(b.displayName));
 
   return (
     <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)]">
