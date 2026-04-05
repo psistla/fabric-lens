@@ -31,9 +31,9 @@ export const useActivityStore = create<ActivityState>()((set, get) => ({
   lastFetchedAt: null,
 
   fetchActivityEvents: async (workspaces: Workspace[]) => {
-    const { ghostWorkspaces, error } = get();
+    const { lastFetchedAt, error } = get();
     // Cache guard: skip if already loaded successfully in this session
-    if (ghostWorkspaces.length > 0 && !error) return;
+    if (lastFetchedAt !== null && !error) return;
 
     if (!isDemoMode && !adminRateLimiter.canMakeRequest()) {
       set({ error: 'Admin API rate limit reached. Please wait before retrying.' });
@@ -61,22 +61,33 @@ export const useActivityStore = create<ActivityState>()((set, get) => ({
       );
 
       // Build workspaceActivity from events: group by workspaceId, track latest date and count
-      const activityMap = new Map<string, WorkspaceActivity>();
+      const lastDateMap = new Map<string, Date>();
+      const countMap = new Map<string, { name: string; count: number }>();
+
       for (const event of events) {
-        const existing = activityMap.get(event.workspaceId);
         const eventDate = new Date(event.creationTime);
-        if (!existing || eventDate > existing.lastActivityDate) {
-          activityMap.set(event.workspaceId, {
-            workspaceId: event.workspaceId,
-            workspaceName: event.workspaceName,
-            lastActivityDate: eventDate,
-            eventCount: (existing?.eventCount ?? 0) + 1,
-          });
+        const existing = lastDateMap.get(event.workspaceId);
+        if (!existing || eventDate > existing) {
+          lastDateMap.set(event.workspaceId, eventDate);
+        }
+        const meta = countMap.get(event.workspaceId);
+        if (!meta) {
+          countMap.set(event.workspaceId, { name: event.workspaceName, count: 1 });
         } else {
-          existing.eventCount++;
+          meta.count++;
         }
       }
-      const workspaceActivity = [...activityMap.values()];
+
+      const workspaceActivity: WorkspaceActivity[] = [];
+      for (const [workspaceId, lastDate] of lastDateMap.entries()) {
+        const meta = countMap.get(workspaceId)!;
+        workspaceActivity.push({
+          workspaceId,
+          workspaceName: meta.name,
+          lastActivityDate: lastDate,
+          eventCount: meta.count,
+        });
+      }
 
       if (!isDemoMode) {
         adminRateLimiter.trackRequest();

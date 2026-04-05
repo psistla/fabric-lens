@@ -20,7 +20,7 @@ export function createActivityEventsApi(client: FabricClient) {
       const initialUrl = `${POWERBI_ADMIN_API_BASE}/admin/activityevents?startDateTime='${startDateTime}'&endDateTime='${endDateTime}'`;
       let url: string | undefined = initialUrl;
       do {
-        const res = await client.get<ActivityEventsResponse>(url, POWERBI_SCOPES);
+        const res: ActivityEventsResponse = await client.get<ActivityEventsResponse>(url, POWERBI_SCOPES);
         results.push(...res.activityEventEntities);
         url = res.continuationUri;
       } while (url);
