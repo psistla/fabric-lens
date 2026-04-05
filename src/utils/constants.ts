@@ -23,6 +23,15 @@ export const GRAPH_SCOPES = ['https://graph.microsoft.com/GroupMember.Read.All']
 /** Default Microsoft Graph API base URL. */
 export const DEFAULT_GRAPH_API_BASE = 'https://graph.microsoft.com/v1.0';
 
+// -- Power BI Admin API --
+
+/** Base URL for the Power BI Admin REST API. Used by widelyShared and (future) activityEvents. */
+export const POWERBI_ADMIN_API_BASE = 'https://api.powerbi.com/v1.0/myorg';
+
+/** OAuth scopes for Power BI Admin API calls (different resource from Fabric API).
+ *  MSAL will fire acquireTokenPopup automatically on first use if not yet consented. */
+export const POWERBI_SCOPES = ['https://analysis.windows.net/powerbi/api/.default'];
+
 // -- Rate limiting --
 
 /** Admin API rate limit (requests per hour). */
