@@ -1,9 +1,11 @@
+import { useMemo } from 'react';
 import { Clock, AlertTriangle, ShieldCheck } from 'lucide-react';
 import { Link } from 'react-router';
 import type { GhostWorkspace } from '@/utils/ghostWorkspaces';
 import type { Workspace } from '@/api/types/workspace';
 import { calculateWorkspaceHealth } from '@/utils/healthScore';
 import type { HealthGrade } from '@/utils/healthScore';
+import { GHOST_WORKSPACE_THRESHOLD_DAYS } from '@/utils/constants';
 
 interface Props {
   ghostWorkspaces: GhostWorkspace[];
@@ -14,11 +16,11 @@ interface Props {
 }
 
 const GRADE_COLORS: Record<HealthGrade, { bg: string; text: string }> = {
-  A: { bg: 'bg-emerald-50 dark:bg-emerald-950', text: 'text-emerald-700 dark:text-emerald-300' },
-  B: { bg: 'bg-indigo-50 dark:bg-indigo-950', text: 'text-indigo-700 dark:text-indigo-300' },
-  C: { bg: 'bg-amber-50 dark:bg-amber-950', text: 'text-amber-700 dark:text-amber-300' },
-  D: { bg: 'bg-orange-50 dark:bg-orange-950', text: 'text-orange-700 dark:text-orange-300' },
-  F: { bg: 'bg-red-50 dark:bg-red-950', text: 'text-red-700 dark:text-red-300' },
+  A: { bg: 'bg-[var(--health-a-bg)]', text: 'text-[var(--health-a)]' },
+  B: { bg: 'bg-[var(--health-b-bg)]', text: 'text-[var(--health-b)]' },
+  C: { bg: 'bg-[var(--health-c-bg)]', text: 'text-[var(--health-c)]' },
+  D: { bg: 'bg-[var(--health-d-bg)]', text: 'text-[var(--health-d)]' },
+  F: { bg: 'bg-[var(--health-f-bg)]', text: 'text-[var(--health-f)]' },
 };
 
 function GradeChip({ grade }: { grade: HealthGrade }) {
@@ -45,6 +47,19 @@ export function GhostWorkspacesPanel({
   error,
   onRetry,
 }: Props) {
+  // Build a lookup map from workspaceId → Workspace for health grade computation
+  const workspaceMap = useMemo(
+    () => new Map(workspaces.map((w) => [w.id, w])),
+    [workspaces]
+  );
+
+  // Sort descending by daysInactive (deriveGhostWorkspaces already does this,
+  // but re-sort here for safety)
+  const sorted = useMemo(
+    () => [...ghostWorkspaces].sort((a, b) => b.daysInactive - a.daysInactive),
+    [ghostWorkspaces]
+  );
+
   // Loading state
   if (loading) {
     return (
@@ -82,6 +97,7 @@ export function GhostWorkspacesPanel({
           </div>
           <button
             onClick={onRetry}
+            aria-label="Retry loading ghost workspaces"
             className="shrink-0 rounded-lg px-3 py-1 text-xs font-semibold text-[var(--m-primary)] ring-1 ring-[var(--m-primary)]/40 transition-colors hover:bg-[var(--m-primary-subtle)]"
           >
             Retry
@@ -110,13 +126,6 @@ export function GhostWorkspacesPanel({
     );
   }
 
-  // Build a lookup map from workspaceId → Workspace for health grade computation
-  const workspaceMap = new Map<string, Workspace>(workspaces.map((ws) => [ws.id, ws]));
-
-  // Sort descending by daysInactive (deriveGhostWorkspaces already does this,
-  // but re-sort here for safety)
-  const sorted = [...ghostWorkspaces].sort((a, b) => b.daysInactive - a.daysInactive);
-
   return (
     <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)]">
       {/* Header */}
@@ -129,7 +138,7 @@ export function GhostWorkspacesPanel({
           <span className="rounded-full bg-[var(--m-error-bg)] px-2 py-0.5 text-[11px] font-semibold text-[var(--m-error-text)]">
             {sorted.length} {sorted.length === 1 ? 'workspace' : 'workspaces'}
           </span>
-          <span className="text-[11px] text-[var(--m-text-tertiary)]">(90+ days inactive)</span>
+          <span className="text-[11px] text-[var(--m-text-tertiary)]">({GHOST_WORKSPACE_THRESHOLD_DAYS}+ days inactive)</span>
         </div>
       </div>
 
@@ -142,7 +151,7 @@ export function GhostWorkspacesPanel({
                 Workspace
               </th>
               <th className="px-4 py-2 text-left text-[11px] font-semibold uppercase tracking-[0.04em] text-[var(--m-text-secondary)]">
-                Health
+                Grade
               </th>
               <th className="px-4 py-2 text-left text-[11px] font-semibold uppercase tracking-[0.04em] text-[var(--m-text-secondary)]">
                 Last Activity
@@ -157,7 +166,7 @@ export function GhostWorkspacesPanel({
               const workspace = workspaceMap.get(ghost.workspaceId);
               const grade = workspace
                 ? calculateWorkspaceHealth(workspace, []).grade
-                : ('F' as HealthGrade);
+                : 'F';
 
               return (
                 <tr key={ghost.workspaceId} className="hover:bg-[var(--m-surface-hover)]">
@@ -189,7 +198,7 @@ export function GhostWorkspacesPanel({
 
       {/* Footer */}
       <div className="border-t border-[var(--m-border)] bg-[var(--m-surface)] px-4 py-2 text-[11px] text-[var(--m-text-tertiary)]">
-        Workspaces with no activity in the last 90 days. Review and consider archiving.
+        Workspaces with no activity in the last {GHOST_WORKSPACE_THRESHOLD_DAYS} days. Review and consider archiving.
       </div>
     </div>
   );
