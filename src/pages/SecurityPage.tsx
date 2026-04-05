@@ -22,6 +22,7 @@ import { useSecurityStore } from '@/store/securityStore';
 import { useWorkspaceStore } from '@/store/workspaceStore';
 import { useTenantSettingsStore } from '@/store/tenantSettingsStore';
 import { useWidelySharedStore } from '@/store/widelySharedStore';
+import { useActivityStore } from '@/store/activityStore';
 import { ExportButton } from '@/components/shared/ExportButton';
 import { SearchBar } from '@/components/shared/SearchBar';
 import { GroupBadge, GroupExpansionRow } from '@/components/security/GroupExpansionRow';
@@ -29,6 +30,7 @@ import { EffectiveAccessCard } from '@/components/security/EffectiveAccessCard';
 import { SecurityFindingsPanel } from '@/components/security/SecurityFindingsPanel';
 import { TenantSettingsRiskPanel } from '@/components/security/TenantSettingsRiskPanel';
 import { WidelySharedPanel } from '@/components/security/WidelySharedPanel';
+import { GhostWorkspacesPanel } from '@/components/security/GhostWorkspacesPanel';
 import { SecurityPostureCard } from '@/components/security/SecurityPostureCard';
 import { SpnGovernancePanel } from '@/components/security/SpnGovernancePanel';
 import { SpofWorkspacesPanel } from '@/components/security/SpofWorkspacesPanel';
@@ -210,6 +212,12 @@ export function SecurityPage() {
     error: widelySharedError,
     fetchWidelySharedArtifacts,
   } = useWidelySharedStore();
+  const {
+    ghostWorkspaces,
+    loading: ghostLoading,
+    error: ghostError,
+    fetchActivityEvents,
+  } = useActivityStore();
 
   // Incremental consent: try silent token first, then show consent card if needed.
   const [consentChecked, setConsentChecked] = useState(isDemoMode);
@@ -249,9 +257,10 @@ export function SecurityPage() {
   const handleScanAll = useCallback(() => {
     void fetchTenantSettings();
     void fetchWidelySharedArtifacts();
+    void fetchActivityEvents(workspaces);
     const ids = workspaces.map((w) => w.id);
     void fetchAllWorkspaceUsers(ids);
-  }, [workspaces, fetchAllWorkspaceUsers, fetchTenantSettings, fetchWidelySharedArtifacts]);
+  }, [workspaces, fetchAllWorkspaceUsers, fetchTenantSettings, fetchWidelySharedArtifacts, fetchActivityEvents]);
 
   const hasScanned = Object.keys(workspaceUsers).length > 0;
 
@@ -674,6 +683,15 @@ export function SecurityPage() {
             loading={widelySharedLoading}
             error={widelySharedError}
             onRetry={fetchWidelySharedArtifacts}
+          />
+
+          {/* Ghost Workspaces Panel */}
+          <GhostWorkspacesPanel
+            ghostWorkspaces={ghostWorkspaces}
+            workspaces={workspaces}
+            loading={ghostLoading}
+            error={ghostError}
+            onRetry={() => void fetchActivityEvents(workspaces)}
           />
 
           {/* SPOF Workspaces Panel */}
