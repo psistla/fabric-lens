@@ -3,6 +3,7 @@ import type { Item } from './types/item';
 import type { Capacity } from './types/capacity';
 import type { WorkspaceUser, GroupMember, ResolvedGroup } from './types/admin';
 import type { TenantSetting } from './types/tenantSettings';
+import type { WidelySharedArtifact } from './types/widelyShared';
 
 export const isDemoMode =
   !import.meta.env.VITE_MSAL_CLIENT_ID ||
@@ -1258,6 +1259,81 @@ export function getMockTenantSettings(): TenantSetting[] {
       tenantSettingGroup: 'Developer settings',
       canSpecifySecurityGroups: false,
       enabledSecurityGroups: [],
+    },
+  ];
+}
+
+export function getMockWidelySharedArtifacts(): WidelySharedArtifact[] {
+  return [
+    {
+      artifactId: 'ws-art-001',
+      displayName: 'Sales Executive Dashboard',
+      artifactType: 'Report',
+      accessRight: 'ReadWrite',
+      shareType: 'Link',
+      sharer: {
+        displayName: 'Alex Johnson',
+        emailAddress: 'alex.johnson@contoso.com',
+        identifier: 'alex.johnson@contoso.com',
+        graphId: 'usr-001',
+        principalType: 'User',
+      },
+    },
+    {
+      artifactId: 'ws-art-002',
+      displayName: 'Org Revenue Metrics',
+      artifactType: 'Dashboard',
+      accessRight: 'Read',
+      shareType: 'Link',
+      sharer: {
+        displayName: 'Maria Garcia',
+        emailAddress: 'maria.garcia@contoso.com',
+        identifier: 'maria.garcia@contoso.com',
+        graphId: 'usr-002',
+        principalType: 'User',
+      },
+    },
+    {
+      artifactId: 'ws-art-003',
+      displayName: 'Customer Data Model',
+      artifactType: 'Dataset',
+      accessRight: 'ReadWrite',
+      shareType: 'Link',
+      sharer: {
+        displayName: 'James Wilson',
+        emailAddress: 'james.wilson@contoso.com',
+        identifier: 'james.wilson@contoso.com',
+        graphId: 'usr-003',
+        principalType: 'User',
+      },
+    },
+    {
+      artifactId: 'ws-art-004',
+      displayName: 'Quarterly Financial Report',
+      artifactType: 'PaginatedReport',
+      accessRight: 'Read',
+      shareType: 'Link',
+      sharer: {
+        displayName: 'Taylor Reed',
+        emailAddress: 'taylor.reed@external.com',
+        identifier: 'taylor.reed@external.com',
+        graphId: 'usr-ext-001',
+        principalType: 'User',
+      },
+    },
+    {
+      artifactId: 'ws-art-005',
+      displayName: 'Marketing Attribution',
+      artifactType: 'Report',
+      accessRight: 'Read',
+      shareType: 'Link',
+      sharer: {
+        displayName: 'Sarah Chen',
+        emailAddress: 'sarah.chen@contoso.com',
+        identifier: 'sarah.chen@contoso.com',
+        graphId: 'usr-004',
+        principalType: 'User',
+      },
     },
   ];
 }
