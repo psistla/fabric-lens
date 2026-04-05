@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { deriveGhostWorkspaces } from './ghostWorkspaces';
 import type { ActivityEvent } from '@/api/types/activityEvents';
 import type { Workspace } from '@/api/types/workspace';
+import { GHOST_WORKSPACE_THRESHOLD_DAYS, ACTIVITY_LOG_LOOKBACK_DAYS } from '@/utils/constants';
 
 // Fixed "now" so daysInactive calculations are deterministic
 const NOW = new Date('2026-04-05T12:00:00.000Z');
@@ -27,8 +28,6 @@ function makeEvent(workspaceId: string, creationTime: string): ActivityEvent {
   };
 }
 
-const THRESHOLD = 90;
-const LOOKBACK = 30;
 
 describe('deriveGhostWorkspaces', () => {
   beforeEach(() => {
@@ -41,7 +40,7 @@ describe('deriveGhostWorkspaces', () => {
   });
 
   it('returns empty array when both events and workspaces are empty', () => {
-    expect(deriveGhostWorkspaces([], [], THRESHOLD, LOOKBACK)).toEqual([]);
+    expect(deriveGhostWorkspaces([], [], GHOST_WORKSPACE_THRESHOLD_DAYS, ACTIVITY_LOG_LOOKBACK_DAYS)).toEqual([]);
   });
 
   it('returns empty array when all workspaces have recent activity (within threshold)', () => {
@@ -49,20 +48,20 @@ describe('deriveGhostWorkspaces', () => {
     const recentDate = new Date(NOW.getTime() - 10 * 24 * 60 * 60 * 1000).toISOString();
     const workspaces = [makeWorkspace('ws-1', 'Active WS 1')];
     const events = [makeEvent('ws-1', recentDate)];
-    expect(deriveGhostWorkspaces(events, workspaces, THRESHOLD, LOOKBACK)).toEqual([]);
+    expect(deriveGhostWorkspaces(events, workspaces, GHOST_WORKSPACE_THRESHOLD_DAYS, ACTIVITY_LOG_LOOKBACK_DAYS)).toEqual([]);
   });
 
   it('includes workspace with no events, setting daysInactive = lookbackDays and lastActivityDate = null', () => {
     const workspaces = [makeWorkspace('ws-2', 'Silent WS')];
-    const result = deriveGhostWorkspaces([], workspaces, THRESHOLD, LOOKBACK);
-    // LOOKBACK (30) < THRESHOLD (90), so it should NOT be included
+    const result = deriveGhostWorkspaces([], workspaces, GHOST_WORKSPACE_THRESHOLD_DAYS, 30);
+    // lookbackDays (30) < GHOST_WORKSPACE_THRESHOLD_DAYS (90), so it should NOT be included
     expect(result).toEqual([]);
   });
 
   it('includes workspace with no events when lookbackDays >= thresholdDays', () => {
     const workspaces = [makeWorkspace('ws-2', 'Silent WS')];
     // Use a lookback of 120 so the workspace qualifies
-    const result = deriveGhostWorkspaces([], workspaces, THRESHOLD, 120);
+    const result = deriveGhostWorkspaces([], workspaces, GHOST_WORKSPACE_THRESHOLD_DAYS, 120);
     expect(result).toHaveLength(1);
     expect(result[0].workspaceId).toBe('ws-2');
     expect(result[0].lastActivityDate).toBeNull();
@@ -74,7 +73,7 @@ describe('deriveGhostWorkspaces', () => {
     const oldDate = new Date(NOW.getTime() - 100 * 24 * 60 * 60 * 1000).toISOString();
     const workspaces = [makeWorkspace('ws-3', 'Old WS')];
     const events = [makeEvent('ws-3', oldDate)];
-    const result = deriveGhostWorkspaces(events, workspaces, THRESHOLD, LOOKBACK);
+    const result = deriveGhostWorkspaces(events, workspaces, GHOST_WORKSPACE_THRESHOLD_DAYS, ACTIVITY_LOG_LOOKBACK_DAYS);
     expect(result).toHaveLength(1);
     expect(result[0].workspaceId).toBe('ws-3');
     expect(result[0].daysInactive).toBe(100);
@@ -100,7 +99,7 @@ describe('deriveGhostWorkspaces', () => {
       makeEvent('ws-ghost-120', old120),
     ];
 
-    const result = deriveGhostWorkspaces(events, workspaces, THRESHOLD, LOOKBACK);
+    const result = deriveGhostWorkspaces(events, workspaces, GHOST_WORKSPACE_THRESHOLD_DAYS, ACTIVITY_LOG_LOOKBACK_DAYS);
     expect(result).toHaveLength(2);
     // Most inactive first
     expect(result[0].workspaceId).toBe('ws-ghost-120');
@@ -122,7 +121,7 @@ describe('deriveGhostWorkspaces', () => {
     ];
 
     // Most recent event is 20 days ago — below the 90-day threshold → not a ghost
-    const result = deriveGhostWorkspaces(events, workspaces, THRESHOLD, LOOKBACK);
+    const result = deriveGhostWorkspaces(events, workspaces, GHOST_WORKSPACE_THRESHOLD_DAYS, ACTIVITY_LOG_LOOKBACK_DAYS);
     expect(result).toEqual([]);
   });
 
@@ -137,7 +136,7 @@ describe('deriveGhostWorkspaces', () => {
     ];
 
     // Most recent is 95 days ago → ghost, daysInactive should be 95 (not 200)
-    const result = deriveGhostWorkspaces(events, workspaces, THRESHOLD, LOOKBACK);
+    const result = deriveGhostWorkspaces(events, workspaces, GHOST_WORKSPACE_THRESHOLD_DAYS, ACTIVITY_LOG_LOOKBACK_DAYS);
     expect(result).toHaveLength(1);
     expect(result[0].daysInactive).toBe(95);
     expect(result[0].lastActivityDate).toEqual(new Date(newerDate));
