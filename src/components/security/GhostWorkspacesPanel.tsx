@@ -1,0 +1,196 @@
+import { Clock, AlertTriangle, ShieldCheck } from 'lucide-react';
+import { Link } from 'react-router';
+import type { GhostWorkspace } from '@/utils/ghostWorkspaces';
+import type { Workspace } from '@/api/types/workspace';
+import { calculateWorkspaceHealth } from '@/utils/healthScore';
+import type { HealthGrade } from '@/utils/healthScore';
+
+interface Props {
+  ghostWorkspaces: GhostWorkspace[];
+  workspaces: Workspace[];
+  loading: boolean;
+  error: string | null;
+  onRetry: () => void;
+}
+
+const GRADE_COLORS: Record<HealthGrade, { bg: string; text: string }> = {
+  A: { bg: 'bg-emerald-50 dark:bg-emerald-950', text: 'text-emerald-700 dark:text-emerald-300' },
+  B: { bg: 'bg-indigo-50 dark:bg-indigo-950', text: 'text-indigo-700 dark:text-indigo-300' },
+  C: { bg: 'bg-amber-50 dark:bg-amber-950', text: 'text-amber-700 dark:text-amber-300' },
+  D: { bg: 'bg-orange-50 dark:bg-orange-950', text: 'text-orange-700 dark:text-orange-300' },
+  F: { bg: 'bg-red-50 dark:bg-red-950', text: 'text-red-700 dark:text-red-300' },
+};
+
+function GradeChip({ grade }: { grade: HealthGrade }) {
+  const colors = GRADE_COLORS[grade];
+  return (
+    <span
+      className={`rounded-full px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide ${colors.bg} ${colors.text}`}
+    >
+      {grade}
+    </span>
+  );
+}
+
+const HEADER_TITLE = (
+  <h2 className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--m-text-secondary)]">
+    Inactive Workspaces
+  </h2>
+);
+
+export function GhostWorkspacesPanel({
+  ghostWorkspaces,
+  workspaces,
+  loading,
+  error,
+  onRetry,
+}: Props) {
+  // Loading state
+  if (loading) {
+    return (
+      <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)]">
+        <div className="flex items-center gap-2 border-b border-[var(--m-border)] px-4 py-3">
+          <Clock className="h-4 w-4 text-[var(--m-text-tertiary)]" />
+          {HEADER_TITLE}
+        </div>
+        <div className="divide-y divide-[var(--m-border)]">
+          {[0, 1, 2].map((i) => (
+            <div key={i} className="flex items-center gap-4 px-4 py-3">
+              <div className="m-skeleton h-4 w-48" />
+              <div className="m-skeleton h-5 w-8 rounded-full" />
+              <div className="m-skeleton h-4 w-28" />
+              <div className="m-skeleton h-4 w-20" />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)]">
+        <div className="flex items-center gap-2 border-b border-[var(--m-border)] px-4 py-3">
+          <Clock className="h-4 w-4 text-[var(--m-text-tertiary)]" />
+          {HEADER_TITLE}
+        </div>
+        <div className="flex items-center justify-between px-4 py-4">
+          <div className="flex items-center gap-2 text-sm text-[var(--m-warning-text)]">
+            <AlertTriangle className="h-4 w-4 shrink-0 text-[var(--m-warning)]" />
+            Ghost workspace data unavailable — check admin permissions
+          </div>
+          <button
+            onClick={onRetry}
+            className="shrink-0 rounded-lg px-3 py-1 text-xs font-semibold text-[var(--m-primary)] ring-1 ring-[var(--m-primary)]/40 transition-colors hover:bg-[var(--m-primary-subtle)]"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Empty state
+  if (ghostWorkspaces.length === 0) {
+    return (
+      <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)]">
+        <div className="flex items-center gap-2 border-b border-[var(--m-border)] px-4 py-3">
+          <Clock className="h-4 w-4 text-[var(--m-text-tertiary)]" />
+          {HEADER_TITLE}
+        </div>
+        <div className="flex flex-col items-center gap-2 py-8 text-center">
+          <ShieldCheck className="h-7 w-7 text-[var(--m-success)]" />
+          <p className="text-sm font-medium text-[var(--m-text)]">
+            All workspaces have recent activity.
+          </p>
+          <p className="text-xs text-[var(--m-text-secondary)]">No inactive workspaces detected.</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Build a lookup map from workspaceId → Workspace for health grade computation
+  const workspaceMap = new Map<string, Workspace>(workspaces.map((ws) => [ws.id, ws]));
+
+  // Sort descending by daysInactive (deriveGhostWorkspaces already does this,
+  // but re-sort here for safety)
+  const sorted = [...ghostWorkspaces].sort((a, b) => b.daysInactive - a.daysInactive);
+
+  return (
+    <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)]">
+      {/* Header */}
+      <div className="flex items-center justify-between border-b border-[var(--m-border)] px-4 py-3">
+        <div className="flex items-center gap-2">
+          <Clock className="h-4 w-4 text-[var(--m-error)]" />
+          {HEADER_TITLE}
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="rounded-full bg-[var(--m-error-bg)] px-2 py-0.5 text-[11px] font-semibold text-[var(--m-error-text)]">
+            {sorted.length} {sorted.length === 1 ? 'workspace' : 'workspaces'}
+          </span>
+          <span className="text-[11px] text-[var(--m-text-tertiary)]">(90+ days inactive)</span>
+        </div>
+      </div>
+
+      {/* Table */}
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b border-[var(--m-border)] bg-[var(--m-surface)]">
+              <th className="px-4 py-2 text-left text-[11px] font-semibold uppercase tracking-[0.04em] text-[var(--m-text-secondary)]">
+                Workspace
+              </th>
+              <th className="px-4 py-2 text-left text-[11px] font-semibold uppercase tracking-[0.04em] text-[var(--m-text-secondary)]">
+                Health
+              </th>
+              <th className="px-4 py-2 text-left text-[11px] font-semibold uppercase tracking-[0.04em] text-[var(--m-text-secondary)]">
+                Last Activity
+              </th>
+              <th className="px-4 py-2 text-left text-[11px] font-semibold uppercase tracking-[0.04em] text-[var(--m-text-secondary)]">
+                Days Inactive
+              </th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-[var(--m-border)]">
+            {sorted.map((ghost) => {
+              const workspace = workspaceMap.get(ghost.workspaceId);
+              const grade = workspace
+                ? calculateWorkspaceHealth(workspace, []).grade
+                : ('F' as HealthGrade);
+
+              return (
+                <tr key={ghost.workspaceId} className="hover:bg-[var(--m-surface-hover)]">
+                  <td className="px-4 py-2.5">
+                    <Link
+                      to={`/workspaces/${ghost.workspaceId}`}
+                      className="font-medium text-[var(--m-primary)] hover:underline"
+                    >
+                      {ghost.workspaceName}
+                    </Link>
+                  </td>
+                  <td className="px-4 py-2.5">
+                    <GradeChip grade={grade} />
+                  </td>
+                  <td className="px-4 py-2.5 text-[var(--m-text-secondary)]">
+                    {ghost.lastActivityDate
+                      ? ghost.lastActivityDate.toLocaleDateString()
+                      : 'No activity detected'}
+                  </td>
+                  <td className="px-4 py-2.5 text-[var(--m-text-secondary)]">
+                    {ghost.daysInactive} days
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Footer */}
+      <div className="border-t border-[var(--m-border)] bg-[var(--m-surface)] px-4 py-2 text-[11px] text-[var(--m-text-tertiary)]">
+        Workspaces with no activity in the last 90 days. Review and consider archiving.
+      </div>
+    </div>
+  );
+}
