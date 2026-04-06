@@ -32,6 +32,12 @@ jobs:
           api_location: "" # Api source code path - optional
           output_location: "dist" # Built app content directory - optional
           ###### End of Repository/Build Configurations ######
+        env:
+          VITE_MSAL_CLIENT_ID: ${{ secrets.VITE_MSAL_CLIENT_ID }}
+          VITE_MSAL_TENANT_ID: common
+          VITE_MSAL_REDIRECT_URI: https://fabric-lens.com
+          VITE_FABRIC_API_BASE: https://api.fabric.microsoft.com/v1
+          VITE_ARM_API_BASE: https://management.azure.com
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
