@@ -648,15 +648,44 @@ export function SecurityPage() {
 
       {/* Pre-scan prompt */}
       {!hasScanned && !scanProgress && (
-        <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)] p-8 text-center">
-          <ScanSearch className="mx-auto h-10 w-10 text-[var(--m-text-tertiary)]" />
-          <p className="mt-3 text-sm text-[var(--m-text-secondary)]">
-            Click <strong>Scan All</strong> to fetch user role assignments across
-            all {workspaces.length} workspaces.
-          </p>
-          <p className="mt-1 text-xs text-[var(--m-text-tertiary)]">
-            Admin APIs are rate-limited to {ADMIN_RATE_LIMIT} requests per hour.
-          </p>
+        <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)] p-6">
+          <div className="flex items-start gap-4">
+            <ScanSearch className="mt-0.5 h-8 w-8 shrink-0 text-[var(--m-text-tertiary)]" />
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-semibold text-[var(--m-text)]">Run a security audit</p>
+              <p className="mt-1 text-xs text-[var(--m-text-secondary)]">
+                Analyses role assignments across all {workspaces.length} workspace{workspaces.length !== 1 ? 's' : ''} to surface:
+              </p>
+              <ul className="mt-3 space-y-1.5">
+                {([
+                  `Users with Admin on ${ADMIN_ROLE_WARNING_THRESHOLD}+ workspaces`,
+                  'Single-admin workspaces (SPOF risk)',
+                  'Service principals with Admin role',
+                  'Widely shared reports and semantic models',
+                  'High-risk tenant settings',
+                  'Inactive (ghost) workspaces',
+                ] as const).map((item) => (
+                  <li key={item} className="flex items-center gap-2 text-xs text-[var(--m-text-secondary)]">
+                    <span className="h-1 w-1 shrink-0 rounded-full bg-[var(--m-text-tertiary)]" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-4 flex items-center gap-3">
+                <button
+                  onClick={handleScanAll}
+                  disabled={loading || wsLoading}
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--m-primary)] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[var(--m-primary-hover)] disabled:opacity-50"
+                >
+                  <ScanSearch className="h-3.5 w-3.5" />
+                  Scan All
+                </button>
+                <span className="text-[11px] text-[var(--m-text-tertiary)]">
+                  ~30s · rate limited to {ADMIN_RATE_LIMIT} req/hr
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
