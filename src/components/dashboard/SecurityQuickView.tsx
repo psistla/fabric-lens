@@ -108,20 +108,28 @@ export function SecurityQuickView() {
 
       {/* No data CTA */}
       {!hasData && !loading && (
-        <div className="flex flex-col items-center gap-3 px-4 py-8 text-center">
-          <ShieldCheck className="h-8 w-8 text-[var(--m-text-tertiary)]" />
-          <div>
-            <p className="text-sm font-medium text-[var(--m-text)]">
-              Permission data not yet loaded
-            </p>
-            <p className="mt-1 text-xs text-[var(--m-text-secondary)]">
-              Load security data to see permission summary
-            </p>
+        <div className="px-4 py-6">
+          <p className="text-sm font-semibold text-[var(--m-text)]">Uncover hidden access risks</p>
+          <p className="mt-1 text-xs text-[var(--m-text-secondary)]">
+            Run a scan to surface permission issues across your {workspaces.length} workspace{workspaces.length !== 1 ? 's' : ''}
+          </p>
+          <div className="mt-4 space-y-2.5">
+            {([
+              `Users with Admin on ${ADMIN_ROLE_WARNING_THRESHOLD}+ workspaces`,
+              'Single-admin workspaces (SPOF risk)',
+              'Service principals with Admin role',
+            ] as const).map((label) => (
+              <div key={label} className="flex items-center gap-2">
+                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--m-text-tertiary)]" />
+                <span className="text-xs text-[var(--m-text-secondary)]">{label}</span>
+                <span className="ml-auto font-mono text-xs font-semibold text-[var(--m-text-tertiary)]">—</span>
+              </div>
+            ))}
           </div>
           <button
             onClick={handleLoad}
             disabled={workspaces.length === 0}
-            className="mt-1 inline-flex items-center gap-1.5 rounded-lg bg-[var(--m-primary)] px-3 py-1.5 text-xs font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+            className="mt-5 inline-flex items-center gap-1.5 rounded-lg bg-[var(--m-primary)] px-3 py-1.5 text-xs font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
           >
             Load security data
           </button>

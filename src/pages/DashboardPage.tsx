@@ -253,6 +253,8 @@ export function DashboardPage() {
             <div key={i} className="m-skeleton h-[104px] rounded-xl" />
           ))}
         </div>
+        {/* SecurityQuickView placeholder */}
+        <div className="m-skeleton h-40 rounded-xl" />
         <div className="m-skeleton h-56 rounded-xl" />
         <div className="m-skeleton h-64 rounded-xl" />
         <div className="grid gap-6 lg:grid-cols-2">
@@ -344,6 +346,8 @@ export function DashboardPage() {
         />
       </div>
 
+      <SecurityQuickView />
+
       {/* Section 2: Health Grid */}
       {workspaces.length > 0 && (
         <HealthGrid
@@ -355,52 +359,48 @@ export function DashboardPage() {
       {/* Section 3: Governance Issues */}
       <GovernanceIssuesPanel issues={aggregatedIssues} workspaces={workspaces} />
 
-      {/* Section 4: Health Grade Distribution + Security Quick View */}
-      <div className="grid gap-6 lg:grid-cols-2">
-        <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)] p-4">
-          <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.04em] text-[var(--m-text-secondary)]">
-            Health Grade Distribution
-          </h2>
-          {gradeDist.length > 0 ? (
-            <ResponsiveContainer width="100%" height={180}>
-              <BarChart
-                layout="vertical"
-                data={gradeDist}
-                margin={{ top: 0, right: 12, left: 0, bottom: 0 }}
-              >
-                <XAxis type="number" hide />
-                <YAxis
-                  type="category"
-                  dataKey="grade"
-                  width={24}
-                  tick={{ fontSize: 12, fontWeight: 700, fill: 'var(--m-text-secondary)' }}
-                  tickLine={false}
-                  axisLine={false}
-                />
-                <RechartsTooltip
-                  contentStyle={CHART_TOOLTIP_STYLE}
-                  itemStyle={{ color: '#e2e8f0' }}
-                  cursor={{ fill: 'var(--m-surface)' }}
-                  formatter={(value?: number | string | ReadonlyArray<string | number>) => {
-                    const n = typeof value === 'number' ? value : 0;
-                    return [`${n} workspace${n !== 1 ? 's' : ''}`, 'Count'] as [string, string];
-                  }}
-                />
-                <Bar dataKey="count" radius={4} maxBarSize={28}>
-                  {gradeDist.map((entry) => (
-                    <Cell key={entry.grade} fill={entry.color} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          ) : (
-            <div className="flex h-[180px] items-center justify-center text-sm text-[var(--m-text-tertiary)]">
-              No health data yet
-            </div>
-          )}
-        </div>
-
-        <SecurityQuickView />
+      {/* Section 4: Health Grade Distribution */}
+      <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)] p-4">
+        <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.04em] text-[var(--m-text-secondary)]">
+          Health Grade Distribution
+        </h2>
+        {gradeDist.length > 0 ? (
+          <ResponsiveContainer width="100%" height={180}>
+            <BarChart
+              layout="vertical"
+              data={gradeDist}
+              margin={{ top: 0, right: 12, left: 0, bottom: 0 }}
+            >
+              <XAxis type="number" hide />
+              <YAxis
+                type="category"
+                dataKey="grade"
+                width={24}
+                tick={{ fontSize: 12, fontWeight: 700, fill: 'var(--m-text-secondary)' }}
+                tickLine={false}
+                axisLine={false}
+              />
+              <RechartsTooltip
+                contentStyle={CHART_TOOLTIP_STYLE}
+                itemStyle={{ color: '#e2e8f0' }}
+                cursor={{ fill: 'var(--m-surface)' }}
+                formatter={(value?: number | string | ReadonlyArray<string | number>) => {
+                  const n = typeof value === 'number' ? value : 0;
+                  return [`${n} workspace${n !== 1 ? 's' : ''}`, 'Count'] as [string, string];
+                }}
+              />
+              <Bar dataKey="count" radius={4} maxBarSize={28}>
+                {gradeDist.map((entry) => (
+                  <Cell key={entry.grade} fill={entry.color} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        ) : (
+          <div className="flex h-[180px] items-center justify-center text-sm text-[var(--m-text-tertiary)]">
+            No health data yet
+          </div>
+        )}
       </div>
 
       {/* Section 5: Item Distribution */}
