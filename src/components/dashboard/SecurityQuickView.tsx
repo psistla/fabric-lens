@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router';
 import { Users, ShieldAlert, Bot, AlertTriangle, ArrowRight, ShieldCheck, Loader2 } from 'lucide-react';
 import { useSecurityStore } from '@/store/securityStore';
 import { useWorkspaceStore } from '@/store/workspaceStore';
+import { useTenantSettingsStore } from '@/store/tenantSettingsStore';
+import { useWidelySharedStore } from '@/store/widelySharedStore';
+import { useActivityStore } from '@/store/activityStore';
 import { ADMIN_ROLE_WARNING_THRESHOLD } from '@/utils/constants';
 import { computeSecurityPosture } from '@/utils/securityFindings';
 
@@ -17,6 +20,9 @@ export function SecurityQuickView() {
   const navigate = useNavigate();
   const { workspaceUsers, resolvedGroups, fetchAllWorkspaceUsers, loading } = useSecurityStore();
   const { workspaces } = useWorkspaceStore();
+  const { fetchTenantSettings } = useTenantSettingsStore();
+  const { fetchWidelySharedArtifacts } = useWidelySharedStore();
+  const { fetchActivityEvents } = useActivityStore();
 
   const hasData = Object.keys(workspaceUsers).length > 0;
 
@@ -81,6 +87,9 @@ export function SecurityQuickView() {
   }, [workspaceUsers, userSummaries, hasData]);
 
   const handleLoad = () => {
+    void fetchTenantSettings();
+    void fetchWidelySharedArtifacts();
+    void fetchActivityEvents(workspaces);
     void fetchAllWorkspaceUsers(workspaces.map((ws) => ws.id));
   };
 

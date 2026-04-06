@@ -4,7 +4,6 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { useAuth } from '@/auth/useAuth';
 import { useUiStore } from '@/store/uiStore';
 import { isDemoMode } from '@/api/demo';
-import { useToastStore } from '@/components/shared/Toast';
 
 const routeLabels: Record<string, string> = {
   '/': 'Dashboard',
@@ -55,7 +54,6 @@ export function Header() {
   const { user, login, logout } = useAuth();
   const theme = useUiStore((s) => s.theme);
   const setTheme = useUiStore((s) => s.setTheme);
-  const addToast = useToastStore((s) => s.addToast);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
@@ -162,11 +160,7 @@ export function Header() {
                     role="menuitem"
                     onClick={() => {
                       closeMenu();
-                      if (isDemoMode) {
-                        addToast('info', 'This is a public demo. To connect your own Microsoft Fabric tenant, self-host this app with your Azure AD app registration. See the About page for setup instructions.');
-                      } else {
-                        void login();
-                      }
+                      void login();
                     }}
                     className="flex w-full items-center gap-2 px-3 py-2 text-sm text-[var(--m-primary)] transition-colors hover:bg-[var(--m-surface-hover)]"
                   >
