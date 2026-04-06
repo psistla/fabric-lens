@@ -18,6 +18,7 @@ interface ScoreRingProps {
   grade: string;
   size?: number;
   strokeWidth?: number;
+  benchmark?: number;
 }
 
 function prefersReducedMotion(): boolean {
@@ -29,6 +30,7 @@ export function ScoreRing({
   grade,
   size = SCORE_RING_DEFAULT_SIZE,
   strokeWidth = SCORE_RING_STROKE_WIDTH,
+  benchmark,
 }: ScoreRingProps) {
   const reduced = prefersReducedMotion();
   const [animatedScore, setAnimatedScore] = useState(0);
@@ -123,6 +125,16 @@ export function ScoreRing({
           {displayed}
         </span>
       </div>
+
+      {/* Benchmark label — only rendered when benchmark prop is provided */}
+      {benchmark !== undefined && (
+        <span
+          className="absolute bottom-0 left-1/2 -translate-x-1/2 text-[var(--m-text-secondary)] whitespace-nowrap"
+          style={{ fontSize: size * 0.12, bottom: -size * 0.18 }}
+        >
+          vs. typical {benchmark}
+        </span>
+      )}
     </div>
   );
 }
