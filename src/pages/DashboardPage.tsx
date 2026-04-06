@@ -29,7 +29,7 @@ import { HealthGrid } from '@/components/dashboard/HealthGrid';
 import { SecurityQuickView } from '@/components/dashboard/SecurityQuickView';
 import { ScoreRing } from '@/components/dashboard/ScoreRing';
 import { exportToJSON } from '@/utils/export';
-import { CHART_COLORS, CHART_FALLBACK_COLOR, CHART_TOOLTIP_STYLE, GRADE_THRESHOLDS, HEALTH_GRADE_COLORS } from '@/utils/constants';
+import { CHART_COLORS, CHART_FALLBACK_COLOR, CHART_TOOLTIP_STYLE, GRADE_THRESHOLDS, HEALTH_GRADE_COLORS, BENCHMARK_HEALTH_SCORE } from '@/utils/constants';
 
 const GRADE_ORDER = ['F', 'D', 'C', 'B', 'A'] as const;
 
@@ -309,7 +309,7 @@ export function DashboardPage() {
       <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-[auto_1fr_1fr_1fr]">
         {/* Tenant score ring card */}
         <div className="flex items-center gap-5 rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)] p-5 md:col-span-3 lg:col-span-1">
-          <ScoreRing score={tenantScore} grade={tenantGrade} size={96} />
+          <ScoreRing score={tenantScore} grade={tenantGrade} size={96} benchmark={BENCHMARK_HEALTH_SCORE} />
           <div className="min-w-0">
             <p className="text-sm font-medium text-[var(--m-text)]">Tenant Health Score</p>
             <p className="mt-0.5 text-xs text-[var(--m-text-secondary)]">
