@@ -6,6 +6,7 @@ import {
   Gauge,
   RefreshCw,
   AlertCircle,
+  FileText,
 } from 'lucide-react';
 import {
   BarChart,
@@ -293,6 +294,15 @@ export function DashboardPage() {
           )}
           {workspaces.length > 0 && (
             <ExportButton onClick={handleExport} label="Export JSON" />
+          )}
+          {workspaces.length > 0 && (
+            <button
+              onClick={() => navigate('/report')}
+              className="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-lg bg-[var(--m-primary)] text-white hover:opacity-90 transition-opacity"
+            >
+              <FileText className="h-3.5 w-3.5" />
+              Generate Report
+            </button>
           )}
           <button
             onClick={() => void loadData()}
