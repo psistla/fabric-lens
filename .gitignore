@@ -19,6 +19,9 @@ dist-ssr
 # Claude Code
 .claude/
 CLAUDE.md
+
+# Git worktrees
+.worktrees/
 DESIGN_GUIDE.md
 
 # Meridian design system reference files (local only — copy from your design system repo)
