@@ -41,7 +41,7 @@ import { WorkspacePivotTable } from '@/components/security/WorkspacePivotTable';
 import { deriveSecurityFindings, computeSecurityPosture } from '@/utils/securityFindings';
 import { deriveRiskySettings } from '@/utils/tenantSettingRisks';
 import { exportToCSV } from '@/utils/export';
-import { isDemoMode } from '@/api/demo';
+import { isEffectiveDemoMode } from '@/auth/AuthProvider';
 import type { PrincipalType, EffectiveAccessSummary } from '@/api/types/admin';
 import {
   ROLE_COLORS,
@@ -224,19 +224,19 @@ export function SecurityPage() {
   const [limitedAccess, setLimitedAccess] = useState(false);
 
   // Incremental consent: try silent token first, then show consent card if needed.
-  const [consentChecked, setConsentChecked] = useState(isDemoMode);
+  const [consentChecked, setConsentChecked] = useState(isEffectiveDemoMode());
   const [consentGranting, setConsentGranting] = useState(false);
   const [consentError, setConsentError] = useState<string | null>(null);
 
   // Demo mode: ?limitedAccess=1 simulates a non-admin user for consultant demos
   useEffect(() => {
-    if (isDemoMode && new URLSearchParams(window.location.search).has('limitedAccess')) {
+    if (isEffectiveDemoMode() && new URLSearchParams(window.location.search).has('limitedAccess')) {
       setLimitedAccess(true);
     }
   }, []);
 
   useEffect(() => {
-    if (isDemoMode) return;
+    if (isEffectiveDemoMode()) return;
     void checkAdminConsent().then((granted) => {
       setConsentChecked(true);
       if (granted && isAdmin === null) void checkAdminAccess();
@@ -250,7 +250,7 @@ export function SecurityPage() {
 
   // In demo mode, trigger admin access check (bypasses auth entirely).
   useEffect(() => {
-    if (isDemoMode && isAdmin === null) void checkAdminAccess();
+    if (isEffectiveDemoMode() && isAdmin === null) void checkAdminAccess();
   }, [isAdmin, checkAdminAccess]);
 
   const handleGrantConsent = useCallback(async () => {
@@ -317,7 +317,7 @@ export function SecurityPage() {
     }
 
     // In demo mode, auto-resolve all group members immediately
-    if (isDemoMode) {
+    if (isEffectiveDemoMode()) {
       for (const g of groups) {
         void resolveGroupMembers(g.email, g.displayName);
       }
@@ -538,7 +538,7 @@ export function SecurityPage() {
   }
 
   // Checking consent / admin status
-  if (!consentChecked || (isAdmin === null && (hasAdminAccess || isDemoMode)) || (loading && !scanProgress)) {
+  if (!consentChecked || (isAdmin === null && (hasAdminAccess || isEffectiveDemoMode())) || (loading && !scanProgress)) {
     return (
       <div className="space-y-4 p-6">
         <div className="m-skeleton h-7 w-40" />
@@ -549,7 +549,7 @@ export function SecurityPage() {
   }
 
   // Admin consent not yet granted — show incremental consent card
-  if (!isDemoMode && !hasAdminAccess) {
+  if (!isEffectiveDemoMode() && !hasAdminAccess) {
     return (
       <div className="p-6">
         <h1 className="text-2xl font-semibold tracking-[-0.02em] text-[var(--m-text)]">

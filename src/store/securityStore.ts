@@ -1,11 +1,11 @@
 import { create } from 'zustand';
 import type { WorkspaceUser, ResolvedGroup } from '@/api/types/admin';
 import {
-  isDemoMode,
   getMockWorkspaceUsers,
   getMockGroupMemberCount,
   getMockResolvedGroup,
 } from '@/api/demo';
+import { isEffectiveDemoMode } from '@/auth/AuthProvider';
 import { fabricClient } from '@/api/fabricClientInstance';
 import { createAdminApi } from '@/api/admin';
 import { ADMIN_RATE_LIMIT, DEMO_PROGRESS_DELAY_MS } from '@/utils/constants';
@@ -56,7 +56,7 @@ export const useSecurityStore = create<SecurityState>()((set, get) => ({
   rateLimitUsage: null,
 
   checkAdminAccess: async () => {
-    if (isDemoMode) {
+    if (isEffectiveDemoMode()) {
       set({ isAdmin: true });
       return;
     }
@@ -81,7 +81,7 @@ export const useSecurityStore = create<SecurityState>()((set, get) => ({
 
   fetchWorkspaceUsers: async (workspaceId: string) => {
     try {
-      if (isDemoMode) {
+      if (isEffectiveDemoMode()) {
         const users = getMockWorkspaceUsers(workspaceId);
         set((state) => ({
           workspaceUsers: { ...state.workspaceUsers, [workspaceId]: users },
@@ -119,7 +119,7 @@ export const useSecurityStore = create<SecurityState>()((set, get) => ({
       scanProgress: { completed: 0, total: toFetch.length },
     });
 
-    if (isDemoMode) {
+    if (isEffectiveDemoMode()) {
       // Simulate batch with small delay for visible progress
       const allUsers: Record<string, WorkspaceUser[]> = {};
       for (let i = 0; i < toFetch.length; i++) {
@@ -174,7 +174,7 @@ export const useSecurityStore = create<SecurityState>()((set, get) => ({
     const existing = get().resolvedGroups[groupUpn];
     if (existing?.memberCount !== null && existing?.memberCount !== undefined) return;
 
-    if (isDemoMode) {
+    if (isEffectiveDemoMode()) {
       const count = getMockGroupMemberCount(groupUpn);
       set((state) => ({
         resolvedGroups: {
@@ -227,7 +227,7 @@ export const useSecurityStore = create<SecurityState>()((set, get) => ({
       },
     }));
 
-    if (isDemoMode) {
+    if (isEffectiveDemoMode()) {
       // Simulate brief loading delay
       await new Promise((r) => setTimeout(r, 400));
       const resolved = getMockResolvedGroup(groupUpn, displayName);

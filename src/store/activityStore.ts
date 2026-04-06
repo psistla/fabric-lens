@@ -3,7 +3,8 @@ import type { Workspace } from '@/api/types/workspace';
 import type { ActivityEvent, WorkspaceActivity } from '@/api/types/activityEvents';
 import type { GhostWorkspace } from '@/utils/ghostWorkspaces';
 import { deriveGhostWorkspaces } from '@/utils/ghostWorkspaces';
-import { isDemoMode, getMockWorkspaceActivity } from '@/api/demo';
+import { getMockWorkspaceActivity } from '@/api/demo';
+import { isEffectiveDemoMode } from '@/auth/AuthProvider';
 import { fabricClient } from '@/api/fabricClientInstance';
 import { createActivityEventsApi } from '@/api/activityEvents';
 import { adminRateLimiter } from '@/utils/rateLimiter';
@@ -35,7 +36,7 @@ export const useActivityStore = create<ActivityState>()((set, get) => ({
     // Cache guard: skip if already loaded successfully in this session
     if (lastFetchedAt !== null && !error) return;
 
-    if (!isDemoMode && !adminRateLimiter.canMakeRequest()) {
+    if (!isEffectiveDemoMode() && !adminRateLimiter.canMakeRequest()) {
       set({ error: 'Admin API rate limit reached. Please wait before retrying.' });
       return;
     }
@@ -43,7 +44,7 @@ export const useActivityStore = create<ActivityState>()((set, get) => ({
     set({ loading: true, error: null });
     try {
       let events: ActivityEvent[];
-      if (isDemoMode) {
+      if (isEffectiveDemoMode()) {
         events = getMockWorkspaceActivity();
       } else {
         const now = new Date();
@@ -89,7 +90,7 @@ export const useActivityStore = create<ActivityState>()((set, get) => ({
         });
       }
 
-      if (!isDemoMode) {
+      if (!isEffectiveDemoMode()) {
         adminRateLimiter.trackRequest();
       }
 

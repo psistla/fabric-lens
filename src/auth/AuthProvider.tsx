@@ -9,6 +9,21 @@ export const msalInstance = isDemoMode
   ? null
   : new PublicClientApplication(msalConfig);
 
+/**
+ * Returns true when the app should use mock data:
+ * - Pure demo mode (no MSAL client ID configured), OR
+ * - MSAL configured but no authenticated account yet.
+ *
+ * Stores use this instead of the static `isDemoMode` so that
+ * unauthenticated visitors see demo data, and authenticated users
+ * see their real tenant data after sign-in + page reload.
+ */
+export function isEffectiveDemoMode(): boolean {
+  if (isDemoMode) return true;
+  if (!msalInstance) return true;
+  return msalInstance.getAllAccounts().length === 0;
+}
+
 interface Props {
   children: ReactNode;
 }

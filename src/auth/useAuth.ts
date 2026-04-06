@@ -48,6 +48,8 @@ export function useAuth() {
       ...fabricLoginRequest,
       redirectUri: `${window.location.origin}/auth.html`,
     });
+    // Reload so stores re-initialise and fetch live tenant data.
+    window.location.reload();
   }
 
   async function logout(): Promise<void> {

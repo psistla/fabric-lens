@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import type { TenantSetting } from '@/api/types/tenantSettings';
-import { isDemoMode, getMockTenantSettings } from '@/api/demo';
+import { getMockTenantSettings } from '@/api/demo';
+import { isEffectiveDemoMode } from '@/auth/AuthProvider';
 import { fabricClient } from '@/api/fabricClientInstance';
 import { createTenantSettingsApi } from '@/api/tenantSettings';
 import { adminRateLimiter } from '@/utils/rateLimiter';
@@ -24,17 +25,17 @@ export const useTenantSettingsStore = create<TenantSettingsState>()((set, get) =
     // Cache guard: skip if already loaded successfully in this session
     if (settings.length > 0 && !error) return;
 
-    if (!isDemoMode && !adminRateLimiter.canMakeRequest()) {
+    if (!isEffectiveDemoMode() && !adminRateLimiter.canMakeRequest()) {
       set({ error: 'Admin API rate limit reached. Please wait before retrying.' });
       return;
     }
 
     set({ loading: true, error: null });
     try {
-      const result = isDemoMode
+      const result = isEffectiveDemoMode()
         ? getMockTenantSettings()
         : await api.fetchTenantSettings();
-      if (!isDemoMode) {
+      if (!isEffectiveDemoMode()) {
         adminRateLimiter.trackRequest();
       }
       set({ settings: result, loading: false });

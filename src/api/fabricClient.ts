@@ -20,7 +20,7 @@ import {
 export function isValidGuid(value: string): boolean {
   return GUID_REGEX.test(value);
 }
-import { isDemoMode } from '@/api/demo';
+import { isEffectiveDemoMode } from '@/auth/AuthProvider';
 
 // Module-level request counter — tracks all fabricClient requests, resets hourly.
 const HOUR_MS = 60 * 60 * 1000;
@@ -163,7 +163,7 @@ export class FabricClient {
   }
 
   async get<T>(path: string, scopes?: string[]): Promise<T> {
-    if (isDemoMode) {
+    if (isEffectiveDemoMode()) {
       throw new Error(
         'fabricClient: API call attempted in demo mode. ' +
         'This is a bug — demo mode should use mock data exclusively.',
@@ -173,7 +173,7 @@ export class FabricClient {
   }
 
   async post<T>(path: string, body?: unknown, scopes?: string[]): Promise<T> {
-    if (isDemoMode) {
+    if (isEffectiveDemoMode()) {
       throw new Error(
         'fabricClient: API call attempted in demo mode. ' +
         'This is a bug — demo mode should use mock data exclusively.',

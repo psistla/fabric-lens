@@ -6,9 +6,11 @@ import type { TenantSetting } from './types/tenantSettings';
 import type { WidelySharedArtifact } from './types/widelyShared';
 import type { ActivityEvent } from './types/activityEvents';
 
-export const isDemoMode =
-  !import.meta.env.VITE_MSAL_CLIENT_ID ||
-  import.meta.env.VITE_MSAL_CLIENT_ID === 'demo';
+export const isMsalConfigured =
+  !!import.meta.env.VITE_MSAL_CLIENT_ID &&
+  import.meta.env.VITE_MSAL_CLIENT_ID !== 'demo';
+
+export const isDemoMode = !isMsalConfigured;
 
 export const mockCapacities: Capacity[] = [
   { id: 'cap-1', displayName: 'Production F64', sku: 'F64', region: 'West US', state: 'Active' },

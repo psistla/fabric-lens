@@ -13,8 +13,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/auth/useAuth';
 import { useUiStore } from '@/store/uiStore';
-import { isDemoMode } from '@/api/demo';
-import { msalInstance } from '@/auth/AuthProvider';
+import { isEffectiveDemoMode, msalInstance } from '@/auth/AuthProvider';
 import {
   DEFAULT_FABRIC_API_BASE,
   DEFAULT_NAMING_PATTERN_STRING,
@@ -43,7 +42,7 @@ function AuthStatusSection() {
           <span className="text-sm text-[var(--m-text-secondary)]">
             Status
           </span>
-          {isDemoMode ? (
+          {isEffectiveDemoMode() ? (
             <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--m-accent-400)] px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-[var(--m-accent-900)]">
               Demo Mode
             </span>
@@ -65,7 +64,7 @@ function AuthStatusSection() {
             User
           </span>
           <span className="text-sm text-[var(--m-text)]">
-            {isDemoMode
+            {isEffectiveDemoMode()
               ? 'Demo User'
               : user?.name || '—'}
           </span>
@@ -76,7 +75,7 @@ function AuthStatusSection() {
             Email
           </span>
           <span className="text-sm text-[var(--m-text)]">
-            {isDemoMode
+            {isEffectiveDemoMode()
               ? 'demo@fabric-lens.com'
               : user?.email || '—'}
           </span>
@@ -87,7 +86,7 @@ function AuthStatusSection() {
             Tenant ID
           </span>
           <span className="font-mono text-xs text-[var(--m-text)]">
-            {isDemoMode
+            {isEffectiveDemoMode()
               ? 'demo-tenant-00000'
               : user?.tenantId || '—'}
           </span>
@@ -117,7 +116,7 @@ interface PermissionRow {
 }
 
 function PermissionStatusBadge({ granted }: { granted: boolean | null }) {
-  if (isDemoMode) {
+  if (isEffectiveDemoMode()) {
     return (
       <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--m-accent-400)] px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-[var(--m-accent-900)]">
         Demo Mode
@@ -149,7 +148,7 @@ function PermissionsSection() {
   const [graphGranting, setGraphGranting] = useState(false);
 
   useEffect(() => {
-    if (isDemoMode) {
+    if (isEffectiveDemoMode()) {
       setAdminChecked(true);
       setGraphConnected(true);
       return;
@@ -228,8 +227,8 @@ function PermissionsSection() {
               <p className="text-xs text-[var(--m-text-tertiary)]">{row.description}</p>
             </div>
             <div className="flex shrink-0 items-center gap-3">
-              <PermissionStatusBadge granted={isDemoMode ? true : row.granted} />
-              {!isDemoMode && row.granted === false && row.onGrant && (
+              <PermissionStatusBadge granted={isEffectiveDemoMode() ? true : row.granted} />
+              {!isEffectiveDemoMode() && row.granted === false && row.onGrant && (
                 <button
                   onClick={row.onGrant}
                   disabled={row.granting}

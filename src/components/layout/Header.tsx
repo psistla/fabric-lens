@@ -3,7 +3,7 @@ import { Sun, Moon, LogIn, LogOut, ChevronRight, FlaskConical } from 'lucide-rea
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useAuth } from '@/auth/useAuth';
 import { useUiStore } from '@/store/uiStore';
-import { isDemoMode } from '@/api/demo';
+
 import { useToastStore } from '@/components/shared/Toast';
 
 const routeLabels: Record<string, string> = {
@@ -120,7 +120,7 @@ export function Header() {
             aria-haspopup="true"
             className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm transition-colors hover:bg-[var(--m-surface-hover)]"
           >
-            {isDemoMode && !user ? (
+            {!user ? (
               <>
                 <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--m-accent-400)] text-xs font-semibold text-[var(--m-accent-900)]">
                   <FlaskConical className="h-3.5 w-3.5" />
@@ -148,7 +148,7 @@ export function Header() {
               role="menu"
               className="absolute right-0 top-full z-[var(--m-z-dropdown)] mt-1 w-56 rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)] py-1 shadow-[var(--m-shadow-lg)]"
             >
-              {isDemoMode && !user ? (
+              {!user ? (
                 <>
                   <div className="border-b border-[var(--m-border)] px-3 py-2">
                     <p className="text-sm font-medium text-[var(--m-text)]">

@@ -18,7 +18,7 @@ import { exportToCSV } from '@/utils/export';
 import { SKU_SPECS, SKU_NAMES, SKU_TIER_STYLES, buildSkuSpecsWithRates } from '@/data/skuSpecs';
 import type { SkuSpec } from '@/data/skuSpecs';
 import { fetchSkuRates, AZURE_REGIONS } from '@/api/azurePricing';
-import { isDemoMode } from '@/api/demo';
+import { isEffectiveDemoMode } from '@/auth/AuthProvider';
 import type { Capacity } from '@/api/types/capacity';
 import type { Item } from '@/api/types/item';
 import type { Workspace } from '@/api/types/workspace';
@@ -48,7 +48,7 @@ function useLivePricing(region: string) {
     let cancelled = false;
 
     async function load() {
-      if (isDemoMode) {
+      if (isEffectiveDemoMode()) {
         if (!cancelled) {
           setSpecs(SKU_SPECS);
           setStatus('live');

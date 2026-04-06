@@ -2,11 +2,11 @@ import { create } from 'zustand';
 import type { Workspace } from '@/api/types/workspace';
 import type { Item } from '@/api/types/item';
 import {
-  isDemoMode,
   mockWorkspaces,
   getMockWorkspaceItems,
   getMockAllWorkspaceItems,
 } from '@/api/demo';
+import { isEffectiveDemoMode } from '@/auth/AuthProvider';
 import { fabricClient } from '@/api/fabricClientInstance';
 import { createWorkspacesApi } from '@/api/workspaces';
 
@@ -37,7 +37,7 @@ export const useWorkspaceStore = create<WorkspaceState>()((set, get) => ({
   fetchWorkspaces: async () => {
     set({ loading: true, error: null });
     try {
-      const workspaces = isDemoMode
+      const workspaces = isEffectiveDemoMode()
         ? mockWorkspaces
         : await api.listWorkspaces();
       set({ workspaces, loading: false });
@@ -52,7 +52,7 @@ export const useWorkspaceStore = create<WorkspaceState>()((set, get) => ({
   fetchWorkspaceDetail: async (id: string) => {
     set({ loading: true, error: null });
     try {
-      const workspace = isDemoMode
+      const workspace = isEffectiveDemoMode()
         ? mockWorkspaces.find((w) => w.id === id) ?? null
         : await api.getWorkspace(id);
       set({ selectedWorkspace: workspace, loading: false });
@@ -68,7 +68,7 @@ export const useWorkspaceStore = create<WorkspaceState>()((set, get) => ({
   fetchWorkspaceItems: async (workspaceId: string) => {
     set({ loading: true, error: null });
     try {
-      const items = isDemoMode
+      const items = isEffectiveDemoMode()
         ? getMockWorkspaceItems(workspaceId)
         : await api.listWorkspaceItems(workspaceId);
       set({ selectedWorkspaceItems: items, loading: false });
@@ -83,7 +83,7 @@ export const useWorkspaceStore = create<WorkspaceState>()((set, get) => ({
 
   fetchAllItems: async () => {
     try {
-      if (isDemoMode) {
+      if (isEffectiveDemoMode()) {
         set({ allItemsByWorkspace: getMockAllWorkspaceItems() });
         return;
       }
