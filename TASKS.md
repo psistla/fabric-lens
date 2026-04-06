@@ -46,13 +46,35 @@ This is the highest-leverage Phase 0 item. It serves three needs: SEO-indexable 
 - [ ] Page sections:
   - **What is fabric-lens?** — one paragraph, written for a Fabric admin or consultant (not a developer)
   - **Key capabilities** — 4–5 bullet summary: health scoring, security audit, capacity monitoring, demo mode
+  - **How to use this site** — step-by-step walkthrough of demo mode vs. live mode; what you can explore in each
+  - **What you need for a Fabric tenant audit** — required Azure permissions (Fabric Admin role, App Registration, scopes), step-by-step connection guide
   - **Health scoring explained** — the 10-check table from CLAUDE.md, written for a non-technical stakeholder
   - **Security audit explained** — what the posture score checks, what admin permissions are required and why
-  - **How to connect your tenant** — concise step-by-step: App Registration, required permissions, env vars (or hosted app sign-in flow)
   - **Demo mode** — one sentence: no credentials needed, click "Try Demo"
   - **Links** — GitHub repo, Fabric REST API docs, issue tracker
 - [ ] Ensure the page renders fully server-side (static HTML from Vite build) so it is crawlable
 - [ ] Use the existing Meridian design tokens — this page should look like the rest of the app, not a separate site
+
+### 0e. Full site visual review ✅ COMPLETE (2026-04-05)
+**Effort:** 1–2 days | **Target:** All pages
+
+Audit every page (Dashboard, Workspaces, WorkspaceDetail, Capacity, Security, Settings) against the Meridian design system and "instrument panel" intent. Should happen before Phase 2 (report export) so the visual foundation is solid before generating printable output.
+
+- [x] Check consistent card patterns, table styles, loading/empty states across all pages
+- [x] Verify color token usage — no hardcoded Tailwind palette classes (e.g. `text-indigo-600`), everything through `--m-*` tokens
+- [x] Verify spacing and typography consistency (headers, body, captions, badge sizes)
+- [x] Verify dark mode correctness on every page and panel
+- [x] Output: a prioritised list of targeted fixes, then implement them
+
+**Fixes implemented:** Replaced hardcoded Tailwind palette classes with semantic tokens in `ErrorBoundary`, `SecurityFindingsPanel`, and `GovernanceIssuesPanel`. Centralised chart hex colors (`GRADE_COLORS`, `ITEM_DOT_COLORS`, `CHART_FALLBACK_COLOR`) into `constants.ts` via new `HEALTH_GRADE_COLORS` export. Global grep confirms zero palette color violations remain across `src/components/` and `src/pages/`.
+
+### 0f. UX audit + targeted improvements ✅ COMPLETE (2026-04-05)
+**Effort:** 2–3 days | **Target:** Security page, Dashboard, Demo flow
+
+- [x] **Security page pre-scan state** — replaced generic icon + "Click Scan All" with a descriptive card: "Run a security audit" headline, 6-bullet list of what gets surfaced, inline Scan All button with `~30s · rate limited to 200 req/hr` note
+- [x] **Security panel ordering** — reordered 11 panels into four audience groups: Summary → Tenant-wide risks → Access risks → Drill-down
+- [x] **Dashboard landing** — promoted `SecurityQuickView` to full-width above the health grid with a value-proposition empty state ("Uncover hidden access risks", 3 metric previews, "Load security data" CTA); Health Grade Distribution chart made standalone full-width below
+- [x] **Demo discoverability** — added "Try →" pill badge to Security nav item in demo mode; disappears once user visits `/security` (sessionStorage persistence); 5 unit tests added (`Sidebar.test.tsx`)
 
 ---
 
