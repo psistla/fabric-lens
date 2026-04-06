@@ -364,6 +364,25 @@
     display: none !important;
   }
 
+  /* Remove overflow/height constraints that clip content to the viewport */
+  html, body, #root {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  /* AppShell outer wrapper uses flex h-screen — flatten it for print */
+  .flex.h-screen {
+    display: block !important;
+    height: auto !important;
+  }
+
+  /* main has overflow-y-auto which clips scrolled content */
+  main {
+    overflow: visible !important;
+    height: auto !important;
+    padding-bottom: 0 !important;
+  }
+
   /* Reset page background */
   body {
     background: white !important;
