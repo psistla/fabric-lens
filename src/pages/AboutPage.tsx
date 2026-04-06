@@ -183,7 +183,7 @@ export function AboutPage() {
                   </h3>
                   <ol className="space-y-2 text-sm text-[var(--m-text-secondary)]">
                     {[
-                      'Open the app. If no Azure AD client ID is configured, demo mode starts automatically.',
+                      'The app opens in demo mode automatically — no login or credentials needed.',
                       'Explore the Dashboard to see health grade distribution and governance issues.',
                       'Open the Security page and click "Scan All" to run the full security audit against mock data.',
                       'Browse the Workspaces and Capacity pages to see inventory and cost breakdowns.',

@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { useAuth } from '@/auth/useAuth';
 import { useUiStore } from '@/store/uiStore';
 import { isDemoMode } from '@/api/demo';
+import { useToastStore } from '@/components/shared/Toast';
 
 const routeLabels: Record<string, string> = {
   '/': 'Dashboard',
@@ -52,6 +53,7 @@ function Breadcrumb() {
 
 export function Header() {
   const { user, login, logout } = useAuth();
+  const addToast = useToastStore((s) => s.addToast);
   const theme = useUiStore((s) => s.theme);
   const setTheme = useUiStore((s) => s.setTheme);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -160,7 +162,9 @@ export function Header() {
                     role="menuitem"
                     onClick={() => {
                       closeMenu();
-                      void login();
+                      login().catch(() => {
+                        addToast('error', 'Sign-in failed. Check that your browser allows pop-ups for this site and try again.');
+                      });
                     }}
                     className="flex w-full items-center gap-2 px-3 py-2 text-sm text-[var(--m-primary)] transition-colors hover:bg-[var(--m-surface-hover)]"
                   >
