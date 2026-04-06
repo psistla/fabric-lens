@@ -13,16 +13,5 @@
   "navigationFallback": {
     "rewrite": "/index.html",
     "exclude": ["/assets/*", "*.svg", "*.png", "*.ico", "/auth.html"]
-  },
-  "routes": [
-    {
-      "route": "/*",
-      "conditions": {
-        "header": "x-forwarded-host",
-        "matchingPattern": "www.fabric-lens.com"
-      },
-      "redirect": "https://fabric-lens.com{request.parsedUrl.pathname}{request.parsedUrl.querystring}",
-      "statusCode": 301
-    }
-  ]
+  }
 }
