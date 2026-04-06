@@ -356,3 +356,54 @@
 .animate-skeleton {
   animation: skeleton-pulse 1.5s ease-in-out infinite;
 }
+
+/* ── Print styles (Report page) ─────────────────────────────────────── */
+@media print {
+  /* Hide all app chrome */
+  nav, aside, header, [class*="sidebar"], [class*="demo-banner"], .print\:hidden {
+    display: none !important;
+  }
+
+  /* Reset page background */
+  body {
+    background: white !important;
+  }
+
+  /* Full width report body */
+  .max-w-4xl {
+    max-width: 100% !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* Page breaks between report sections */
+  section {
+    page-break-inside: avoid;
+  }
+
+  section + section {
+    page-break-before: auto;
+  }
+
+  /* Cover page always starts fresh */
+  .border-b-4 {
+    page-break-after: always;
+  }
+
+  /* Footer on every page */
+  @page {
+    margin: 20mm 15mm;
+
+    @bottom-left {
+      content: "fabric-lens.com · Microsoft Fabric Governance & Health Dashboard";
+      font-size: 9pt;
+      color: #9ca3af;
+    }
+
+    @bottom-right {
+      content: "github.com/psistla/fabric-lens";
+      font-size: 9pt;
+      color: #9ca3af;
+    }
+  }
+}
