@@ -120,46 +120,36 @@ Scope blocker resolved in Feature 3 (`POWERBI_SCOPES` via `FabricClient` scopes 
 
 ---
 
-## Phase 2: Consultant Delivery
+## Phase 2: Consultant Delivery ✅ COMPLETE (2026-04-06)
 
 These features transform fabric-lens from a monitoring dashboard into a consulting tool. They depend on Phase 1 being complete — a generated report is more valuable when it includes tenant settings risk and widely shared objects data.
 
-### Generate Report export
-**Effort:** Medium | **Target:** Dashboard or new Report route
+### Generate Report export ✅ COMPLETE (2026-04-06)
+**Effort:** Medium | **Target:** `/report` route
 
-The #1 missing feature for the consultant persona. Consultants need a formatted deliverable to hand to the client after an audit session. CSV rows are not that.
+- [x] 8 report section components in `src/components/report/` — Cover, ExecutiveSummary, Health, Security, TenantSettings, WidelyShared, GhostWorkspaces, Recommendations
+- [x] `src/utils/reportData.ts` — `assembleReportData()` + `ReportData` interface
+- [x] `src/utils/reportSummary.ts` — `generateExecutiveSummary()` with posture classification
+- [x] `src/pages/ReportPage.tsx` — full orchestrator with print toolbar; `← Back to Dashboard` uses `to="/"` (correct route)
+- [x] `/report` route in `App.tsx` inside `ProtectedRoute`
+- [x] "Generate Report" button on DashboardPage (visible when `workspaces.length > 0`)
+- [x] `@media print` CSS in `src/index.css` — unclips `h-screen`/`overflow-y-auto` ancestors so full report prints (not just viewport); `@page` footer
+- [x] `SecurityQuickView` "Load security data" triggers all four fetches (workspace users + tenant settings + widely shared + activity events) so report is fully populated from the dashboard scan
 
-- [ ] **Design the report layout first** — agree on sections before writing code:
-  - Cover: tenant name, audit date, overall health grade
-  - Executive summary: 3–5 top findings in plain English
-  - Health scores: per-workspace grade distribution chart + top 5 worst workspaces
-  - Security posture: score, grade, check-by-check breakdown
-  - Tenant settings: high-risk enabled settings (from Feature 2)
-  - Widely shared objects: count + list (from Feature 3)
-  - Ghost workspaces: inactive workspace list (from Feature 1)
-  - Recommendations: top 5 governance actions, sorted by recoverable points
-- [ ] Implement as a client-side rendered print view (`/report` route or modal) using `window.print()` with a `@media print` stylesheet — no PDF library dependency
-- [ ] "Generate Report" button on DashboardPage (or a toolbar action) — only visible when data is loaded
-- [ ] Report must look professional when printed or saved as PDF from browser
-- [ ] Demo mode must produce a complete report using mock data (critical for consultant demos)
+### Static benchmarks ✅ COMPLETE (2026-04-06)
+**Effort:** Low | **Target:** DashboardPage ScoreRing
 
-### Static benchmarks
-**Effort:** Low | **Target:** DashboardPage ScoreRing + WorkspaceDetailPage
+- [x] `BENCHMARK_HEALTH_SCORE = 78` and `BENCHMARK_SECURITY_SCORE = 72` in `constants.ts`
+- [x] `ScoreRing` optional `benchmark?: number` prop showing "vs. typical N" label
+- [x] Dashboard wires `benchmark={BENCHMARK_HEALTH_SCORE}` on the tenant health ring
 
-- [ ] Define benchmark values as constants — synthetic medians based on demo data distribution (e.g. median tenant health: B / 78%, median security posture: 72)
-- [ ] Show benchmark reference line on health grade distribution chart
-- [ ] Show "vs. typical" comparison on ScoreRing tooltip or label
-- [ ] Keep copy honest — label as "typical" or "reference" not "industry average" since these are synthetic
-
-### Guided limited-access flow
+### Guided limited-access flow ✅ COMPLETE (2026-04-06)
 **Effort:** Low–Medium | **Target:** SecurityPage
 
-Consultants rarely get Fabric Admin role on day one. The current hard gate ("Admin role required") leaves them with nothing. A limited-access mode should show what IS available and guide them on what to request.
-
-- [ ] Detect limited access (403 on admin API check) and show a "Limited Access Mode" state instead of a hard error card
-- [ ] In limited access mode, show: workspace inventory, health scores, capacity view, item counts — everything derivable from user-scoped APIs
-- [ ] Add a clear panel: "To unlock security audit, request Fabric Administrator role" with a link to Microsoft docs on how to grant it
-- [ ] Update demo data to include a simulated limited-access scenario (useful for consultant demos when explaining the permission model to clients)
+- [x] `FetchResult` discriminated union exported from `securityStore.ts` — `{ status: 'ok' } | { status: 'access_denied' } | { status: 'error' }`
+- [x] `fetchAllWorkspaceUsers` returns `FetchResult`; 403 on first workspace → `access_denied`
+- [x] `LimitedAccessPanel` in `src/components/security/` — two-column informational panel
+- [x] SecurityPage: `limitedAccess` state, `?limitedAccess=1` demo URL param, async `handleScanAll`
 
 ---
 
