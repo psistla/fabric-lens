@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/auth/useAuth';
 import { useSecurityStore } from '@/store/securityStore';
+import type { FetchResult } from '@/store/securityStore';
 import { useWorkspaceStore } from '@/store/workspaceStore';
 import { useTenantSettingsStore } from '@/store/tenantSettingsStore';
 import { useWidelySharedStore } from '@/store/widelySharedStore';
@@ -31,6 +32,7 @@ import { SecurityFindingsPanel } from '@/components/security/SecurityFindingsPan
 import { TenantSettingsRiskPanel } from '@/components/security/TenantSettingsRiskPanel';
 import { WidelySharedPanel } from '@/components/security/WidelySharedPanel';
 import { GhostWorkspacesPanel } from '@/components/security/GhostWorkspacesPanel';
+import { LimitedAccessPanel } from '@/components/security/LimitedAccessPanel';
 import { SecurityPostureCard } from '@/components/security/SecurityPostureCard';
 import { SpnGovernancePanel } from '@/components/security/SpnGovernancePanel';
 import { SpofWorkspacesPanel } from '@/components/security/SpofWorkspacesPanel';
@@ -219,10 +221,19 @@ export function SecurityPage() {
     fetchActivityEvents,
   } = useActivityStore();
 
+  const [limitedAccess, setLimitedAccess] = useState(false);
+
   // Incremental consent: try silent token first, then show consent card if needed.
   const [consentChecked, setConsentChecked] = useState(isDemoMode);
   const [consentGranting, setConsentGranting] = useState(false);
   const [consentError, setConsentError] = useState<string | null>(null);
+
+  // Demo mode: ?limitedAccess=1 simulates a non-admin user for consultant demos
+  useEffect(() => {
+    if (isDemoMode && new URLSearchParams(window.location.search).has('limitedAccess')) {
+      setLimitedAccess(true);
+    }
+  }, []);
 
   useEffect(() => {
     if (isDemoMode) return;
@@ -254,13 +265,15 @@ export function SecurityPage() {
     }
   }, [requestAdminConsent, checkAdminAccess]);
 
-  const handleScanAll = useCallback(() => {
+  const handleScanAll = useCallback(async () => {
     void fetchTenantSettings();
     void fetchWidelySharedArtifacts();
     void fetchActivityEvents(workspaces);
-    const ids = workspaces.map((w) => w.id);
-    void fetchAllWorkspaceUsers(ids);
-  }, [workspaces, fetchAllWorkspaceUsers, fetchTenantSettings, fetchWidelySharedArtifacts, fetchActivityEvents]);
+    const result: FetchResult = await fetchAllWorkspaceUsers(workspaces.map((w) => w.id));
+    if (result.status === 'access_denied') {
+      setLimitedAccess(true);
+    }
+  }, [workspaces, fetchAllWorkspaceUsers, fetchTenantSettings, fetchWidelySharedArtifacts, fetchActivityEvents, setLimitedAccess]);
 
   const hasScanned = Object.keys(workspaceUsers).length > 0;
 
@@ -596,7 +609,7 @@ export function SecurityPage() {
             </>
           )}
           <button
-            onClick={handleScanAll}
+            onClick={() => void handleScanAll()}
             disabled={loading || wsLoading}
             className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--m-primary)] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[var(--m-primary-hover)] disabled:opacity-50"
           >
@@ -638,7 +651,7 @@ export function SecurityPage() {
             skipped.
           </div>
           <button
-            onClick={handleScanAll}
+            onClick={() => void handleScanAll()}
             className="shrink-0 rounded-lg bg-[var(--m-warning-bg)] px-3 py-1 text-xs font-semibold text-[var(--m-warning-text)] ring-1 ring-[var(--m-warning)] transition-colors hover:opacity-80"
           >
             Retry
@@ -647,7 +660,9 @@ export function SecurityPage() {
       )}
 
       {/* Pre-scan prompt */}
-      {!hasScanned && !scanProgress && (
+      {limitedAccess ? (
+        <LimitedAccessPanel />
+      ) : !hasScanned && !scanProgress ? (
         <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)] p-6">
           <div className="flex items-start gap-4">
             <ScanSearch className="mt-0.5 h-8 w-8 shrink-0 text-[var(--m-text-tertiary)]" />
@@ -673,7 +688,7 @@ export function SecurityPage() {
               </ul>
               <div className="mt-4 flex items-center gap-3">
                 <button
-                  onClick={handleScanAll}
+                  onClick={() => void handleScanAll()}
                   disabled={loading || wsLoading}
                   className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--m-primary)] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[var(--m-primary-hover)] disabled:opacity-50"
                 >
@@ -687,7 +702,7 @@ export function SecurityPage() {
             </div>
           </div>
         </div>
-      )}
+      ) : null}
 
       {/* Results */}
       {hasScanned && (
