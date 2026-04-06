@@ -26,6 +26,11 @@ function trackAdminRequest(set: (partial: Partial<SecurityState>) => void): void
   }
 }
 
+export type FetchResult =
+  | { status: 'ok' }
+  | { status: 'access_denied' }
+  | { status: 'error'; message: string };
+
 interface SecurityState {
   workspaceUsers: Record<string, WorkspaceUser[]>;
   resolvedGroups: Record<string, ResolvedGroup>;
@@ -36,7 +41,7 @@ interface SecurityState {
   rateLimitUsage: RateLimitUsage | null;
   checkAdminAccess: () => Promise<void>;
   fetchWorkspaceUsers: (workspaceId: string) => Promise<void>;
-  fetchAllWorkspaceUsers: (workspaceIds: string[]) => Promise<void>;
+  fetchAllWorkspaceUsers: (workspaceIds: string[]) => Promise<FetchResult>;
   resolveGroupCount: (groupUpn: string, displayName: string) => Promise<void>;
   resolveGroupMembers: (groupUpn: string, displayName: string) => Promise<void>;
 }
@@ -130,13 +135,17 @@ export const useSecurityStore = create<SecurityState>()((set, get) => ({
         loading: false,
         scanProgress: null,
       }));
-      return;
+      return { status: 'ok' };
     }
 
     const allUsers: Record<string, WorkspaceUser[]> = {};
     for (let i = 0; i < toFetch.length; i++) {
       const wsId = toFetch[i];
       const result = await api.getWorkspaceUsers(wsId);
+      if (i === 0 && !result.success && result.reason === 'access_denied') {
+        set({ loading: false, scanProgress: null });
+        return { status: 'access_denied' };
+      }
       if (result.success) {
         allUsers[wsId] = result.data;
       }
@@ -157,6 +166,8 @@ export const useSecurityStore = create<SecurityState>()((set, get) => ({
         error: `Rate limit: scanned ${toFetch.length} of ${workspaceIds.length} workspaces. ${workspaceIds.length - toFetch.length} skipped (${ADMIN_RATE_LIMIT} req/hr limit).`,
       });
     }
+
+    return { status: 'ok' };
   },
 
   resolveGroupCount: async (groupUpn: string, displayName: string) => {
