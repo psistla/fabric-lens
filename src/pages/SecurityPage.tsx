@@ -685,22 +685,8 @@ export function SecurityPage() {
             onRetry={fetchWidelySharedArtifacts}
           />
 
-          {/* Ghost Workspaces Panel */}
-          <GhostWorkspacesPanel
-            ghostWorkspaces={ghostWorkspaces}
-            workspaces={workspaces}
-            loading={ghostLoading}
-            error={ghostError}
-            onRetry={() => void fetchActivityEvents(workspaces)}
-          />
-
           {/* SPOF Workspaces Panel */}
           <SpofWorkspacesPanel workspaceUsers={workspaceUsers} workspaces={workspaces} />
-
-          {/* Effective Access Card */}
-          {effectiveAccessSummary && (
-            <EffectiveAccessCard summary={effectiveAccessSummary} />
-          )}
 
           {/* SPN Governance Panel */}
           <SpnGovernancePanel userSummaries={userSummaries} />
@@ -744,6 +730,20 @@ export function SecurityPage() {
               </ul>
             </div>
           )}
+
+          {/* Effective Access Card */}
+          {effectiveAccessSummary && (
+            <EffectiveAccessCard summary={effectiveAccessSummary} />
+          )}
+
+          {/* Ghost Workspaces Panel */}
+          <GhostWorkspacesPanel
+            ghostWorkspaces={ghostWorkspaces}
+            workspaces={workspaces}
+            loading={ghostLoading}
+            error={ghostError}
+            onRetry={() => void fetchActivityEvents(workspaces)}
+          />
 
           {/* User / Workspace pivot table */}
           <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)]">
