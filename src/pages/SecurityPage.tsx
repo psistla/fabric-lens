@@ -273,7 +273,7 @@ export function SecurityPage() {
     if (result.status === 'access_denied') {
       setLimitedAccess(true);
     }
-  }, [workspaces, fetchAllWorkspaceUsers, fetchTenantSettings, fetchWidelySharedArtifacts, fetchActivityEvents, setLimitedAccess]);
+  }, [workspaces, fetchAllWorkspaceUsers, fetchTenantSettings, fetchWidelySharedArtifacts, fetchActivityEvents]);
 
   const hasScanned = Object.keys(workspaceUsers).length > 0;
 

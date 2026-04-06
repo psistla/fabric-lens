@@ -4,7 +4,7 @@ export function LimitedAccessPanel() {
   return (
     <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-surface)] p-6">
       <div className="flex items-center gap-3 mb-4">
-        <Info size={20} className="text-[var(--m-primary)] shrink-0" />
+        <Info className="h-5 w-5 text-[var(--m-primary)] shrink-0" />
         <h2 className="text-base font-semibold text-[var(--m-text)]">Limited Access Mode</h2>
       </div>
       <p className="text-sm text-[var(--m-text-secondary)] mb-6">
@@ -16,7 +16,7 @@ export function LimitedAccessPanel() {
         {/* Available now */}
         <div className="rounded-lg border border-[var(--m-border)] bg-[var(--m-bg)] p-4">
           <div className="flex items-center gap-2 mb-3">
-            <Unlock size={16} className="text-[var(--m-success)]" />
+            <Unlock className="h-4 w-4 text-[var(--m-success)]" />
             <span className="text-xs font-semibold uppercase tracking-wide text-[var(--m-text-secondary)]">
               Available now
             </span>
@@ -32,7 +32,7 @@ export function LimitedAccessPanel() {
         {/* Requires admin */}
         <div className="rounded-lg border border-[var(--m-border)] bg-[var(--m-bg)] p-4">
           <div className="flex items-center gap-2 mb-3">
-            <Lock size={16} className="text-[var(--m-text-secondary)]" />
+            <Lock className="h-4 w-4 text-[var(--m-text-secondary)]" />
             <span className="text-xs font-semibold uppercase tracking-wide text-[var(--m-text-secondary)]">
               Requires Fabric Admin role
             </span>
