@@ -180,6 +180,11 @@ export const PRINCIPAL_TYPE_COLORS: Record<string, string> = {
   ServicePrincipalProfile: '#7C3AED',
 };
 
+// -- Demo mode --
+
+/** sessionStorage key used to track whether the user has visited the Security page in demo mode. */
+export const DEMO_SECURITY_VISITED_KEY = 'security_visited';
+
 // -- Session management --
 
 /** Idle timeout (ms) before the session is expired and the user is logged out. */

@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { NavLink } from 'react-router';
+import { useEffect, useState } from 'react';
+import { NavLink, useLocation } from 'react-router';
 import {
   LayoutDashboard,
   FolderOpen,
@@ -11,14 +11,17 @@ import {
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { useUiStore } from '@/store/uiStore';
+import * as demo from '@/api/demo';
+import { DEMO_SECURITY_VISITED_KEY } from '@/utils/constants';
 
 interface NavItem {
   label: string;
   path: string;
   icon: LucideIcon;
+  badge?: string;
 }
 
-const navItems: NavItem[] = [
+const BASE_NAV_ITEMS: Omit<NavItem, 'badge'>[] = [
   { label: 'Dashboard', path: '/', icon: LayoutDashboard },
   { label: 'Workspaces', path: '/workspaces', icon: FolderOpen },
   { label: 'Capacity', path: '/capacity', icon: Gauge },
@@ -29,6 +32,18 @@ const navItems: NavItem[] = [
 export function Sidebar() {
   const collapsed = useUiStore((s) => s.sidebarCollapsed);
   const toggleSidebar = useUiStore((s) => s.toggleSidebar);
+  const { pathname } = useLocation();
+  const [securityVisited, setSecurityVisited] = useState(
+    () => sessionStorage.getItem(DEMO_SECURITY_VISITED_KEY) === 'true',
+  );
+
+  // Mark security as visited when user navigates to /security
+  useEffect(() => {
+    if (pathname === '/security' && !securityVisited) {
+      sessionStorage.setItem(DEMO_SECURITY_VISITED_KEY, 'true');
+      setSecurityVisited(true);
+    }
+  }, [pathname, securityVisited]);
 
   // Auto-collapse sidebar on screens < 1024px
   useEffect(() => {
@@ -45,6 +60,17 @@ export function Sidebar() {
     // Only run on mount
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const navItems: NavItem[] = BASE_NAV_ITEMS.map((item) => ({
+    ...item,
+    badge:
+      demo.isDemoMode &&
+      !securityVisited &&
+      pathname !== '/security' &&
+      item.path === '/security'
+        ? 'Try →'
+        : undefined,
+  }));
 
   return (
     <aside
@@ -81,7 +107,16 @@ export function Sidebar() {
             }
           >
             <item.icon className="h-5 w-5 shrink-0" />
-            {!collapsed && <span>{item.label}</span>}
+            {!collapsed && (
+              <span className="flex flex-1 items-center justify-between">
+                <span>{item.label}</span>
+                {item.badge && (
+                  <span className="rounded-full bg-[var(--m-primary)] px-1.5 py-0.5 text-[10px] font-semibold text-white">
+                    {item.badge}
+                  </span>
+                )}
+              </span>
+            )}
           </NavLink>
         ))}
       </nav>
