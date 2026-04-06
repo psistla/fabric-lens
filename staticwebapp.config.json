@@ -12,6 +12,6 @@
   },
   "navigationFallback": {
     "rewrite": "/index.html",
-    "exclude": ["/assets/*", "*.svg", "*.png", "*.ico"]
+    "exclude": ["/assets/*", "*.svg", "*.png", "*.ico", "/auth.html"]
   }
 }

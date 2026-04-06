@@ -44,11 +44,10 @@ export function useAuth() {
   const [hasAdminAccess, setHasAdminAccess] = useState(_adminConsentGranted);
 
   async function login(): Promise<void> {
-    try {
-      await instance.loginPopup(fabricLoginRequest);
-    } catch {
-      await instance.loginRedirect(fabricLoginRequest);
-    }
+    await instance.loginPopup({
+      ...fabricLoginRequest,
+      redirectUri: `${window.location.origin}/auth.html`,
+    });
   }
 
   async function logout(): Promise<void> {
