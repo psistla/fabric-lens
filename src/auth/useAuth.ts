@@ -44,9 +44,12 @@ export function useAuth() {
   const [hasAdminAccess, setHasAdminAccess] = useState(_adminConsentGranted);
 
   async function login(): Promise<void> {
+    // Use the current origin as the popup redirect URI so the popup and main
+    // window share the same origin — required for MSAL's BroadcastChannel
+    // handshake to work regardless of www vs non-www access.
     await instance.loginPopup({
       ...fabricLoginRequest,
-      redirectUri: `${window.location.origin}/auth.html`,
+      redirectUri: window.location.origin,
     });
     // Reload so stores re-initialise and fetch live tenant data.
     window.location.reload();
