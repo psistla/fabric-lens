@@ -97,8 +97,8 @@ function IssueSection({
 
   const headerColor =
     severity === 'critical'
-      ? 'bg-red-50 text-red-700 dark:bg-red-950/40 dark:text-red-400'
-      : 'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400';
+      ? 'bg-[var(--m-error-bg)] text-[var(--m-error-text)]'
+      : 'bg-[var(--m-warning-bg)] text-[var(--m-warning-text)]';
 
   return (
     <div>
@@ -155,7 +155,7 @@ export function GovernanceIssuesPanel({ issues, workspaces }: Props) {
       {/* Empty state */}
       {issues.length === 0 ? (
         <div className="flex flex-col items-center gap-2 py-10 text-center">
-          <CheckCircle className="h-8 w-8 text-emerald-600 dark:text-emerald-400" />
+          <CheckCircle className="h-8 w-8 text-[var(--m-success)]" />
           <p className="text-sm font-medium text-[var(--m-text)]">
             All governance checks passing across {workspaces.length} workspace
             {workspaces.length !== 1 ? 's' : ''}.
