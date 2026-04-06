@@ -29,23 +29,9 @@ import { HealthGrid } from '@/components/dashboard/HealthGrid';
 import { SecurityQuickView } from '@/components/dashboard/SecurityQuickView';
 import { ScoreRing } from '@/components/dashboard/ScoreRing';
 import { exportToJSON } from '@/utils/export';
-import { CHART_TOOLTIP_STYLE, GRADE_THRESHOLDS } from '@/utils/constants';
-
-const GRADE_COLORS: Record<string, string> = {
-  A: '#15803D',
-  B: '#4F46E5',
-  C: '#B45309',
-  D: '#EA580C',
-  F: '#DC2626',
-};
+import { CHART_COLORS, CHART_TOOLTIP_STYLE, GRADE_THRESHOLDS, HEALTH_GRADE_COLORS } from '@/utils/constants';
 
 const GRADE_ORDER = ['F', 'D', 'C', 'B', 'A'] as const;
-
-const ITEM_DOT_COLORS = [
-  '#4F46E5', '#B45309', '#818CF8', '#FBBF24', '#868E96',
-  '#6366F1', '#D97706', '#15803D', '#0891B2', '#7C3AED',
-  '#DB2777', '#EA580C',
-];
 
 function getGrade(score: number): string {
   if (score >= GRADE_THRESHOLDS.A) return 'A';
@@ -174,7 +160,7 @@ export function DashboardPage() {
     }
     return GRADE_ORDER
       .filter((g) => (counts.get(g) ?? 0) > 0)
-      .map((g) => ({ grade: g, count: counts.get(g) ?? 0, color: GRADE_COLORS[g] }));
+      .map((g) => ({ grade: g, count: counts.get(g) ?? 0, color: HEALTH_GRADE_COLORS[g] }));
   }, [healthMap]);
 
   // Item type distribution — top 12 + "Other"
@@ -193,7 +179,7 @@ export function DashboardPage() {
       type: e.type,
       count: e.count,
       pct: total > 0 ? Math.round((e.count / total) * 100) : 0,
-      color: ITEM_DOT_COLORS[i] ?? '#868E96',
+      color: CHART_COLORS[i % CHART_COLORS.length],
     }));
     if (rest.length > 0) {
       const otherCount = rest.reduce((sum, e) => sum + e.count, 0);
