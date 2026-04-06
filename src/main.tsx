@@ -1,22 +1,17 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router';
-import { AuthProvider, msalInstance } from '@/auth/AuthProvider';
+import { AuthProvider } from '@/auth/AuthProvider';
 import { App } from './App';
 import './index.css';
 
-// When MSAL redirects the popup back to this origin after authentication,
-// the URL contains an auth code (?code= or #code=). In that case we must
-// handle the response and close the popup immediately — without rendering
-// the full app — so the parent window can receive the token and continue.
-// Capture in a const so TypeScript's control-flow narrowing is preserved
-// inside the promise chain callbacks (closures break if/&& narrowing).
-const msalForPopup = msalInstance;
-if (window.opener && msalForPopup && /[?#]code=/.test(window.location.href)) {
-  void msalForPopup
-    .initialize()
-    .then(() => msalForPopup.handleRedirectPromise())
-    .finally(() => window.close());
+// When MSAL's loginPopup() redirects the popup back to this origin, the URL
+// contains the auth code in the hash (#code=...). The parent window is
+// actively polling popup.location.hash to read that code — do NOT run MSAL
+// here (it clears the hash) and do NOT mount the React app. Just stay idle
+// so the parent can read the hash, exchange it for tokens, and close the popup.
+if (window.opener && /[?#]code=/.test(window.location.href)) {
+  // Popup redirect target — intentionally empty.
 } else {
   createRoot(document.getElementById('root')!).render(
     <StrictMode>
