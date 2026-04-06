@@ -139,13 +139,13 @@ export const GRADE_THRESHOLDS = {
 } as const;
 
 /** Health grade hex colors — used for Recharts <Cell fill> where CSS vars cannot be used. */
-export const HEALTH_GRADE_COLORS: Record<string, string> = {
+export const HEALTH_GRADE_COLORS = {
   A: '#15803D',
   B: '#4F46E5',
   C: '#B45309',
   D: '#EA580C',
   F: '#DC2626',
-};
+} as const;
 
 /** Maximum item count before a workspace is flagged as oversized. */
 export const MAX_REASONABLE_ITEM_COUNT = 100;
