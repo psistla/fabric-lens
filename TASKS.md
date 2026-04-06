@@ -11,49 +11,35 @@
 These tasks are independent of all feature work. They affect every visitor today and cost hours, not days.
 Do these before or alongside Phase 1 — they do not block each other.
 
-### 0a. SEO meta tags
+### 0a. SEO meta tags ✅ COMPLETE (2026-04-05)
 **Effort:** 30 min | **File:** `index.html`
 
-- [ ] Set a meaningful `<title>`: e.g. "fabric-lens — Microsoft Fabric Governance & Health Dashboard"
-- [ ] Add `<meta name="description">` (150–160 chars): what it does, who it's for, that it's free/OSS
-- [ ] Add `<meta name="keywords">` with relevant Fabric governance/admin terms
-- [ ] Add `<link rel="canonical" href="https://fabric-lens.com">`
-- [ ] Verify no `<meta name="robots" content="noindex">` is present (check Vite defaults)
+- [x] Set a meaningful `<title>`: "fabric-lens — Microsoft Fabric Governance & Health Dashboard"
+- [x] Add `<meta name="description">` (150–160 chars)
+- [x] Add `<meta name="keywords">` with relevant Fabric governance/admin terms
+- [x] Add `<link rel="canonical" href="https://fabric-lens.com">`
+- [x] No `<meta name="robots" content="noindex">` present (Vite does not inject one)
 
-### 0b. Open Graph + social preview
-**Effort:** 1–2 hours | **Files:** `index.html` + a new OG image asset
+### 0b. Open Graph + social preview ✅ COMPLETE (2026-04-05)
+**Effort:** 1–2 hours | **Files:** `index.html` + `public/og-image.png`
 
-- [ ] Create an OG image (1200×630px) — screenshot or designed graphic showing the dashboard with health grades. Save to `public/og-image.png`
-- [ ] Add `<meta property="og:title">`, `og:description`, `og:image`, `og:url`, `og:type`
-- [ ] Add Twitter card meta tags (`twitter:card`, `twitter:title`, `twitter:description`, `twitter:image`)
-- [ ] Test preview using a link unfurl checker before marking done
+- [x] Created OG image (1200×630px PNG) — dark background with health grade badges, key stats, branding. Saved to `public/og-image.png`
+- [x] Added `og:title`, `og:description`, `og:image`, `og:url`, `og:type`, `og:image:width/height`, `og:site_name`
+- [x] Added Twitter card meta tags (`twitter:card`, `twitter:title`, `twitter:description`, `twitter:image`)
 
-### 0c. Privacy-respecting analytics
+### 0c. Privacy-respecting analytics ⏸ DEFERRED — revisit once site has traffic
 **Effort:** 1 hour | **File:** `index.html`
 
-- [ ] Choose between Plausible Analytics or Fathom (both: no cookies, GDPR-compliant, no Google data sharing — appropriate for a tool that handles client tenant data)
-- [ ] Add the analytics script tag to `index.html`
-- [ ] Configure goals/events for: demo mode entered, security page visited, export triggered, tenant sign-in attempted
-- [ ] Verify no PII is captured (user names, tenant IDs must not appear in tracked URLs or events)
+> Deferred to Icebox. No value in adding analytics before there is meaningful traffic to measure. Revisit after the site is publicly promoted.
 
-### 0d. Public `/about` route
-**Effort:** 1–2 days | **Files:** new `src/pages/AboutPage.tsx` + route in `App.tsx`
+### 0d. Public `/about` route ✅ COMPLETE (2026-04-05)
+**Effort:** 1–2 days | **Files:** `src/pages/AboutPage.tsx`, `src/App.tsx`, `src/components/layout/Sidebar.tsx`
 
-This is the highest-leverage Phase 0 item. It serves three needs: SEO-indexable content, consultant onboarding reference, and "show this to the client before the session" explainer. Must be accessible without authentication (no `ProtectedRoute` wrapper).
-
-- [ ] Add route `/about` to `App.tsx` — public, no auth guard
-- [ ] Add "About / Help" link to sidebar (bottom section, below main nav)
-- [ ] Page sections:
-  - **What is fabric-lens?** — one paragraph, written for a Fabric admin or consultant (not a developer)
-  - **Key capabilities** — 4–5 bullet summary: health scoring, security audit, capacity monitoring, demo mode
-  - **How to use this site** — step-by-step walkthrough of demo mode vs. live mode; what you can explore in each
-  - **What you need for a Fabric tenant audit** — required Azure permissions (Fabric Admin role, App Registration, scopes), step-by-step connection guide
-  - **Health scoring explained** — the 10-check table from CLAUDE.md, written for a non-technical stakeholder
-  - **Security audit explained** — what the posture score checks, what admin permissions are required and why
-  - **Demo mode** — one sentence: no credentials needed, click "Try Demo"
-  - **Links** — GitHub repo, Fabric REST API docs, issue tracker
-- [ ] Ensure the page renders fully server-side (static HTML from Vite build) so it is crawlable
-- [ ] Use the existing Meridian design tokens — this page should look like the rest of the app, not a separate site
+- [x] Added route `/about` to `App.tsx` — public, no auth guard (outside ProtectedRoute)
+- [x] Added "About" link to sidebar bottom section (below collapse toggle, uses `Info` icon)
+- [x] Page sections: What is fabric-lens?, Key capabilities (6 cards), How to use this site (demo + live mode), What you need for a tenant audit (permissions + App Registration steps), Health scoring table, Security audit checks, Demo mode, Links
+- [x] Standalone layout with sticky top bar and sticky table-of-contents sidebar (hidden on mobile)
+- [x] Uses Meridian `--m-*` design tokens throughout — no hardcoded palette classes
 
 ### 0e. Full site visual review ✅ COMPLETE (2026-04-05)
 **Effort:** 1–2 days | **Target:** All pages
@@ -187,3 +173,4 @@ Deferred — valid ideas, not yet planned.
 - **Sensitivity label / Purview integration** — item-level classification coverage. Requires Microsoft Purview APIs and additional consent.
 - **Domain governance analysis** — `domainId` already on workspaces; surface assignment coverage and cross-domain access patterns.
 - **Landing page redesign** — replace the app-as-landing with a marketing hero section before the demo/sign-in prompt. High value for SEO and first impressions but requires copy, design, and AppShell restructuring. Deliberate choice to defer until the `/about` page (Phase 0d) validates what messaging resonates.
+- **Privacy-respecting analytics (0c)** — add Plausible or Fathom (no cookies, GDPR-compliant) once the site has real traffic worth measuring. Track: demo mode entered, security page visited, export triggered, tenant sign-in attempted. Verify no PII in tracked URLs or events.

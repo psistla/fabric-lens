@@ -6,6 +6,7 @@ import {
   Gauge,
   Shield,
   Settings,
+  Info,
   PanelLeftClose,
   PanelLeftOpen,
 } from 'lucide-react';
@@ -120,6 +121,24 @@ export function Sidebar() {
           </NavLink>
         ))}
       </nav>
+
+      {/* About / Help */}
+      <div className="border-t border-[var(--m-border)] px-2 py-2">
+        <NavLink
+          to="/about"
+          title={collapsed ? 'About' : undefined}
+          className={({ isActive }) =>
+            `flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors duration-[120ms] ${
+              isActive
+                ? 'bg-[var(--m-primary-subtle)] font-semibold text-[var(--m-primary)]'
+                : 'text-[var(--m-text-secondary)] hover:bg-[var(--m-surface-hover)] hover:text-[var(--m-text)]'
+            } ${collapsed ? 'justify-center px-0' : ''}`
+          }
+        >
+          <Info className="h-5 w-5 shrink-0" />
+          {!collapsed && <span>About</span>}
+        </NavLink>
+      </div>
 
       {/* Collapse toggle */}
       <div className="border-t border-[var(--m-border)] p-2">

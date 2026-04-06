@@ -8,25 +8,37 @@ import { WorkspaceDetailPage } from '@/pages/WorkspaceDetailPage';
 import { CapacityPage } from '@/pages/CapacityPage';
 import { SecurityPage } from '@/pages/SecurityPage';
 import { SettingsPage } from '@/pages/SettingsPage';
+import { AboutPage } from '@/pages/AboutPage';
 
 export function App() {
   return (
-    <ProtectedRoute>
-      <AppShell>
-        <ErrorBoundary>
-          <Routes>
-            <Route path="/" element={<DashboardPage />} />
-            <Route path="/workspaces" element={<WorkspacesPage />} />
-            <Route
-              path="/workspaces/:id"
-              element={<WorkspaceDetailPage />}
-            />
-            <Route path="/capacity" element={<CapacityPage />} />
-            <Route path="/security" element={<SecurityPage />} />
-            <Route path="/settings" element={<SettingsPage />} />
-          </Routes>
-        </ErrorBoundary>
-      </AppShell>
-    </ProtectedRoute>
+    <Routes>
+      {/* Public route — no auth guard */}
+      <Route path="/about" element={<AboutPage />} />
+
+      {/* Protected routes */}
+      <Route
+        path="*"
+        element={
+          <ProtectedRoute>
+            <AppShell>
+              <ErrorBoundary>
+                <Routes>
+                  <Route path="/" element={<DashboardPage />} />
+                  <Route path="/workspaces" element={<WorkspacesPage />} />
+                  <Route
+                    path="/workspaces/:id"
+                    element={<WorkspaceDetailPage />}
+                  />
+                  <Route path="/capacity" element={<CapacityPage />} />
+                  <Route path="/security" element={<SecurityPage />} />
+                  <Route path="/settings" element={<SettingsPage />} />
+                </Routes>
+              </ErrorBoundary>
+            </AppShell>
+          </ProtectedRoute>
+        }
+      />
+    </Routes>
   );
 }

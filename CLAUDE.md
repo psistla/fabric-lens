@@ -45,7 +45,7 @@ src/
                   GhostWorkspacesPanel [PLANNED]
   pages/        → DashboardPage, WorkspacesPage, WorkspaceDetailPage,
                   CapacityPage, SecurityPage, SettingsPage,
-                  AboutPage [PLANNED — public, no auth guard]
+                  AboutPage (public, no auth guard — standalone layout with ToC sidebar)
   utils/        → healthScore, export (CSV), constants (single source of truth),
                   governanceIssues (aggregated issue derivation),
                   rateLimiter (AdminApiRateLimiter class + singleton),
