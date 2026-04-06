@@ -29,7 +29,7 @@ import { HealthGrid } from '@/components/dashboard/HealthGrid';
 import { SecurityQuickView } from '@/components/dashboard/SecurityQuickView';
 import { ScoreRing } from '@/components/dashboard/ScoreRing';
 import { exportToJSON } from '@/utils/export';
-import { CHART_COLORS, CHART_TOOLTIP_STYLE, GRADE_THRESHOLDS, HEALTH_GRADE_COLORS } from '@/utils/constants';
+import { CHART_COLORS, CHART_FALLBACK_COLOR, CHART_TOOLTIP_STYLE, GRADE_THRESHOLDS, HEALTH_GRADE_COLORS } from '@/utils/constants';
 
 const GRADE_ORDER = ['F', 'D', 'C', 'B', 'A'] as const;
 
@@ -187,7 +187,7 @@ export function DashboardPage() {
         type: 'Other',
         count: otherCount,
         pct: total > 0 ? Math.round((otherCount / total) * 100) : 0,
-        color: '#868E96',
+        color: CHART_FALLBACK_COLOR as typeof CHART_COLORS[number],
       });
     }
     return entries;
