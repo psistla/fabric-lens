@@ -16,9 +16,15 @@ vi.mock('@/api/admin', () => ({
 vi.mock('@/api/fabricClientInstance', () => ({ fabricClient: {} }));
 vi.mock('@/api/demo', () => ({
   isDemoMode: false,
+  isMsalConfigured: true,
   getMockWorkspaceUsers: () => [],
   getMockGroupMemberCount: () => 0,
   getMockResolvedGroup: () => ({ members: [], memberCount: 0 }),
+}));
+// isEffectiveDemoMode returns false so the store exercises live-mode code paths.
+vi.mock('@/auth/AuthProvider', () => ({
+  msalInstance: null,
+  isEffectiveDemoMode: () => false,
 }));
 // Mock the rate limiter so getRemainingRequests always returns 200
 // (avoids test-order sensitivity from the in-memory singleton)

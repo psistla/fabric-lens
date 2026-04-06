@@ -1,10 +1,14 @@
 import { vi, describe, it, expect } from 'vitest';
 
 // Mock isDemoMode = true before any module under test is imported.
-vi.mock('@/api/demo', () => ({ isDemoMode: true }));
+vi.mock('@/api/demo', () => ({ isDemoMode: true, isMsalConfigured: false }));
 
 // Prevent MSAL from instantiating with undefined credentials in test env.
-vi.mock('@/auth/AuthProvider', () => ({ msalInstance: null }));
+// isEffectiveDemoMode returns true so fabricClient guards trigger as expected.
+vi.mock('@/auth/AuthProvider', () => ({
+  msalInstance: null,
+  isEffectiveDemoMode: () => true,
+}));
 
 import { FabricClient } from '@/api/fabricClient';
 import { getGroupMemberCount, getGroupMembers } from '@/api/graphClient';
