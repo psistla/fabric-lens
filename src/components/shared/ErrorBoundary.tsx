@@ -36,8 +36,8 @@ export class ErrorBoundary extends Component<Props, State> {
       return (
         <div className="flex items-center justify-center p-12">
           <div className="max-w-md space-y-4 text-center">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30">
-              <AlertTriangle className="h-6 w-6 text-red-600 dark:text-red-400" />
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[var(--m-error-bg)]">
+              <AlertTriangle className="h-6 w-6 text-[var(--m-error-text)]" />
             </div>
             <h2 className="text-lg font-semibold text-[var(--m-text)]">
               {this.props.fallbackTitle ?? 'Something went wrong'}
