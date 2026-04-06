@@ -9,10 +9,13 @@ import './index.css';
 // the URL contains an auth code (?code= or #code=). In that case we must
 // handle the response and close the popup immediately — without rendering
 // the full app — so the parent window can receive the token and continue.
-if (window.opener && msalInstance && /[?#]code=/.test(window.location.href)) {
-  void msalInstance
+// Capture in a const so TypeScript's control-flow narrowing is preserved
+// inside the promise chain callbacks (closures break if/&& narrowing).
+const msalForPopup = msalInstance;
+if (window.opener && msalForPopup && /[?#]code=/.test(window.location.href)) {
+  void msalForPopup
     .initialize()
-    .then(() => msalInstance.handleRedirectPromise())
+    .then(() => msalForPopup.handleRedirectPromise())
     .finally(() => window.close());
 } else {
   createRoot(document.getElementById('root')!).render(
