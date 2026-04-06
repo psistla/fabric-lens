@@ -273,3 +273,11 @@ export const TENANT_SETTINGS_MEDIUM_RISK: string[] = [
 /** Deep link to the Fabric Admin Portal tenant settings page. */
 export const FABRIC_ADMIN_PORTAL_SETTINGS_URL =
   'https://app.fabric.microsoft.com/admin-portal/tenantSettings';
+
+// -- Benchmarks --
+
+/** Synthetic median tenant health score (percentage 0–100). Label as "typical" — never "industry average". */
+export const BENCHMARK_HEALTH_SCORE = 78;
+
+/** Synthetic median security posture score. Label as "typical" — never "industry average". */
+export const BENCHMARK_SECURITY_SCORE = 72;
