@@ -12,7 +12,12 @@ import './index.css';
 // the auth payload, and calls window.close(). Without this the parent times
 // out after 60 s. We detect the popup context early so the full React app
 // never mounts in the popup window.
-if (window.opener && /[?#&](?:code|error)=/.test(window.location.href)) {
+//
+// NOTE: Do NOT check window.opener here — Azure AD's login page sets
+// Cross-Origin-Opener-Policy headers that clear window.opener before our
+// code runs. broadcastResponseToMainFrame() handles popup vs redirect
+// distinction internally via the MSAL state parameter.
+if (/[?#&](?:code|error)=/.test(window.location.href)) {
   import('@azure/msal-browser/redirect-bridge')
     .then(({ broadcastResponseToMainFrame }) => broadcastResponseToMainFrame())
     .catch(() => window.close());
