@@ -15,7 +15,6 @@ import { useAuth } from '@/auth/useAuth';
 import { useUiStore } from '@/store/uiStore';
 import { isEffectiveDemoMode, msalInstance } from '@/auth/AuthProvider';
 import {
-  DEFAULT_FABRIC_API_BASE,
   DEFAULT_NAMING_PATTERN_STRING,
   DEFAULT_STALE_THRESHOLD_DAYS,
   HEALTH_SCORE_WEIGHTS,
@@ -92,14 +91,6 @@ function AuthStatusSection() {
           </span>
         </div>
 
-        <div className="flex items-center justify-between px-5 py-3">
-          <span className="text-sm text-[var(--m-text-secondary)]">
-            API Base
-          </span>
-          <span className="font-mono text-xs text-[var(--m-text-secondary)]">
-            {import.meta.env.VITE_FABRIC_API_BASE || DEFAULT_FABRIC_API_BASE}
-          </span>
-        </div>
       </div>
     </div>
   );
@@ -403,26 +394,32 @@ function AboutSection() {
             React 19
           </span>
           <span className="inline-flex rounded-full bg-[var(--m-surface)] px-2.5 py-0.5 text-[11px] font-semibold text-[var(--m-text-secondary)]">
-            TypeScript
+            TypeScript 6
           </span>
           <span className="inline-flex rounded-full bg-[var(--m-surface)] px-2.5 py-0.5 text-[11px] font-semibold text-[var(--m-text-secondary)]">
-            Vite
+            Vite 8
           </span>
           <span className="inline-flex rounded-full bg-[var(--m-surface)] px-2.5 py-0.5 text-[11px] font-semibold text-[var(--m-text-secondary)]">
-            Tailwind CSS
+            Tailwind v4
           </span>
           <span className="inline-flex rounded-full bg-[var(--m-surface)] px-2.5 py-0.5 text-[11px] font-semibold text-[var(--m-text-secondary)]">
-            Zustand
+            Zustand 5
           </span>
           <span className="inline-flex rounded-full bg-[var(--m-surface)] px-2.5 py-0.5 text-[11px] font-semibold text-[var(--m-text-secondary)]">
-            Recharts
+            Recharts 3
           </span>
           <span className="inline-flex rounded-full bg-[var(--m-surface)] px-2.5 py-0.5 text-[11px] font-semibold text-[var(--m-text-secondary)]">
-            MSAL.js
+            MSAL v5
           </span>
         </div>
 
         <div className="flex gap-4 pt-1">
+          <a
+            href="/about"
+            className="inline-flex items-center gap-1 text-sm text-[var(--m-primary)]"
+          >
+            About &amp; Docs
+          </a>
           <a
             href="https://github.com/psistla/fabric-lens"
             target="_blank"
