@@ -118,7 +118,7 @@ export function SpofWorkspacesPanel({ workspaceUsers, workspaces }: Props) {
 
       {/* Footer */}
       <div className="border-t border-[var(--m-border)] bg-[var(--m-surface)] px-4 py-2 text-[11px] text-[var(--m-text-tertiary)]">
-        If this admin loses access, the workspace becomes unmanageable — add a second admin
+        If this admin loses access, the workspace becomes unmanageable. Add a second admin
       </div>
     </div>
   );

@@ -13,7 +13,7 @@ export function WidelySharedSection({ artifacts, artifactsLoaded }: Props) {
       </h2>
       {!artifactsLoaded ? (
         <p className="text-sm text-[var(--m-text-secondary)] italic">
-          Security scan required — visit the Security page to run a scan.
+          Security scan required. Visit the Security page to run a scan.
         </p>
       ) : artifacts.length === 0 ? (
         <p className="text-sm text-[var(--m-text-secondary)]">No org-wide shared artifacts found.</p>

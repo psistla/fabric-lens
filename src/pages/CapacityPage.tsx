@@ -125,7 +125,7 @@ function CostCalculator() {
             className="inline-flex items-center gap-1.5 text-xs text-[var(--m-warning)] hover:opacity-80"
           >
             <AlertCircle className="h-3 w-3" />
-            Using fallback rates — click to retry
+            Using fallback rates. Click to retry.
           </button>
         )}
       </div>
@@ -161,7 +161,7 @@ function CostCalculator() {
           >
             {SKU_NAMES.map((s) => (
               <option key={s} value={s}>
-                {s} — {specs[s].cu} CUs (${specs[s].rate.toFixed(2)}/hr)
+                {s}: {specs[s].cu} CUs · ${specs[s].rate.toFixed(2)}/hr
               </option>
             ))}
           </select>
@@ -318,7 +318,7 @@ function CapacityDetail({
             <div className="flex items-center gap-4">
               <SkuBadge sku={capacity.sku} />
               <span className="text-sm text-[var(--m-text-secondary)]">
-                {spec.cu} Capacity Units — ${spec.rate}/hr
+                {spec.cu} Capacity Units · ${spec.rate}/hr
               </span>
             </div>
           )}

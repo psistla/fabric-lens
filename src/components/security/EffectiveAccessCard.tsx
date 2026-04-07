@@ -61,7 +61,7 @@ export function EffectiveAccessCard({ summary }: Props) {
       {hasDuplicates && (
         <div className="mt-2 flex items-center gap-1.5 text-xs text-[var(--m-text-tertiary)]">
           <Info className="h-3 w-3 shrink-0" />
-          {summary.duplicates} duplicate{summary.duplicates !== 1 ? 's' : ''} removed — users appearing in multiple groups
+          {summary.duplicates} duplicate{summary.duplicates !== 1 ? 's' : ''} removed (users appearing in multiple groups)
         </div>
       )}
     </div>

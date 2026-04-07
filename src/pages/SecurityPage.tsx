@@ -766,7 +766,7 @@ export function SecurityPage() {
                       className="text-xs text-[var(--m-error-text)]"
                     >
                       <span className="font-medium">{u.displayName}</span>
-                      {' — Admin on '}
+                      {', Admin on '}
                       {adminCount} workspaces
                     </li>
                   );

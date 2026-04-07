@@ -8,11 +8,11 @@ interface Props {
 }
 
 const GRADE_DESCRIPTIONS: Record<string, string> = {
-  A: 'Excellent — access is well-governed',
-  B: 'Good — minor gaps to address',
-  C: 'Fair — several risks need attention',
-  D: 'Poor — significant exposure present',
-  F: 'Critical — immediate remediation needed',
+  A: 'Excellent: access is well-governed',
+  B: 'Good: minor gaps to address',
+  C: 'Fair: several risks need attention',
+  D: 'Poor: significant exposure present',
+  F: 'Critical: immediate remediation needed',
 };
 
 function CheckRow({
@@ -92,7 +92,7 @@ export function SecurityPostureCard({ posture }: Props) {
                 <div className="absolute right-0 top-5 z-10 w-64 rounded-lg border border-[var(--m-border)] bg-[var(--m-bg)] p-3 shadow-lg">
                   <p className="text-[11px] font-semibold text-[var(--m-text)]">How scoring works</p>
                   <p className="mt-1 text-[11px] leading-relaxed text-[var(--m-text-secondary)]">
-                    Each check awards points toward a 100-point posture score. Points are prorated by how many workspaces pass — e.g. 24 of 25 safe workspaces earns partial credit.
+                    Each check awards points toward a 100-point posture score. Points are prorated by how many workspaces pass, e.g. 24 of 25 safe workspaces earns partial credit.
                   </p>
                   <p className="mt-1.5 text-[11px] text-[var(--m-text-tertiary)]">
                     The score drives the posture grade (A–F).

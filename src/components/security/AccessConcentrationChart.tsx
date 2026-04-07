@@ -128,7 +128,7 @@ export function AccessConcentrationChart({ workspaceUsers, userSummaries }: Prop
             Most Assigned Workspaces
           </h2>
           <p className="mt-0.5 text-[11px] text-[var(--m-text-tertiary)]">
-            Top {TOP_N} by principal count — over-sharing risk
+            Top {TOP_N} by principal count (over-sharing risk)
           </p>
         </div>
         <ConcentrationChart
@@ -145,7 +145,7 @@ export function AccessConcentrationChart({ workspaceUsers, userSummaries }: Prop
             Broadest User Access
           </h2>
           <p className="mt-0.5 text-[11px] text-[var(--m-text-tertiary)]">
-            Top {TOP_N} users by workspace count — blast radius
+            Top {TOP_N} users by workspace count (blast radius)
           </p>
         </div>
         <ConcentrationChart

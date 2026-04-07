@@ -57,7 +57,7 @@ export function TenantSettingsRiskPanel({ settings, loading, error, onRetry }: P
         <div className="flex items-center justify-between px-4 py-4">
           <div className="flex items-center gap-2 text-sm text-[var(--m-warning-text)]">
             <AlertTriangle className="h-4 w-4 shrink-0 text-[var(--m-warning)]" />
-            Tenant settings unavailable — check admin permissions
+            Tenant settings unavailable. Check admin permissions.
           </div>
           <button
             onClick={onRetry}

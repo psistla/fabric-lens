@@ -197,7 +197,7 @@ function PermissionsSection() {
     },
     {
       label: 'Admin APIs',
-      description: 'Security audit — cross-workspace role assignments',
+      description: 'Security audit: cross-workspace role assignments',
       granted: adminChecked ? hasAdminAccess : null,
       onGrant: () => void handleGrantAdmin(),
       granting: adminGranting,
@@ -292,7 +292,7 @@ function HealthConfigSection() {
             className="w-32 rounded-lg border border-[var(--m-border)] bg-[var(--m-bg)] px-3 py-2 text-sm text-[var(--m-text)]"
           />
           <p className="mt-1 text-xs text-[var(--m-text-tertiary)]">
-            Items not modified within this period are considered stale (informational — does not affect health score).
+            Items not modified within this period are considered stale. This is informational and does not affect the health score.
           </p>
         </div>
 
@@ -394,9 +394,8 @@ function AboutSection() {
 
         <p className="text-sm text-[var(--m-text-secondary)]">
           Fabric Lens gives Microsoft Fabric tenant admins a clear picture of
-          workspace health, access governance, and security posture — all
-          derived from live Fabric APIs, directly in the browser. No backend
-          required.
+          workspace health, access governance, and security posture, derived
+          from live Fabric APIs, directly in the browser. No backend required.
         </p>
 
         <div className="flex flex-wrap gap-2">

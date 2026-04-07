@@ -334,7 +334,7 @@ export function DashboardPage() {
           icon={FolderOpen}
           signal={
             atRiskCount > 0
-              ? `${atRiskCount} at risk — grade D or F`
+              ? `${atRiskCount} at risk (grade D or F)`
               : 'All workspaces grade C+'
           }
           signalColor={atRiskCount > 0 ? 'var(--m-error)' : undefined}

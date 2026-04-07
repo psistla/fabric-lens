@@ -14,7 +14,7 @@ export function GhostWorkspacesSection({ ghostWorkspaces, activityLoaded }: Prop
       </h2>
       {!activityLoaded ? (
         <p className="text-sm text-[var(--m-text-secondary)] italic">
-          Security scan required — visit the Security page to run a scan.
+          Security scan required. Visit the Security page to run a scan.
         </p>
       ) : ghostWorkspaces.length === 0 ? (
         <p className="text-sm text-[var(--m-text-secondary)]">

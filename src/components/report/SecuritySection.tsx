@@ -12,7 +12,7 @@ export function SecuritySection({ securityPosture }: Props) {
       </h2>
       {securityPosture === null ? (
         <p className="text-sm text-[var(--m-text-secondary)] italic">
-          Security scan required — visit the Security page to run a scan.
+          Security scan required. Visit the Security page to run a scan.
         </p>
       ) : (
         <div>

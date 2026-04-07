@@ -13,7 +13,7 @@ export function TenantSettingsSection({ riskySettings, settingsLoaded }: Props) 
       </h2>
       {!settingsLoaded ? (
         <p className="text-sm text-[var(--m-text-secondary)] italic">
-          Security scan required — visit the Security page to run a scan.
+          Security scan required. Visit the Security page to run a scan.
         </p>
       ) : riskySettings.length === 0 ? (
         <p className="text-sm text-[var(--m-text-secondary)]">No high-risk settings enabled.</p>
