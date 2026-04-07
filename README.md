@@ -39,9 +39,13 @@ Fabric Lens is a standalone React SPA that connects directly to Microsoft Fabric
 |---------|-------------|
 | **Dashboard** | Tenant-wide overview with workspace/item/capacity stats, artifact distribution charts, governance issues, average health score, and the **Health Grid** — a dense color-coded tile map showing every workspace's health grade at a glance, sorted best to worst |
 | **Workspace Explorer** | Browse, search, and drill into every workspace. View items, health grades, capacity assignments, OneLake endpoints, and Git status |
-| **Health Scoring** | Automated 100-point governance assessment per workspace across 10 checks — description, capacity, domain, Git, naming, active items, data layer, item count, identity, and tag coverage |
+| **Health Scoring** | Automated 100-point governance assessment per workspace across 9 checks — description, capacity, domain, Git, naming, active items, data layer, item count, and tag coverage |
 | **Capacity Monitor** | Track SKUs, regions, and states with tier-based badges. Cost calculator with **live Azure pricing** from the Azure Retail Prices API |
 | **Security Audit** | Cross-workspace role mapping with search, role filter chips, sortable columns, and pagination. Flags over-permissioned users (Admin on 5+ workspaces). Expands Azure AD group memberships via Microsoft Graph (optional) |
+| **Tenant Settings Risk** | Surfaces enabled high-risk tenant-level settings (PublishToWeb, external sharing, etc.) with risk level badges. Requires Fabric Admin role |
+| **Widely Shared Objects** | Identifies org-wide shared artifacts — reports and semantic models accessible to the entire organization via shareable links |
+| **Ghost Workspace Detection** | Flags workspaces with no recorded activity in the past 90 days using the Power BI Activity Log API |
+| **Governance Report** | Printable multi-section report with executive summary, health distribution, security findings, tenant settings, widely shared objects, ghost workspaces, and top recommendations |
 | **Incremental Consent** | Core API scopes are acquired at sign-in. Admin API (`Tenant.Read.All`) and Graph API (`GroupMember.Read.All`) scopes are requested on-demand the first time you use those features — users are never prompted for permissions they don't need |
 | **Multi-tenant** | Works with any Azure AD tenant — sign in with your organization account. No per-tenant app registration required when using the hosted version |
 | **CSV Export** | Export workspace inventories and security audit data for offline analysis |
@@ -100,16 +104,16 @@ In your App Registration > **API permissions** > **Add a permission**:
 
 | API | Permission | Type |
 |-----|-----------|------|
-| Power BI Service | `Workspace.Read.All` | Delegated |
-| Power BI Service | `Item.Read.All` | Delegated |
-| Power BI Service | `Capacity.Read.All` | Delegated |
+| Microsoft Fabric | `Workspace.Read.All` | Delegated |
+| Microsoft Fabric | `Item.Read.All` | Delegated |
+| Microsoft Fabric | `Capacity.Read.All` | Delegated |
 | Azure Service Management | `user_impersonation` | Delegated |
 
 **Security Audit — requested on demand (first visit to Security page):**
 
 | API | Permission | Type |
 |-----|-----------|------|
-| Power BI Service | `Tenant.Read.All` | Delegated |
+| Microsoft Fabric | `Tenant.Read.All` | Delegated |
 
 **Group Expansion — requested on demand (opt-in from Settings):**
 
@@ -147,38 +151,31 @@ For production deployments on Azure Static Web Apps, set these as Application Se
 
 ## Architecture
 
-```
-┌──────────────────────────────────────────────────────────────┐
-│                     Browser SPA (React 19)                   │
-│                                                              │
-│  ┌─────────────┐  ┌──────────────┐  ┌────────────────────┐  │
-│  │ React Router │  │Zustand Stores│  │     MSAL.js 5      │  │
-│  │              │  │              │  │                    │  │
-│  │ /dashboard   │  │workspaceStore│  │ Core scopes: login │  │
-│  │ /workspaces  │◄►│capacityStore │  │ Admin scopes: lazy │  │
-│  │ /capacity    │  │securityStore │  │ Graph scopes: lazy │  │
-│  │ /security    │  │uiStore       │  └─────────┬──────────┘  │
-│  │ /settings    │  └──────┬───────┘            │             │
-│  └─────────────┘          │                    │             │
-│                           ▼                    ▼             │
-│                  ┌────────┴────────┐  ┌────────┴──────────┐  │
-│                  │  fabricClient   │◄─│ Incremental consent│  │
-│                  └───┬────┬───┬───┘  └────────────────────┘  │
-│                      │    │   │                               │
-│  ┌───────────────────┼────┼───┼─────────────────────────┐    │
-│  │   Demo Mode       │    │   │   (mock data layer)     │    │
-│  │   isDemoMode ──►  │    │   │   3 capacities,         │    │
-│  │   bypass auth     │    │   │   35 workspaces,        │    │
-│  │   serve mocks     │    │   │   200+ items, 8 users   │    │
-│  └───────────────────┼────┼───┼─────────────────────────┘    │
-└──────────────────────┼────┼───┼──────────────────────────────┘
-                       │    │   │
-                       ▼    ▼   ▼
-          ┌────────┐ ┌─────┐ ┌─────┐ ┌──────────────────┐
-          │ Fabric │ │Admin│ │ ARM │ │ Azure Retail      │
-          │Core API│ │ API │ │ API │ │ Prices API        │
-          │        │ │     │ │     │ │ (public, no auth) │
-          └────────┘ └─────┘ └─────┘ └──────────────────┘
+```mermaid
+flowchart TD
+    subgraph Browser["Browser SPA — React 19"]
+        direction TB
+        subgraph UI["UI Layer"]
+            Router["**React Router**\n/dashboard · /workspaces · /capacity\n/security · /settings · /report · /about"]
+            Stores["**Zustand Stores**\nworkspace · capacity · security · ui\ntenantSettings · widelyShared · activity"]
+        end
+
+        MSAL["**MSAL.js 5**\nCore scopes: login\nAdmin + Graph scopes: lazy"]
+        IC["Incremental Consent"]
+        FC["**fabricClient**\ntoken injection · pagination · rate limiting"]
+        Demo["**Demo Mode**\nisDemoMode → bypass auth · serve mocks\n3 capacities · 35 workspaces · 200+ items"]
+    end
+
+    Router <-->|render / navigate| Stores
+    Stores -->|API calls| FC
+    MSAL -->|on-demand scope request| IC
+    IC -->|inject access token| FC
+    Demo -. mock data .-> Stores
+
+    FC --> FabricAPI["**Fabric Core API**\nWorkspaces · Items · Capacities"]
+    FC --> AdminAPI["**Admin API**\nTenant · Scanner · Activity Log"]
+    FC --> ARMAPI["**ARM API**\nCapacity management"]
+    FC --> PricingAPI["**Azure Retail Prices API**\npublic · no auth · 1 hr cache"]
 ```
 
 **Key design decisions:**
@@ -192,7 +189,7 @@ For production deployments on Azure Static Web Apps, set these as Application Se
 
 ## Health Scoring
 
-Each workspace is scored across ten governance checks. When items are present, the raw score is normalized against a 110-point maximum; when there are no items, tag coverage is skipped and the maximum is 100.
+Each workspace is scored across nine governance checks. When items are present, the raw score is normalized against a 110-point maximum; when there are no items, tag coverage is skipped and the maximum is 100.
 
 | Check | Points | Description |
 |-------|--------|-------------|
@@ -215,16 +212,26 @@ Each workspace is scored across ten governance checks. When items are present, t
 ```
 src/
   auth/           MSAL config, AuthProvider, useAuth (with incremental consent), ProtectedRoute
-  api/            fabricClient, resource modules, azurePricing, demo, types/
+  api/            fabricClient, resource modules, azurePricing, activityEvents, widelyShared,
+                  tenantSettings, demo, types/
   data/           SKU specifications and derived pricing (skuSpecs.ts)
-  store/          Zustand stores (workspace, capacity, security, ui)
+  store/          Zustand stores (workspace, capacity, security, ui,
+                  tenantSettings, widelyShared, activity)
   components/
     layout/       AppShell, Sidebar, Header (demo-mode-aware)
+    dashboard/    GovernanceIssuesPanel, HealthGrid, ScoreRing, SecurityQuickView
     workspace/    GovernanceIssues, HealthBadge, HealthDetail
     shared/       DataTable, StatCard, SearchBar, EmptyState, ExportButton, ItemTypeBadge, ...
     charts/       ItemsByTypeChart, WorkspacesByCapacityChart
-  pages/          Dashboard, Workspaces, WorkspaceDetail, Capacity, Security, Settings
-  utils/          healthScore, export (CSV), constants (single source of truth)
+    security/     AccessConcentrationChart, EffectiveAccessCard, SecurityFindingsPanel,
+                  TenantSettingsRiskPanel, WidelySharedPanel, GhostWorkspacesPanel, ...
+    report/       ReportCover, ExecutiveSummarySection, HealthSection, SecuritySection,
+                  TenantSettingsSection, WidelySharedSection, GhostWorkspacesSection,
+                  RecommendationsSection
+  pages/          Dashboard, Workspaces, WorkspaceDetail, Capacity, Security, Settings,
+                  Report, About (public — no auth guard)
+  utils/          healthScore, export (CSV), constants (single source of truth),
+                  ghostWorkspaces, tenantSettingRisks, reportData, reportSummary
 ```
 
 ---
