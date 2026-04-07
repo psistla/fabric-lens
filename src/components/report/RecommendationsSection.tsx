@@ -17,7 +17,7 @@ export function RecommendationsSection({ topRecommendations }: Props) {
           {topRecommendations.map((rec, i) => (
             <div
               key={rec.action}
-              className="flex items-start gap-3 px-4 py-2.5 bg-[var(--m-bg)] rounded-lg border-l-4 border-[var(--m-primary)]"
+              className="report-rec-card flex items-start gap-3 px-4 py-2.5 bg-[var(--m-bg)] rounded-lg border-l-4 border-[var(--m-primary)]"
             >
               <span className="text-lg font-bold text-[var(--m-primary)] min-w-[24px]">{i + 1}</span>
               <div>

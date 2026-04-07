@@ -395,18 +395,28 @@
     box-shadow: none !important;
   }
 
-  /* Page breaks between report sections */
+  /* Cover page always starts a new page after itself */
+  .report-cover {
+    break-after: page;
+    page-break-after: always;
+  }
+
+  /* Sections: avoid breaking inside where possible */
   section {
+    break-inside: avoid;
     page-break-inside: avoid;
   }
 
-  section + section {
-    page-break-before: auto;
+  /* Table rows must not split across pages */
+  tr {
+    break-inside: avoid;
+    page-break-inside: avoid;
   }
 
-  /* Cover page always starts fresh */
-  .border-b-4 {
-    page-break-after: always;
+  /* Recommendation cards must not split */
+  .report-rec-card {
+    break-inside: avoid;
+    page-break-inside: avoid;
   }
 
   /* Footer on every page */
@@ -419,10 +429,5 @@
       color: #9ca3af;
     }
 
-    @bottom-right {
-      content: "github.com/psistla/fabric-lens";
-      font-size: 9pt;
-      color: #9ca3af;
-    }
   }
 }

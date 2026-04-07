@@ -17,7 +17,7 @@ export function ReportCover({ data }: Props) {
   const ghostCount = data.activityLoaded ? data.ghostWorkspaces.length : null;
 
   return (
-    <div className="bg-[var(--m-surface)] px-10 py-12 border-b-4 border-[var(--m-border)]">
+    <div className="report-cover bg-[var(--m-surface)] px-10 py-12 border-b-4 border-[var(--m-border)]">
       <div className="flex items-start justify-between">
         <div>
           <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--m-primary)] mb-2">
