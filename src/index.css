@@ -414,7 +414,7 @@
     margin: 20mm 15mm;
 
     @bottom-left {
-      content: "fabric-lens.com · Microsoft Fabric Governance & Health Dashboard";
+      content: "fabric-lens.com | Microsoft Fabric Governance & Health";
       font-size: 9pt;
       color: #9ca3af;
     }
