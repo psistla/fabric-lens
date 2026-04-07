@@ -56,9 +56,13 @@ export function useAuth() {
   }
 
   async function logout(): Promise<void> {
-    await instance.logoutPopup({
-      account: account,
-    });
+    // logoutPopup() opens a popup that redirects to postLogoutRedirectUri with
+    // no auth code in the URL — our broadcastResponseToMainFrame gate doesn't
+    // fire, so the popup loads the full app and never closes.
+    // clearCache() clears local MSAL tokens without any popup or redirect,
+    // then we reload so stores re-initialize in demo mode.
+    await instance.clearCache();
+    window.location.reload();
   }
 
   async function getToken(scopes: string[]): Promise<string> {
