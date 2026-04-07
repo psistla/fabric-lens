@@ -10,7 +10,7 @@ export function GhostWorkspacesSection({ ghostWorkspaces, activityLoaded }: Prop
   return (
     <section className="bg-[var(--m-surface)] px-10 py-8 border-b border-[var(--m-border)] mt-0.5">
       <h2 className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--m-text-secondary)] mb-4">
-        Ghost Workspaces
+        Inactive Workspaces
       </h2>
       {!activityLoaded ? (
         <p className="text-sm text-[var(--m-text-secondary)] italic">

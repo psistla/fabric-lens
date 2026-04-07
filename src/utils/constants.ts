@@ -34,11 +34,15 @@ export const POWERBI_SCOPES = ['https://analysis.windows.net/powerbi/api/.defaul
 
 // -- Ghost workspaces --
 
-/** Number of days of inactivity after which a workspace is considered a ghost workspace. */
-export const GHOST_WORKSPACE_THRESHOLD_DAYS = 90;
+/** Number of days of inactivity after which a workspace is considered inactive/stale. */
+export const GHOST_WORKSPACE_THRESHOLD_DAYS = 7;
 
-/** Number of days to look back when fetching activity events from the Power BI activity log. */
-export const ACTIVITY_LOG_LOOKBACK_DAYS = 30;
+/**
+ * Number of days to look back when fetching activity events from the Power BI activity log.
+ * The API requires start/end within the same UTC day, so each day is a separate request.
+ * Keep this value low to minimise API calls against the 200 req/hr admin rate limit.
+ */
+export const ACTIVITY_LOG_LOOKBACK_DAYS = 7;
 
 // -- Rate limiting --
 
@@ -243,7 +247,7 @@ export const HEALTH_GRID_HOVER_SCALE = 1.15;
 // -- App metadata --
 
 /** Application version (mirrors package.json). */
-export const APP_VERSION = '1.1.0';
+export const APP_VERSION = '1.2.0';
 
 // -- Tenant Settings Risk --
 

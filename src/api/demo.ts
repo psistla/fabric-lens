@@ -1358,15 +1358,15 @@ export function getMockWidelySharedArtifacts(): WidelySharedArtifact[] {
 /**
  * Returns ~200 realistic mock activity events for demo mode.
  *
- * Ghost workspaces (Grade D — daysInactive 95-180):
+ * Inactive workspaces (Grade D — daysInactive 95-180):
  *   ws-6  (My Workspace), ws-7  (Legacy Reports),
  *   ws-32 (Field Operations), ws-33 (Partner Analytics)
  *
- * No-event workspaces (Grade F — 0 events, not visible in 30-day live lookback
- * but still ghost candidates because daysInactive is effectively ∞):
+ * No-event workspaces (Grade F — 0 events, not visible in 7-day live lookback
+ * but still inactive candidates because daysInactive is effectively ∞):
  *   ws-5  (HR Dashboard), ws-34 (Temp Workspace), ws-35 (Archive Q3 2024)
  *
- * Active workspaces (daysInactive 1-14, not ghosts): all remaining 28 workspaces.
+ * Active workspaces (daysInactive 1-14, not inactive): all remaining 28 workspaces.
  */
 export function getMockWorkspaceActivity(): ActivityEvent[] {
   const DAY_MS = 24 * 60 * 60 * 1000;
@@ -1626,9 +1626,9 @@ export function getMockWorkspaceActivity(): ActivityEvent[] {
     // ------------------------------------------------------------------
     // Grade F workspaces — NO EVENTS
     // ws-5  (HR Dashboard), ws-34 (Temp Workspace), ws-35 (Archive Q3 2024)
-    // These have 0 events. In live mode (30-day lookback) they'd be invisible.
+    // These have 0 events. In live mode (7-day lookback) they'd be invisible.
     // In demo mode deriveGhostWorkspaces sees them via the workspace list
-    // (not via events), so they still surface as ghosts with daysInactive=∞.
+    // (not via events), so they still surface as inactive with daysInactive=lookbackDays.
     // ------------------------------------------------------------------
   ];
 
