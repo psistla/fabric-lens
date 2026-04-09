@@ -42,7 +42,7 @@ export function calculateWorkspaceHealth(
   const checks: HealthCheck[] = [];
 
   // Description provided
-  const hasDescription = workspace.description.trim().length > 0;
+  const hasDescription = (workspace.description ?? '').trim().length > 0;
   checks.push({
     name: 'Description provided',
     passed: hasDescription,
