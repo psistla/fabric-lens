@@ -289,12 +289,21 @@ export function SecurityPage() {
       const wsName =
         workspaces.find((w) => w.id === wsId)?.displayName ?? wsId;
       for (const u of users) {
-        const email = u.userDetails.userPrincipalName;
+        // Live API may return null for userPrincipalName (e.g. service principals)
+        // and null for displayName. Normalise to strings to prevent downstream crashes.
+        const email =
+          u.userDetails.userPrincipalName ??
+          u.servicePrincipalDetails?.aadAppId ??
+          u.userDetails.displayName ??
+          'unknown-principal';
         const pType = u.userDetails.principalType ?? 'User';
         let summary = map.get(email);
         if (!summary) {
           summary = {
-            displayName: u.userDetails.displayName,
+            displayName:
+              u.userDetails.displayName ??
+              u.userDetails.userPrincipalName ??
+              'Unknown',
             email,
             principalType: pType,
             assignments: [],

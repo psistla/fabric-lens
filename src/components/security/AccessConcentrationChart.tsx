@@ -27,7 +27,8 @@ interface Bar {
   count: number;
 }
 
-function truncate(s: string, max = 20): string {
+function truncate(s: string | null | undefined, max = 20): string {
+  if (!s) return '';
   return s.length > max ? s.slice(0, max - 1) + '…' : s;
 }
 
