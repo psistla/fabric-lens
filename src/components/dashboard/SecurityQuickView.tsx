@@ -32,11 +32,20 @@ export function SecurityQuickView() {
     for (const [wsId, users] of Object.entries(workspaceUsers)) {
       const wsName = workspaces.find((w) => w.id === wsId)?.displayName ?? wsId;
       for (const u of users) {
-        const email = u.userDetails.userPrincipalName;
+        const email =
+          u.userDetails.userPrincipalName ??
+          u.servicePrincipalDetails?.aadAppId ??
+          u.userDetails.displayName ??
+          'unknown-principal';
         const pType = u.userDetails.principalType ?? 'User';
         let s = map.get(email);
         if (!s) {
-          s = { displayName: u.userDetails.displayName, email, principalType: pType, assignments: [] };
+          s = {
+            displayName: u.userDetails.displayName ?? u.userDetails.userPrincipalName ?? 'Unknown',
+            email,
+            principalType: pType,
+            assignments: [],
+          };
           map.set(email, s);
         }
         s.assignments.push({ workspaceId: wsId, workspaceName: wsName, role: u.workspaceAccessDetails.workspaceRole });
@@ -61,7 +70,10 @@ export function SecurityQuickView() {
       for (const user of users) {
         const pType = user.userDetails.principalType ?? 'User';
         if (pType === 'User') {
-          const upn = user.userDetails.userPrincipalName;
+          const upn =
+            user.userDetails.userPrincipalName ??
+            user.userDetails.displayName ??
+            'unknown-user';
           uniqueUpns.add(upn);
           if (user.workspaceAccessDetails.workspaceRole === 'Admin') {
             adminCountByUpn.set(upn, (adminCountByUpn.get(upn) ?? 0) + 1);

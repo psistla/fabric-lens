@@ -222,7 +222,7 @@ export function computeSecurityPosture(
     earned: spofEarned,
     max: 25,
     status: spofCount === 0
-      ? 'All workspaces have ≥2 admins'
+      ? 'No single-admin workspaces'
       : `${spofCount} of ${totalWs} workspace${spofCount > 1 ? 's' : ''} at risk`,
   });
 
