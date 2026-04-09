@@ -60,9 +60,9 @@ export function StatCard({ label, value, icon: Icon, trend, signal, signalColor 
   return (
     <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)] p-5">
       <div className="flex items-start justify-between">
-        <div>
+        <div className="min-w-0">
           <p className="text-sm text-[var(--m-text-secondary)]">{label}</p>
-          <p className="mt-1 text-2xl font-semibold text-[var(--m-text)]">
+          <p className="mt-1 truncate text-2xl font-semibold text-[var(--m-text)]" title={typeof value === 'string' ? value : undefined}>
             {value}
           </p>
           {signal && (
