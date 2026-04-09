@@ -285,6 +285,7 @@ export function SecurityPage() {
   const userSummaries = useMemo((): UserSummary[] => {
     const map = new Map<string, UserSummary>();
     for (const [wsId, users] of Object.entries(workspaceUsers)) {
+      if (!Array.isArray(users)) continue;
       const wsName =
         workspaces.find((w) => w.id === wsId)?.displayName ?? wsId;
       for (const u of users) {

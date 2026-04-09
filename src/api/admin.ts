@@ -47,7 +47,7 @@ export function createAdminApi(client: FabricClient) {
       const response = await client.get<PaginatedResponse<WorkspaceUser>>(
         `/admin/workspaces/${workspaceId}/users`,
       );
-      return { success: true, data: response.value };
+      return { success: true, data: response.value ?? [] };
     } catch (e) {
       if (e instanceof FabricApiError && e.statusCode === 403) {
         return {
