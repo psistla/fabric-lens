@@ -189,8 +189,15 @@ export class FabricClient {
       const url = continuationToken
         ? `${path}${path.includes('?') ? '&' : '?'}continuationToken=${continuationToken}`
         : path;
-      const response =
-        await this.get<PaginatedResponse<T>>(url);
+      const response = await this.get<PaginatedResponse<T>>(url);
+      if (!Array.isArray(response.value)) {
+        // The API returned an unexpected response shape. Log in dev so we can
+        // diagnose, then bail out with what we have rather than crashing.
+        if (import.meta.env.DEV) {
+          console.warn('[FabricClient] listAll: unexpected response — no "value" array', path, response);
+        }
+        break;
+      }
       results.push(...response.value);
       continuationToken = response.continuationToken;
     } while (continuationToken);
