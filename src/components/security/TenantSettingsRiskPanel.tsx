@@ -13,10 +13,11 @@ function humanise(settingName: string): string {
   return settingName.replace(/([a-z])([A-Z])/g, '$1 $2');
 }
 
-function scopeLabel(enabledSecurityGroups: RiskyTenantSetting['enabledSecurityGroups']): string {
-  return enabledSecurityGroups.length === 0
+function scopeLabel(enabledSecurityGroups: RiskyTenantSetting['enabledSecurityGroups'] | null | undefined): string {
+  const groups = enabledSecurityGroups ?? [];
+  return groups.length === 0
     ? 'All users'
-    : `${enabledSecurityGroups.length} group${enabledSecurityGroups.length > 1 ? 's' : ''}`;
+    : `${groups.length} group${groups.length > 1 ? 's' : ''}`;
 }
 
 export function TenantSettingsRiskPanel({ settings, loading, error, onRetry }: Props) {
