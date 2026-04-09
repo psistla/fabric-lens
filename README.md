@@ -153,11 +153,11 @@ For production deployments on Azure Static Web Apps, set these as Application Se
 ```mermaid
 flowchart TB
     subgraph Browser["Browser SPA — React 19 · TypeScript · Vite"]
-        Router["React Router\n/dashboard · /workspaces · /capacity\n/security · /settings · /report · /about"]
-        Stores["Zustand Stores\nworkspace · capacity · security · ui\ntenantSettings · widelyShared · activity"]
-        Demo["Demo Mode\nbypasses auth · serves mock data\n3 capacities · 35 workspaces · 200+ items"]
-        MSAL["MSAL.js 5\ncore scopes on login\nAdmin + Graph scopes on-demand"]
-        FC["fabricClient\ntoken injection · pagination · rate limiting"]
+        Router["React Router\n/dashboard · /workspaces\n/capacity · /security\n/settings · /report · /about"]
+        Stores["Zustand Stores\nworkspace · capacity\nsecurity · tenantSettings\nwidelyShared · activity · ui"]
+        Demo["Demo Mode\nbypasses auth · serves mocks\n3 capacities · 35 workspaces\n200+ items · 19 item types"]
+        MSAL["MSAL.js 5\ncore scopes on login\nAdmin + Graph: on-demand"]
+        FC["fabricClient\ntoken injection · pagination\nrate limiting"]
     end
 
     Router <--> Stores
@@ -165,10 +165,10 @@ flowchart TB
     MSAL -->|incremental consent| FC
     Demo -. mock data .-> Stores
 
-    FC --> Core["Fabric Core API\nWorkspaces · Items · Capacities"]
-    FC --> Admin["Admin API\nTenant settings · Scanner · Activity log"]
+    FC --> Core["Fabric Core API\nWorkspaces · Items\nCapacities"]
+    FC --> Admin["Admin API\nTenant settings · Scanner\nActivity log"]
     FC --> ARM["ARM API\nCapacity management"]
-    FC --> Prices["Azure Retail Prices\npublic · no auth · 1 hr TTL"]
+    FC --> Prices["Azure Retail Prices\npublic · no auth\n1 hr TTL cache"]
 
     style Browser fill:#1a1b2e,stroke:#4F46E5,stroke-width:2px,color:#e2e8f0
     style Router fill:#312e81,stroke:#818cf8,color:#e2e8f0
