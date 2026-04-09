@@ -151,43 +151,35 @@ For production deployments on Azure Static Web Apps, set these as Application Se
 ## Architecture
 
 ```mermaid
-flowchart TD
-    subgraph Browser["Browser SPA · React 19"]
-        direction TB
-        subgraph UI["UI Layer"]
-            Router["**React Router**\n/dashboard · /workspaces · /capacity\n/security · /settings · /report · /about"]
-            Stores["**Zustand Stores**\nworkspace · capacity · security · ui\ntenantSettings · widelyShared · activity"]
-        end
-
-        MSAL["**MSAL.js 5**\nCore scopes: login\nAdmin + Graph scopes: lazy"]
-        IC["Incremental Consent"]
-        FC["**fabricClient**\ntoken injection · pagination · rate limiting"]
-        Demo["**Demo Mode**\nisDemoMode: bypass auth, serve mocks\n3 capacities · 35 workspaces · 200+ items"]
+flowchart TB
+    subgraph Browser["Browser SPA — React 19 · TypeScript · Vite"]
+        Router["React Router\n/dashboard · /workspaces · /capacity\n/security · /settings · /report · /about"]
+        Stores["Zustand Stores\nworkspace · capacity · security · ui\ntenantSettings · widelyShared · activity"]
+        Demo["Demo Mode\nbypasses auth · serves mock data\n3 capacities · 35 workspaces · 200+ items"]
+        MSAL["MSAL.js 5\ncore scopes on login\nAdmin + Graph scopes on-demand"]
+        FC["fabricClient\ntoken injection · pagination · rate limiting"]
     end
 
-    Router <-->|render / navigate| Stores
-    Stores -->|API calls| FC
-    MSAL -->|on-demand scope request| IC
-    IC -->|inject access token| FC
+    Router <--> Stores
+    Stores --> FC
+    MSAL -->|incremental consent| FC
     Demo -. mock data .-> Stores
 
-    FC --> FabricAPI["**Fabric Core API**\nWorkspaces · Items · Capacities"]
-    FC --> AdminAPI["**Admin API**\nTenant · Scanner · Activity Log"]
-    FC --> ARMAPI["**ARM API**\nCapacity management"]
-    FC --> PricingAPI["**Azure Retail Prices API**\npublic, no auth, 1 hr cache"]
+    FC --> Core["Fabric Core API\nWorkspaces · Items · Capacities"]
+    FC --> Admin["Admin API\nTenant settings · Scanner · Activity log"]
+    FC --> ARM["ARM API\nCapacity management"]
+    FC --> Prices["Azure Retail Prices\npublic · no auth · 1 hr TTL"]
 
-    style Browser fill:#1e1e2e,stroke:#4F46E5,stroke-width:2px,color:#e2e8f0
-    style UI fill:#2a2a3e,stroke:#6366f1,stroke-width:1px,color:#e2e8f0
-    style Router fill:#3730a3,stroke:#818cf8,color:#e2e8f0
-    style Stores fill:#3730a3,stroke:#818cf8,color:#e2e8f0
-    style MSAL fill:#4338ca,stroke:#818cf8,color:#e2e8f0
-    style IC fill:#4338ca,stroke:#818cf8,color:#e2e8f0
-    style FC fill:#4F46E5,stroke:#a5b4fc,color:#ffffff
-    style Demo fill:#92400e,stroke:#fbbf24,color:#fef3c7
-    style FabricAPI fill:#065f46,stroke:#34d399,color:#d1fae5
-    style AdminAPI fill:#065f46,stroke:#34d399,color:#d1fae5
-    style ARMAPI fill:#065f46,stroke:#34d399,color:#d1fae5
-    style PricingAPI fill:#065f46,stroke:#34d399,color:#d1fae5
+    style Browser fill:#1a1b2e,stroke:#4F46E5,stroke-width:2px,color:#e2e8f0
+    style Router fill:#312e81,stroke:#818cf8,color:#e2e8f0
+    style Stores fill:#312e81,stroke:#818cf8,color:#e2e8f0
+    style MSAL fill:#3730a3,stroke:#818cf8,color:#e2e8f0
+    style Demo fill:#78350f,stroke:#fbbf24,color:#fef3c7
+    style FC fill:#4338ca,stroke:#a5b4fc,color:#ffffff
+    style Core fill:#064e3b,stroke:#34d399,color:#d1fae5
+    style Admin fill:#064e3b,stroke:#34d399,color:#d1fae5
+    style ARM fill:#064e3b,stroke:#34d399,color:#d1fae5
+    style Prices fill:#064e3b,stroke:#34d399,color:#d1fae5
 ```
 
 **Key design decisions:**
