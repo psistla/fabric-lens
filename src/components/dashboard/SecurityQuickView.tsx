@@ -54,9 +54,17 @@ export function SecurityQuickView() {
     return [...map.values()];
   }, [workspaceUsers, workspaces, hasData]);
 
+  const scannedWorkspaces = useMemo(
+    () => Object.keys(workspaceUsers).map((id) => ({
+      id,
+      name: workspaces.find((w) => w.id === id)?.displayName ?? id,
+    })),
+    [workspaceUsers, workspaces],
+  );
+
   const posture = useMemo(
-    () => (hasData ? computeSecurityPosture(userSummaries, resolvedGroups) : null),
-    [userSummaries, resolvedGroups, hasData],
+    () => (hasData ? computeSecurityPosture(userSummaries, resolvedGroups, scannedWorkspaces) : null),
+    [userSummaries, resolvedGroups, hasData, scannedWorkspaces],
   );
 
   const summary = useMemo<SecuritySummary>(() => {

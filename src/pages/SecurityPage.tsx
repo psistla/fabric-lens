@@ -344,16 +344,25 @@ export function SecurityPage() {
     return computeEffectiveAccess(userSummaries, resolvedGroups);
   }, [hasScanned, userSummaries, resolvedGroups]);
 
+  // All workspaces that were scanned — needed to detect zero-assignment workspaces
+  const scannedWorkspaces = useMemo(
+    () => Object.keys(workspaceUsers).map((id) => ({
+      id,
+      name: workspaces.find((w) => w.id === id)?.displayName ?? id,
+    })),
+    [workspaceUsers, workspaces],
+  );
+
   // Security findings (derived from scan data — no extra API calls)
   const securityFindings = useMemo(
-    () => (hasScanned ? deriveSecurityFindings(userSummaries, resolvedGroups) : []),
-    [hasScanned, userSummaries, resolvedGroups],
+    () => (hasScanned ? deriveSecurityFindings(userSummaries, resolvedGroups, scannedWorkspaces) : []),
+    [hasScanned, userSummaries, resolvedGroups, scannedWorkspaces],
   );
 
   // Security posture score
   const securityPosture = useMemo(
-    () => (hasScanned ? computeSecurityPosture(userSummaries, resolvedGroups) : null),
-    [hasScanned, userSummaries, resolvedGroups],
+    () => (hasScanned ? computeSecurityPosture(userSummaries, resolvedGroups, scannedWorkspaces) : null),
+    [hasScanned, userSummaries, resolvedGroups, scannedWorkspaces],
   );
 
   const riskySettings = useMemo(

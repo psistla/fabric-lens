@@ -25,10 +25,22 @@ interface WorkspaceAdminMap {
   [workspaceId: string]: { name: string; adminCount: number; hasAnyAdmin: boolean };
 }
 
+/**
+ * Build a map of workspace → admin counts.
+ * `knownWorkspaces` pre-seeds every scanned workspace so that workspaces with
+ * zero assignments (e.g. trial tenants where the API omits implicit owners)
+ * are still counted rather than silently passing all checks.
+ */
 function buildWorkspaceAdminMap(
   userSummaries: UserSummary[],
+  knownWorkspaces: { id: string; name: string }[] = [],
 ): WorkspaceAdminMap {
   const map: WorkspaceAdminMap = {};
+
+  // Pre-seed with every workspace that was scanned
+  for (const ws of knownWorkspaces) {
+    map[ws.id] = { name: ws.name, adminCount: 0, hasAnyAdmin: false };
+  }
 
   for (const u of userSummaries) {
     for (const a of u.assignments) {
@@ -47,9 +59,10 @@ function buildWorkspaceAdminMap(
 export function deriveSecurityFindings(
   userSummaries: UserSummary[],
   resolvedGroups: Record<string, ResolvedGroup>,
+  knownWorkspaces: { id: string; name: string }[] = [],
 ): SecurityFinding[] {
   const findings: SecurityFinding[] = [];
-  const wsMap = buildWorkspaceAdminMap(userSummaries);
+  const wsMap = buildWorkspaceAdminMap(userSummaries, knownWorkspaces);
 
   // --- Critical: Workspaces with exactly 1 admin (SPOF) ---
   const spofWorkspaces = Object.values(wsMap).filter((ws) => ws.adminCount === 1);
@@ -205,8 +218,9 @@ function postureGrade(score: number): string {
 export function computeSecurityPosture(
   userSummaries: UserSummary[],
   resolvedGroups: Record<string, ResolvedGroup>,
+  knownWorkspaces: { id: string; name: string }[] = [],
 ): SecurityPosture {
-  const wsMap = buildWorkspaceAdminMap(userSummaries);
+  const wsMap = buildWorkspaceAdminMap(userSummaries, knownWorkspaces);
   const allWorkspaces = Object.values(wsMap);
   const totalWs = allWorkspaces.length;
 
