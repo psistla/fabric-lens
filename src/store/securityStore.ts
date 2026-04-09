@@ -66,13 +66,16 @@ export const useSecurityStore = create<SecurityState>()((set, get) => ({
       if (result.success) {
         set({ isAdmin: true, loading: false });
       } else if (result.reason === 'access_denied') {
+        // 403 — user genuinely lacks the Fabric Admin role
         set({ isAdmin: false, loading: false });
       } else {
-        set({ isAdmin: false, error: result.message, loading: false });
+        // Non-403 error (network, server, token issue) — don't block as if role is missing
+        set({ isAdmin: null, error: result.message, loading: false });
       }
     } catch (e) {
+      // Unexpected error — leave isAdmin: null so user can retry
       set({
-        isAdmin: false,
+        isAdmin: null,
         error: e instanceof Error ? e.message : 'Failed to check admin access',
         loading: false,
       });

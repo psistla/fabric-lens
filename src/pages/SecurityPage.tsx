@@ -164,8 +164,12 @@ function AdminRequiredCard() {
           <li>2. Navigate to Roles &rarr; Fabric Administrator</li>
           <li>3. Add your account to the role assignment</li>
           <li>4. Wait ~15 minutes for the role to propagate</li>
-          <li>5. Refresh this page</li>
+          <li>5. Sign out of fabric-lens, then sign back in</li>
         </ol>
+        <p className="mt-3 text-[11px] text-[var(--m-text-tertiary)]">
+          Already have the role? A page refresh is not enough — sign out and sign back
+          in to get a fresh token that reflects your current role assignment.
+        </p>
       </div>
       <a
         href="https://learn.microsoft.com/en-us/fabric/admin/roles"
@@ -538,12 +542,38 @@ export function SecurityPage() {
   }
 
   // Checking consent / admin status
-  if (!consentChecked || (isAdmin === null && (hasAdminAccess || isEffectiveDemoMode())) || (loading && !scanProgress)) {
+  if (!consentChecked || (isAdmin === null && !error && (hasAdminAccess || isEffectiveDemoMode())) || (loading && !scanProgress)) {
     return (
       <div className="space-y-4 p-6">
         <div className="m-skeleton h-7 w-40" />
         <div className="m-skeleton h-4 w-64" />
         <div className="m-skeleton h-48 rounded-xl" />
+      </div>
+    );
+  }
+
+  // Admin check failed with a non-403 error (network, token, server issue)
+  if (isAdmin === null && error && !loading) {
+    return (
+      <div className="p-6">
+        <h1 className="text-2xl font-semibold tracking-[-0.02em] text-[var(--m-text)]">Security</h1>
+        <p className="mt-1 text-sm text-[var(--m-text-secondary)]">Role assignments and access governance.</p>
+        <div className="mx-auto mt-12 max-w-lg space-y-4 text-center">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[var(--m-error-bg)]">
+            <ShieldAlert className="h-8 w-8 text-[var(--m-error)]" />
+          </div>
+          <h2 className="text-lg font-semibold text-[var(--m-text)]">Unable to verify admin access</h2>
+          <p className="text-sm text-[var(--m-text-secondary)]">{error}</p>
+          <p className="text-sm text-[var(--m-text-secondary)]">
+            This is usually a token or network issue. Sign out and sign back in, then try again.
+          </p>
+          <button
+            onClick={() => void checkAdminAccess()}
+            className="inline-flex items-center gap-2 rounded-lg bg-[var(--m-primary)] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[var(--m-primary-hover)]"
+          >
+            Retry
+          </button>
+        </div>
       </div>
     );
   }
