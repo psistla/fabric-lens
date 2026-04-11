@@ -13,6 +13,7 @@ import { deriveRiskySettings } from '@/utils/tenantSettingRisks';
 import { assembleReportData } from '@/utils/reportData';
 import { generateExecutiveSummary } from '@/utils/reportSummary';
 import { GRADE_THRESHOLDS } from '@/utils/constants';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { ReportCover } from '@/components/report/ReportCover';
 import { ExecutiveSummarySection } from '@/components/report/ExecutiveSummarySection';
 import { HealthSection } from '@/components/report/HealthSection';
@@ -31,6 +32,7 @@ function getGrade(score: number): HealthGrade {
 }
 
 export function ReportPage() {
+  useDocumentTitle('Governance Report');
   const { workspaces, allItemsByWorkspace } = useWorkspaceStore();
   const { workspaceUsers, resolvedGroups } = useSecurityStore();
   const { settings, error: settingsError } = useTenantSettingsStore();

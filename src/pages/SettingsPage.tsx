@@ -22,6 +22,7 @@ import {
   APP_VERSION,
   GRAPH_SCOPES,
 } from '@/utils/constants';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 // --- Auth Status Section ---
 
@@ -465,6 +466,7 @@ function AboutSection() {
 // --- Main Settings Page ---
 
 export function SettingsPage() {
+  useDocumentTitle('Settings');
   return (
     <div className="space-y-6 p-6">
       <div>

@@ -9,8 +9,10 @@ import { StateBadge } from '@/components/shared/StateBadge';
 import { ExportButton } from '@/components/shared/ExportButton';
 import { exportToCSV } from '@/utils/export';
 import type { Workspace } from '@/api/types/workspace';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 export function WorkspacesPage() {
+  useDocumentTitle('Workspaces');
   const navigate = useNavigate();
   const { workspaces, loading, error, fetchWorkspaces } = useWorkspaceStore();
   const { fetchCapacities, getCapacityById } = useCapacityStore();

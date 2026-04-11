@@ -22,6 +22,7 @@ import { isEffectiveDemoMode } from '@/auth/AuthProvider';
 import type { Capacity } from '@/api/types/capacity';
 import type { Item } from '@/api/types/item';
 import type { Workspace } from '@/api/types/workspace';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 // --- SKU badge ---
 
@@ -391,6 +392,7 @@ function CapacityDetail({
 // --- Main Page ---
 
 export function CapacityPage() {
+  useDocumentTitle('Capacity');
   const {
     capacities,
     loading: capLoading,

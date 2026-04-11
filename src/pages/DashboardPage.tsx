@@ -31,6 +31,7 @@ import { SecurityQuickView } from '@/components/dashboard/SecurityQuickView';
 import { ScoreRing } from '@/components/dashboard/ScoreRing';
 import { exportToJSON } from '@/utils/export';
 import { CHART_COLORS, CHART_FALLBACK_COLOR, CHART_TOOLTIP_STYLE, GRADE_THRESHOLDS, HEALTH_GRADE_COLORS, BENCHMARK_HEALTH_SCORE } from '@/utils/constants';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 const GRADE_ORDER = ['F', 'D', 'C', 'B', 'A'] as const;
 
@@ -43,6 +44,7 @@ function getGrade(score: number): string {
 }
 
 export function DashboardPage() {
+  useDocumentTitle('Dashboard');
   const navigate = useNavigate();
 
   const {

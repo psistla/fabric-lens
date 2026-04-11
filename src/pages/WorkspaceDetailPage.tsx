@@ -19,6 +19,7 @@ import { HealthBadge } from '@/components/workspace/HealthBadge';
 import { HealthDetail } from '@/components/workspace/HealthDetail';
 import { calculateWorkspaceHealth } from '@/utils/healthScore';
 import type { Item } from '@/api/types/item';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 function CopyText({ text }: { text: string }) {
   return (
@@ -50,6 +51,7 @@ export function WorkspaceDetailPage() {
     clearSelection,
   } = useWorkspaceStore();
   const { getCapacityById, fetchCapacities } = useCapacityStore();
+  useDocumentTitle(workspace?.displayName ?? 'Workspace');
 
   useEffect(() => {
     if (id) {

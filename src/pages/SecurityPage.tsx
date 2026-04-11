@@ -49,6 +49,7 @@ import {
   ADMIN_ROLE_WARNING_THRESHOLD,
 } from '@/utils/constants';
 import { computeEffectiveAccess, type UserSummary } from '@/utils/effectiveAccess';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 type SortKey = 'displayName' | 'email' | 'assignmentCount';
 type SortDir = 'asc' | 'desc';
@@ -187,6 +188,7 @@ function AdminRequiredCard() {
 // --- Main page ---
 
 export function SecurityPage() {
+  useDocumentTitle('Security Audit');
   const navigate = useNavigate();
   const { checkAdminConsent, requestAdminConsent, hasAdminAccess } = useAuth();
   const {

@@ -8,8 +8,11 @@
     <!-- SEO -->
     <title>fabric-lens | Microsoft Fabric Governance &amp; Health</title>
     <meta name="description" content="Free open-source governance dashboard for Microsoft Fabric. Audit workspace health, security posture, capacity usage, and tenant settings — runs entirely in your browser." />
-    <meta name="keywords" content="Microsoft Fabric, Fabric governance, Fabric admin, workspace health, security audit, capacity monitoring, Fabric tenant, Power BI admin, data platform governance" />
+    <meta name="keywords" content="Microsoft Fabric, Fabric governance, Fabric admin, workspace health, security audit, capacity monitoring, Fabric tenant, Power BI admin, data platform governance, FUAM alternative, Fabric admin tool, workspace health score, Fabric security audit, Fabric capacity monitoring, tenant settings risk, Fabric consultant tool" />
     <link rel="canonical" href="https://fabric-lens.com" />
+    <meta name="theme-color" content="#4F46E5" />
+    <link rel="preconnect" href="https://login.microsoftonline.com" />
+    <link rel="preconnect" href="https://api.fabric.microsoft.com" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
@@ -20,12 +23,36 @@
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:site_name" content="fabric-lens" />
+    <meta property="og:locale" content="en_US" />
 
     <!-- Twitter / X -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="fabric-lens | Microsoft Fabric Governance &amp; Health" />
     <meta name="twitter:description" content="Free governance dashboard for Microsoft Fabric. Audit workspace health, security posture, capacity, and tenant settings — runs entirely in your browser." />
     <meta name="twitter:image" content="https://fabric-lens.com/og-image.png" />
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "fabric-lens",
+      "url": "https://fabric-lens.com",
+      "description": "Free open-source governance dashboard for Microsoft Fabric. Audit workspace health, security posture, capacity usage, and tenant settings — runs entirely in your browser.",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Web",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "author": {
+        "@type": "Organization",
+        "name": "fabric-lens"
+      },
+      "screenshot": "https://fabric-lens.com/og-image.png",
+      "featureList": "Workspace health scoring, Security posture audit, Capacity monitoring, Tenant settings risk analysis, Ghost workspace detection, Governance report export"
+    }
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -1,4 +1,5 @@
 import { Link } from 'react-router';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import {
   ShieldCheck,
   LayoutDashboard,
@@ -56,6 +57,7 @@ const toc = [
 ];
 
 export function AboutPage() {
+  useDocumentTitle('About');
   return (
     <div className="min-h-screen bg-[var(--m-bg)] text-[var(--m-text)]">
       {/* Top bar */}
@@ -80,7 +82,7 @@ export function AboutPage() {
 
       <div className="mx-auto max-w-6xl px-6 py-12">
         <div className="flex gap-12">
-          {/* Table of contents — sticky sidebar */}
+          {/* Table of contents (sticky sidebar) */}
           <aside className="hidden w-52 shrink-0 lg:block">
             <div className="sticky top-24">
               <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--m-text-tertiary)]">
@@ -117,7 +119,7 @@ export function AboutPage() {
               <p className="leading-relaxed text-[var(--m-text-secondary)]">
                 fabric-lens is a free, open-source governance and health intelligence dashboard for
                 Microsoft Fabric tenants. It connects directly to the Fabric and Power BI Admin APIs
-                using your existing Azure AD credentials — no backend server, no data export, no
+                using your existing Azure AD credentials. No backend server, no data export, no
                 third-party data handling. Every API call runs in your browser, so tenant data
                 never leaves your session. It is designed for Fabric administrators and Microsoft
                 data platform consultants who need a fast, structured way to audit a tenant's
@@ -132,7 +134,7 @@ export function AboutPage() {
                   {
                     icon: LayoutDashboard,
                     title: 'Workspace health scoring',
-                    desc: 'Every workspace scored across 9 governance checks — from capacity assignment to tag coverage. Grades A–F with drill-down.',
+                    desc: 'Every workspace scored across 9 governance checks, from capacity assignment to tag coverage. Grades A through F with drill-down.',
                   },
                   {
                     icon: ShieldCheck,
@@ -157,7 +159,7 @@ export function AboutPage() {
                   {
                     icon: FlaskConical,
                     title: 'Demo mode',
-                    desc: 'Fully functional with realistic mock data. No Azure tenant or credentials required — share a link and it just works.',
+                    desc: 'Fully functional with realistic mock data. No Azure tenant or credentials required; share a link and it just works.',
                   },
                 ].map(({ icon: Icon, title, desc }) => (
                   <div
@@ -179,11 +181,11 @@ export function AboutPage() {
               <div className="space-y-6">
                 <div>
                   <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-[var(--m-text-tertiary)]">
-                    Demo mode — no credentials needed
+                    Demo mode (no credentials needed)
                   </h3>
                   <ol className="space-y-2 text-sm text-[var(--m-text-secondary)]">
                     {[
-                      'The app opens in demo mode automatically — no login or credentials needed.',
+                      'The app opens in demo mode automatically. No login or credentials needed.',
                       'Explore the Dashboard to see health grade distribution and governance issues.',
                       'Open the Security page and click "Scan All" to run the full security audit against mock data.',
                       'Browse the Workspaces and Capacity pages to see inventory and cost breakdowns.',
@@ -200,7 +202,7 @@ export function AboutPage() {
                 </div>
                 <div>
                   <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-[var(--m-text-tertiary)]">
-                    Live mode — connected to your Fabric tenant
+                  Live mode: connected to your Fabric tenant
                   </h3>
                   <ol className="space-y-2 text-sm text-[var(--m-text-secondary)]">
                     {[
@@ -228,7 +230,7 @@ export function AboutPage() {
                   <h3 className="mb-2 font-semibold text-[var(--m-text)]">Required permissions</h3>
                   <ul className="space-y-1.5">
                     {[
-                      'Fabric Administrator role in the target tenant — required for admin API access (workspace users, tenant settings, scanner API)',
+                      'Fabric Administrator role in the target tenant, required for admin API access (workspace users, tenant settings, scanner API)',
                       'A Microsoft account in the target tenant, or a guest account with Fabric Admin role assigned',
                     ].map((item) => (
                       <li key={item} className="flex gap-2">
@@ -245,7 +247,7 @@ export function AboutPage() {
                     and ARM scopes are requested on sign-in. Admin API scopes are requested the
                     first time you visit the Security or Settings page. Group expansion (Microsoft
                     Graph) is opt-in from Settings. You will see a Microsoft consent prompt once
-                    per scope — not on every page visit.
+                    per scope, not on every page visit.
                   </p>
                 </div>
               </div>
@@ -255,7 +257,7 @@ export function AboutPage() {
             <Section id="health-scoring" title="Health scoring explained">
               <p className="mb-4 text-sm leading-relaxed text-[var(--m-text-secondary)]">
                 Every workspace is scored across nine governance checks, worth a combined maximum of
-                110 points when the workspace has items (100 points when empty — tag coverage is
+                110 points when the workspace has items (100 points when empty; tag coverage is
                 skipped). The score is normalised to a percentage and converted to a letter grade.
               </p>
               <div className="overflow-x-auto rounded-xl border border-[var(--m-border)]">
@@ -325,7 +327,7 @@ export function AboutPage() {
                   },
                   {
                     title: 'Single point of failure (SPOF) workspaces',
-                    desc: 'Workspaces where only one user holds the Admin role — if that user leaves, the workspace becomes unmanageable.',
+                    desc: 'Workspaces where only one user holds the Admin role. If that user leaves, the workspace becomes unmanageable.',
                   },
                   {
                     title: 'Service principal governance',
@@ -341,7 +343,7 @@ export function AboutPage() {
                   },
                   {
                     title: 'Ghost workspace detection',
-                    desc: 'Identifies workspaces with no recorded user activity in the past 90 days by cross-referencing the Power BI activity log.',
+                    desc: 'Identifies workspaces with no recorded user activity in the past 7 days by cross-referencing the Power BI activity log.',
                   },
                 ].map(({ title, desc }) => (
                   <div key={title} className="flex gap-3 rounded-xl border border-[var(--m-border)] bg-[var(--m-surface)] p-4">
@@ -358,8 +360,8 @@ export function AboutPage() {
             {/* Demo mode */}
             <Section id="demo-mode" title="Demo mode">
               <p className="text-sm leading-relaxed text-[var(--m-text-secondary)]">
-                No credentials needed — open the app and click "Try Demo" to explore a complete
-                audit of a realistic mock Fabric tenant with 35 workspaces, 3 capacities, 200+
+                No credentials needed. The app opens in demo mode automatically, with a complete
+                audit of a realistic mock Fabric tenant: 35 workspaces, 3 capacities, 200+
                 items across all 19 item types, and pre-loaded security findings.
               </p>
             </Section>
