@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Allow: /about
 
-Sitemap: https://fabric-lens.com/sitemap.xml
+Sitemap: https://www.fabric-lens.com/sitemap.xml
