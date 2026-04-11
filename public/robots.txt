@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Allow: /about
+
+Sitemap: https://fabric-lens.com/sitemap.xml
