@@ -1,5 +1,10 @@
 User-agent: *
-Allow: /
+Allow: /$
 Allow: /about
+Disallow: /workspaces
+Disallow: /capacity
+Disallow: /security
+Disallow: /settings
+Disallow: /report
 
 Sitemap: https://www.fabric-lens.com/sitemap.xml
