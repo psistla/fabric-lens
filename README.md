@@ -45,6 +45,7 @@ Fabric Lens is a standalone React SPA that connects directly to Microsoft Fabric
 | **Tenant Settings Risk** | Surfaces enabled high-risk tenant-level settings (PublishToWeb, external sharing, etc.) with risk level badges. Requires Fabric Admin role |
 | **Widely Shared Objects** | Identifies org-wide shared artifacts: reports and semantic models accessible to the entire organization via shareable links |
 | **Inactive Workspace Detection** | Flags workspaces with no recorded activity in the past 7 days using the Power BI Activity Log API. Day-by-day API calls respect the same-day constraint |
+| **Domain Governance** | Shows workspaces-per-domain distribution, flags unassigned workspaces, and highlights org-wide sharing that bypasses domain access boundaries |
 | **Governance Report** | Printable multi-section report with executive summary, health distribution, security findings, tenant settings, widely shared objects, inactive workspaces, and top recommendations |
 | **Incremental Consent** | Core API scopes are acquired at sign-in. Admin API (`Tenant.Read.All`) and Graph API (`GroupMember.Read.All`) scopes are requested on-demand the first time you use those features, so users are never prompted for permissions they don't need |
 | **Multi-tenant** | Works with any Azure AD tenant. Sign in with your organization account; no per-tenant app registration required when using the hosted version |
@@ -219,7 +220,7 @@ src/
                   tenantSettings, demo, types/
   data/           SKU specifications and derived pricing (skuSpecs.ts)
   store/          Zustand stores (workspace, capacity, security, ui,
-                  tenantSettings, widelyShared, activity)
+                  tenantSettings, widelyShared, activity, domain)
   components/
     layout/       AppShell, Sidebar, Header (demo-mode-aware)
     dashboard/    GovernanceIssuesPanel, HealthGrid, ScoreRing, SecurityQuickView
@@ -227,14 +228,16 @@ src/
     shared/       DataTable, StatCard, SearchBar, EmptyState, ExportButton, ItemTypeBadge, ...
     charts/       ItemsByTypeChart, WorkspacesByCapacityChart
     security/     AccessConcentrationChart, EffectiveAccessCard, SecurityFindingsPanel,
-                  TenantSettingsRiskPanel, WidelySharedPanel, GhostWorkspacesPanel, ...
+                  TenantSettingsRiskPanel, WidelySharedPanel, DomainGovernancePanel,
+                  GhostWorkspacesPanel, ...
     report/       ReportCover, ExecutiveSummarySection, HealthSection, SecuritySection,
                   TenantSettingsSection, WidelySharedSection, GhostWorkspacesSection,
                   RecommendationsSection
   pages/          Dashboard, Workspaces, WorkspaceDetail, Capacity, Security, Settings,
                   Report, About (public, no auth guard)
   utils/          healthScore, export (CSV), constants (single source of truth),
-                  ghostWorkspaces, tenantSettingRisks, reportData, reportSummary
+                  ghostWorkspaces, tenantSettingRisks, domainGovernance,
+                  reportData, reportSummary
 ```
 
 ---

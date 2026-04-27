@@ -247,7 +247,7 @@ export const HEALTH_GRID_HOVER_SCALE = 1.15;
 // -- App metadata --
 
 /** Application version (mirrors package.json). */
-export const APP_VERSION = '1.2.1';
+export const APP_VERSION = '1.3.0';
 
 // -- Tenant Settings Risk --
 
@@ -277,6 +277,11 @@ export const TENANT_SETTINGS_MEDIUM_RISK: string[] = [
 /** Deep link to the Fabric Admin Portal tenant settings page. */
 export const FABRIC_ADMIN_PORTAL_SETTINGS_URL =
   'https://app.fabric.microsoft.com/admin-portal/tenantSettings';
+
+// -- Domain governance --
+
+/** Workspace count threshold below which an unassigned-domain count is worth flagging. */
+export const DOMAIN_UNASSIGNED_WARNING_COUNT = 5;
 
 // -- Benchmarks --
 

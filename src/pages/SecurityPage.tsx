@@ -24,6 +24,7 @@ import { useWorkspaceStore } from '@/store/workspaceStore';
 import { useTenantSettingsStore } from '@/store/tenantSettingsStore';
 import { useWidelySharedStore } from '@/store/widelySharedStore';
 import { useActivityStore } from '@/store/activityStore';
+import { useDomainStore } from '@/store/domainStore';
 import { ExportButton } from '@/components/shared/ExportButton';
 import { SearchBar } from '@/components/shared/SearchBar';
 import { GroupBadge, GroupExpansionRow } from '@/components/security/GroupExpansionRow';
@@ -31,6 +32,7 @@ import { EffectiveAccessCard } from '@/components/security/EffectiveAccessCard';
 import { SecurityFindingsPanel } from '@/components/security/SecurityFindingsPanel';
 import { TenantSettingsRiskPanel } from '@/components/security/TenantSettingsRiskPanel';
 import { WidelySharedPanel } from '@/components/security/WidelySharedPanel';
+import { DomainGovernancePanel } from '@/components/security/DomainGovernancePanel';
 import { GhostWorkspacesPanel } from '@/components/security/GhostWorkspacesPanel';
 import { LimitedAccessPanel } from '@/components/security/LimitedAccessPanel';
 import { SecurityPostureCard } from '@/components/security/SecurityPostureCard';
@@ -226,6 +228,11 @@ export function SecurityPage() {
     error: ghostError,
     fetchActivityEvents,
   } = useActivityStore();
+  const {
+    domainStats,
+    unassignedCount,
+    totalWorkspaces: domainTotalWorkspaces,
+  } = useDomainStore();
 
   const [limitedAccess, setLimitedAccess] = useState(false);
 
@@ -778,6 +785,14 @@ export function SecurityPage() {
             loading={widelySharedLoading}
             error={widelySharedError}
             onRetry={fetchWidelySharedArtifacts}
+          />
+
+          {/* Domain Governance Panel */}
+          <DomainGovernancePanel
+            domainStats={domainStats}
+            unassignedCount={unassignedCount}
+            totalWorkspaces={domainTotalWorkspaces}
+            hasCrossDomainSharing={artifacts.length > 0}
           />
 
           {/* SPOF Workspaces Panel */}
