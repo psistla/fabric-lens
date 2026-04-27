@@ -25,6 +25,7 @@ export function SpofWorkspacesPanel({ workspaceUsers, workspaces }: Props) {
   const spofRows = useMemo((): SpofRow[] => {
     const rows: SpofRow[] = [];
     for (const [wsId, users] of Object.entries(workspaceUsers)) {
+      if (!(wsId in wsNameMap)) continue;
       const admins = users.filter(
         (u) => u.workspaceAccessDetails.workspaceRole === 'Admin',
       );

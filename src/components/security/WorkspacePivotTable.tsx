@@ -92,6 +92,7 @@ export function WorkspacePivotTable({ workspaceUsers, workspaces }: Props) {
 
   const rows = useMemo((): WorkspaceRow[] => {
     return Object.entries(workspaceUsers)
+      .filter(([id]) => wsNameMap.has(id))
       .map(([id, assignments]) => {
         const name = wsNameMap.get(id) ?? id;
         const adminCount = assignments.filter((u) => u.workspaceAccessDetails.workspaceRole === 'Admin').length;
