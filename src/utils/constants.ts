@@ -255,7 +255,7 @@ export const HEALTH_GRID_HOVER_SCALE = 1.15;
 // -- App metadata --
 
 /** Application version (mirrors package.json). */
-export const APP_VERSION = '1.3.0';
+export const APP_VERSION = '1.4.0';
 
 // -- Tenant Settings Risk --
 

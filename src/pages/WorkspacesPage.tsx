@@ -9,7 +9,6 @@ import { SearchBar } from '@/components/shared/SearchBar';
 import { StateBadge } from '@/components/shared/StateBadge';
 import { ExportButton } from '@/components/shared/ExportButton';
 import { exportToCSV } from '@/utils/export';
-import { isEffectiveDemoMode } from '@/auth/AuthProvider';
 import { getCurrentUserEmail } from '@/auth/currentUser';
 import { getMyWorkspaceIds } from '@/utils/myWorkspaces';
 import type { Workspace } from '@/api/types/workspace';
@@ -26,7 +25,7 @@ export function WorkspacesPage() {
 
   const hasScanned = Object.keys(workspaceUsers).length > 0;
   const userEmail = getCurrentUserEmail();
-  const showToggle = hasScanned || isEffectiveDemoMode();
+  const showToggle = hasScanned;
 
   useEffect(() => {
     void fetchWorkspaces();
