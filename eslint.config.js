@@ -23,6 +23,8 @@ export default tseslint.config(
         'warn',
         { allowConstantExport: true },
       ],
+      // React Compiler rules added in react-hooks 7.1.1 — not applicable without React Compiler
+      'react-hooks/set-state-in-effect': 'off',
     },
   },
 );

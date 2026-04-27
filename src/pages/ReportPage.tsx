@@ -111,7 +111,6 @@ export function ReportPage() {
         ghostWorkspaces,
         activityLoaded,
       }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [tenantScore, tenantGrade, healthMap, workspaces, userSummaries, securityPosture,
      riskySettings, settingsLoaded, artifacts, artifactsLoaded, ghostWorkspaces, activityLoaded],
   );
