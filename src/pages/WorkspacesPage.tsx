@@ -3,11 +3,15 @@ import { useNavigate } from 'react-router';
 import { AlertCircle } from 'lucide-react';
 import { useWorkspaceStore } from '@/store/workspaceStore';
 import { useCapacityStore } from '@/store/capacityStore';
+import { useSecurityStore } from '@/store/securityStore';
 import { DataTable, type Column } from '@/components/shared/DataTable';
 import { SearchBar } from '@/components/shared/SearchBar';
 import { StateBadge } from '@/components/shared/StateBadge';
 import { ExportButton } from '@/components/shared/ExportButton';
 import { exportToCSV } from '@/utils/export';
+import { isEffectiveDemoMode } from '@/auth/AuthProvider';
+import { getCurrentUserEmail } from '@/auth/currentUser';
+import { getMyWorkspaceIds } from '@/utils/myWorkspaces';
 import type { Workspace } from '@/api/types/workspace';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
@@ -16,15 +20,37 @@ export function WorkspacesPage() {
   const navigate = useNavigate();
   const { workspaces, loading, error, fetchWorkspaces } = useWorkspaceStore();
   const { fetchCapacities, getCapacityById } = useCapacityStore();
+  const { workspaceUsers } = useSecurityStore();
   const [search, setSearch] = useState('');
+  const [myOnly, setMyOnly] = useState(false);
+
+  const hasScanned = Object.keys(workspaceUsers).length > 0;
+  const userEmail = getCurrentUserEmail();
+  const showToggle = hasScanned || isEffectiveDemoMode();
 
   useEffect(() => {
     void fetchWorkspaces();
     void fetchCapacities();
   }, [fetchWorkspaces, fetchCapacities]);
 
+  const myWorkspaceIds = useMemo(
+    () => (myOnly && userEmail ? getMyWorkspaceIds(userEmail, workspaceUsers) : null),
+    [myOnly, userEmail, workspaceUsers],
+  );
+
+  const filtered = useMemo(() => {
+    let list = myWorkspaceIds
+      ? workspaces.filter((w) => myWorkspaceIds.has(w.id))
+      : workspaces;
+    if (search) {
+      const q = search.toLowerCase();
+      list = list.filter((w) => w.displayName.toLowerCase().includes(q));
+    }
+    return list;
+  }, [workspaces, myWorkspaceIds, search]);
+
   const handleExport = useCallback(() => {
-    const rows = workspaces.map((w) => {
+    const rows = filtered.map((w) => {
       const cap = w.capacityId ? getCapacityById(w.capacityId) : null;
       return {
         Name: w.displayName,
@@ -38,15 +64,7 @@ export function WorkspacesPage() {
       };
     });
     exportToCSV(rows, 'fabric-lens-workspaces.csv');
-  }, [workspaces, getCapacityById]);
-
-  const filtered = useMemo(() => {
-    if (!search) return workspaces;
-    const q = search.toLowerCase();
-    return workspaces.filter((w) =>
-      w.displayName.toLowerCase().includes(q),
-    );
-  }, [workspaces, search]);
+  }, [filtered, getCapacityById]);
 
   const columns: Column<Workspace>[] = useMemo(
     () => [
@@ -146,12 +164,32 @@ export function WorkspacesPage() {
       )}
 
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-        <div className="w-full sm:w-72">
-          <SearchBar
-            value={search}
-            onChange={setSearch}
-            placeholder="Search workspaces..."
-          />
+        <div className="flex items-center gap-2">
+          <div className="w-full sm:w-72">
+            <SearchBar
+              value={search}
+              onChange={setSearch}
+              placeholder="Search workspaces..."
+            />
+          </div>
+          {showToggle && (
+            <div className="flex shrink-0 overflow-hidden rounded-lg ring-1 ring-[var(--m-border)]">
+              {(['all', 'mine'] as const).map((v) => (
+                <button
+                  key={v}
+                  onClick={() => setMyOnly(v === 'mine')}
+                  className={[
+                    'px-3 py-1.5 text-xs font-semibold transition-colors',
+                    (v === 'mine') === myOnly
+                      ? 'bg-[var(--m-primary)] text-white'
+                      : 'bg-[var(--m-surface)] text-[var(--m-text-secondary)] hover:bg-[var(--m-surface-raised)]',
+                  ].join(' ')}
+                >
+                  {v === 'all' ? 'All' : 'My workspaces'}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
         <span className="text-xs text-[var(--m-text-secondary)]">
           Showing {filtered.length} of {workspaces.length} workspaces

@@ -38,10 +38,10 @@ Fabric Lens is a standalone React SPA that connects directly to Microsoft Fabric
 | Feature | Description |
 |---------|-------------|
 | **Dashboard** | Tenant-wide overview with workspace/item/capacity stats, artifact distribution charts, governance issues, average health score, and the **Health Grid**: a dense color-coded tile map showing every workspace's health grade at a glance, sorted best to worst |
-| **Workspace Explorer** | Browse, search, and drill into every workspace. View items, health grades, capacity assignments, OneLake endpoints, and Git status |
+| **Workspace Explorer** | Browse, search, and drill into every workspace. Toggle between all workspaces and **My workspaces** to filter by your role assignments. View items, health grades, capacity assignments, OneLake endpoints, and Git status |
 | **Health Scoring** | Automated 100-point governance assessment per workspace across 9 checks: description, capacity, domain, Git, naming, active items, data layer, item count, and tag coverage |
 | **Capacity Monitor** | Track SKUs, regions, and states with tier-based badges. Cost calculator with **live Azure pricing** from the Azure Retail Prices API |
-| **Security Audit** | Cross-workspace role mapping with search, role filter chips, sortable columns, and pagination. Flags over-permissioned users (Admin on 5+ workspaces). Expands Azure AD group memberships via Microsoft Graph (optional) |
+| **Security Audit** | Cross-workspace role mapping with search, role filter chips, sortable columns, and pagination. **My workspaces** toggle narrows the pivot table to your own assignments. Flags over-permissioned users (Admin on 5+ workspaces). Expands Azure AD group memberships via Microsoft Graph (optional) |
 | **Tenant Settings Risk** | Surfaces enabled high-risk tenant-level settings (PublishToWeb, external sharing, etc.) with risk level badges. Requires Fabric Admin role |
 | **Widely Shared Objects** | Identifies org-wide shared artifacts: reports and semantic models accessible to the entire organization via shareable links |
 | **Inactive Workspace Detection** | Flags workspaces with no recorded activity in the past 7 days using the Power BI Activity Log API. Day-by-day API calls respect the same-day constraint |

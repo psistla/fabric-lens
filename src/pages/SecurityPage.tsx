@@ -44,6 +44,8 @@ import { deriveSecurityFindings, computeSecurityPosture } from '@/utils/security
 import { deriveRiskySettings } from '@/utils/tenantSettingRisks';
 import { exportToCSV } from '@/utils/export';
 import { isEffectiveDemoMode } from '@/auth/AuthProvider';
+import { getCurrentUserEmail } from '@/auth/currentUser';
+import { getMyWorkspaceIds } from '@/utils/myWorkspaces';
 import type { PrincipalType, EffectiveAccessSummary } from '@/api/types/admin';
 import {
   ROLE_COLORS,
@@ -289,6 +291,19 @@ export function SecurityPage() {
   }, [workspaces, fetchAllWorkspaceUsers, fetchTenantSettings, fetchWidelySharedArtifacts, fetchActivityEvents]);
 
   const hasScanned = Object.keys(workspaceUsers).length > 0;
+
+  const [myOnly, setMyOnly] = useState(false);
+  const currentUserEmail = getCurrentUserEmail();
+
+  const myWorkspaceIds = useMemo(
+    () => (myOnly && currentUserEmail ? getMyWorkspaceIds(currentUserEmail, workspaceUsers) : null),
+    [myOnly, currentUserEmail, workspaceUsers],
+  );
+
+  const filteredWorkspaces = useMemo(
+    () => (myWorkspaceIds ? workspaces.filter((w) => myWorkspaceIds.has(w.id)) : workspaces),
+    [workspaces, myWorkspaceIds],
+  );
 
   // Aggregate user summaries (now includes principalType)
   const userSummaries = useMemo((): UserSummary[] => {
@@ -796,7 +811,7 @@ export function SecurityPage() {
           />
 
           {/* SPOF Workspaces Panel */}
-          <SpofWorkspacesPanel workspaceUsers={workspaceUsers} workspaces={workspaces} />
+          <SpofWorkspacesPanel workspaceUsers={workspaceUsers} workspaces={filteredWorkspaces} />
 
           {/* SPN Governance Panel */}
           <SpnGovernancePanel userSummaries={userSummaries} />
@@ -862,27 +877,47 @@ export function SecurityPage() {
                 <h2 className="text-sm font-medium text-[var(--m-text)]">
                   {pivotView === 'users' ? 'User Access Summary' : 'Workspace Risk View'}
                 </h2>
-                <div className="flex rounded-lg border border-[var(--m-border)] p-0.5 text-[11px] font-semibold">
-                  <button
-                    onClick={() => setPivotView('users')}
-                    className={`rounded-md px-2.5 py-1 transition-colors ${
-                      pivotView === 'users'
-                        ? 'bg-[var(--m-primary)] text-white'
-                        : 'text-[var(--m-text-secondary)] hover:text-[var(--m-text)]'
-                    }`}
-                  >
-                    Users
-                  </button>
-                  <button
-                    onClick={() => setPivotView('workspaces')}
-                    className={`rounded-md px-2.5 py-1 transition-colors ${
-                      pivotView === 'workspaces'
-                        ? 'bg-[var(--m-primary)] text-white'
-                        : 'text-[var(--m-text-secondary)] hover:text-[var(--m-text)]'
-                    }`}
-                  >
-                    Workspaces
-                  </button>
+                <div className="flex items-center gap-2">
+                  {hasScanned && (
+                    <div className="flex shrink-0 overflow-hidden rounded-lg ring-1 ring-[var(--m-border)]">
+                      {(['all', 'mine'] as const).map((v) => (
+                        <button
+                          key={v}
+                          onClick={() => setMyOnly(v === 'mine')}
+                          className={[
+                            'px-3 py-1.5 text-[11px] font-semibold transition-colors',
+                            (v === 'mine') === myOnly
+                              ? 'bg-[var(--m-primary)] text-white'
+                              : 'bg-[var(--m-surface)] text-[var(--m-text-secondary)] hover:bg-[var(--m-surface-raised)]',
+                          ].join(' ')}
+                        >
+                          {v === 'all' ? 'All' : 'My workspaces'}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  <div className="flex rounded-lg border border-[var(--m-border)] p-0.5 text-[11px] font-semibold">
+                    <button
+                      onClick={() => setPivotView('users')}
+                      className={`rounded-md px-2.5 py-1 transition-colors ${
+                        pivotView === 'users'
+                          ? 'bg-[var(--m-primary)] text-white'
+                          : 'text-[var(--m-text-secondary)] hover:text-[var(--m-text)]'
+                      }`}
+                    >
+                      Users
+                    </button>
+                    <button
+                      onClick={() => setPivotView('workspaces')}
+                      className={`rounded-md px-2.5 py-1 transition-colors ${
+                        pivotView === 'workspaces'
+                          ? 'bg-[var(--m-primary)] text-white'
+                          : 'text-[var(--m-text-secondary)] hover:text-[var(--m-text)]'
+                      }`}
+                    >
+                      Workspaces
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -890,7 +925,7 @@ export function SecurityPage() {
               {pivotView === 'workspaces' && (
                 <WorkspacePivotTable
                   workspaceUsers={workspaceUsers}
-                  workspaces={workspaces}
+                  workspaces={filteredWorkspaces}
                 />
               )}
 

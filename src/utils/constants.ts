@@ -189,6 +189,14 @@ export const PRINCIPAL_TYPE_COLORS: Record<string, string> = {
 /** sessionStorage key used to track whether the user has visited the Security page in demo mode. */
 export const DEMO_SECURITY_VISITED_KEY = 'security_visited';
 
+// -- Demo identity --
+
+/** UPN of the demo persona used for "My workspaces" filtering in demo mode. Alice is Admin on 16/35 demo workspaces. */
+export const DEMO_USER_UPN = 'alice@contoso.com';
+
+/** Display name of the demo persona. */
+export const DEMO_USER_NAME = 'Alice Johnson';
+
 // -- Session management --
 
 /** Idle timeout (ms) before the session is expired and the user is logged out. */
