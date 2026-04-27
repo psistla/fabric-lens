@@ -3,9 +3,7 @@ import type { DomainStat, DomainGovernanceStats } from '@/utils/domainGovernance
 import { deriveDomainGovernanceStats } from '@/utils/domainGovernance';
 import { useWorkspaceStore } from './workspaceStore';
 
-interface DomainState extends DomainGovernanceStats {}
-
-export const useDomainStore = create<DomainState>()(() => ({
+export const useDomainStore = create<DomainGovernanceStats>()(() => ({
   domainStats: [] as DomainStat[],
   unassignedCount: 0,
   totalWorkspaces: 0,
