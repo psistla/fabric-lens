@@ -18,6 +18,7 @@ vi.mock('@/api/demo', () => ({
   isDemoMode: false,
   isMsalConfigured: true,
   getMockWorkspaceUsers: () => [],
+  getMockAllWorkspaceUsers: () => ({}),
   getMockGroupMemberCount: () => 0,
   getMockResolvedGroup: () => ({ members: [], memberCount: 0 }),
 }));

@@ -11,6 +11,7 @@ import { ExportButton } from '@/components/shared/ExportButton';
 import { exportToCSV } from '@/utils/export';
 import { getCurrentUserEmail } from '@/auth/currentUser';
 import { getMyWorkspaceIds } from '@/utils/myWorkspaces';
+import { isEffectiveDemoMode } from '@/auth/AuthProvider';
 import type { Workspace } from '@/api/types/workspace';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
@@ -19,18 +20,19 @@ export function WorkspacesPage() {
   const navigate = useNavigate();
   const { workspaces, loading, error, fetchWorkspaces } = useWorkspaceStore();
   const { fetchCapacities, getCapacityById } = useCapacityStore();
-  const { workspaceUsers } = useSecurityStore();
+  const { workspaceUsers, populateDemoUsers } = useSecurityStore();
   const [search, setSearch] = useState('');
   const [myOnly, setMyOnly] = useState(false);
 
   const hasScanned = Object.keys(workspaceUsers).length > 0;
   const userEmail = getCurrentUserEmail();
-  const showToggle = hasScanned;
+  const showToggle = hasScanned || isEffectiveDemoMode();
 
   useEffect(() => {
     void fetchWorkspaces();
     void fetchCapacities();
-  }, [fetchWorkspaces, fetchCapacities]);
+    populateDemoUsers();
+  }, [fetchWorkspaces, fetchCapacities, populateDemoUsers]);
 
   const myWorkspaceIds = useMemo(
     () => (myOnly && userEmail ? getMyWorkspaceIds(userEmail, workspaceUsers) : null),
