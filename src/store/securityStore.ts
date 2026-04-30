@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import type { WorkspaceUser, ResolvedGroup } from '@/api/types/admin';
 import {
   getMockWorkspaceUsers,
+  getMockAllWorkspaceUsers,
   getMockGroupMemberCount,
   getMockResolvedGroup,
 } from '@/api/demo';
@@ -42,6 +43,7 @@ interface SecurityState {
   checkAdminAccess: () => Promise<void>;
   fetchWorkspaceUsers: (workspaceId: string) => Promise<void>;
   fetchAllWorkspaceUsers: (workspaceIds: string[]) => Promise<FetchResult>;
+  populateDemoUsers: () => void;
   resolveGroupCount: (groupUpn: string, displayName: string) => Promise<void>;
   resolveGroupMembers: (groupUpn: string, displayName: string) => Promise<void>;
 }
@@ -171,6 +173,12 @@ export const useSecurityStore = create<SecurityState>()((set, get) => ({
     }
 
     return { status: 'ok' };
+  },
+
+  populateDemoUsers: () => {
+    if (!isEffectiveDemoMode()) return;
+    if (Object.keys(get().workspaceUsers).length > 0) return;
+    set({ workspaceUsers: getMockAllWorkspaceUsers() });
   },
 
   resolveGroupCount: async (groupUpn: string, displayName: string) => {
