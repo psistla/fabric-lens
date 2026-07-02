@@ -21,6 +21,9 @@ dist-ssr
 CLAUDE.md
 .superpowers/
 
+# Understand Anything knowledge graph (generated output)
+.understand-anything/
+
 # Git worktrees
 .worktrees/
 DESIGN_GUIDE.md
