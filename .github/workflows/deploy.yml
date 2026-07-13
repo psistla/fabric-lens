@@ -49,8 +49,24 @@ jobs:
           VITE_FABRIC_API_BASE: https://api.fabric.microsoft.com/v1
           VITE_ARM_API_BASE: https://management.azure.com
 
-      - name: Test
-        run: npm run test -- --run
+      - name: Test + coverage floor
+        run: npm run test:coverage
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: E2E (Playwright, demo build)
+        run: npm run test:e2e
+
+      - name: Upload Playwright artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-artifacts
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
 
   # ── Deploy ─────────────────────────────────────────────────────────────────
   # On PR: deploys to an Azure SWA preview environment. GitHub posts the
