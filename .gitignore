@@ -51,7 +51,14 @@ SECURITY_PAGE_PLAN.md
 STRATEGY.md
 TASKS.md
 NEXT.md
+AUTONOMY.md
 docs/superpowers/
 
 # Local dev scripts
 scripts/
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
