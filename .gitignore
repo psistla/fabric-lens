@@ -21,6 +21,9 @@ dist-ssr
 CLAUDE.md
 .superpowers/
 
+# Understand Anything knowledge graph (generated output)
+.understand-anything/
+
 # Git worktrees
 .worktrees/
 DESIGN_GUIDE.md
@@ -48,7 +51,17 @@ SECURITY_PAGE_PLAN.md
 STRATEGY.md
 TASKS.md
 NEXT.md
+AUTONOMY.md
 docs/superpowers/
 
 # Local dev scripts
 scripts/
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
+# Vitest coverage
+/coverage/
