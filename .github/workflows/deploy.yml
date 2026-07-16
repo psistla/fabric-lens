@@ -78,7 +78,13 @@ jobs:
   deploy:
     name: Deploy to Azure SWA
     needs: ci
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    # Dependabot runs never receive repo secrets, so the SWA deployment token is
+    # empty and the deploy fails. Skip it rather than granting a deployment token
+    # to runs whose purpose is pulling in third-party package updates. Dependabot
+    # PRs are still gated by the ci job above.
+    if: |
+      github.actor != 'dependabot[bot]' &&
+      (github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed'))
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
