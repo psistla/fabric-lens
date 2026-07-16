@@ -20,6 +20,11 @@ export default defineConfig({
     },
   },
   test: {
+    // Required for @testing-library/react's auto-cleanup, which only registers
+    // itself when a global afterEach exists. Without it, component trees stay
+    // mounted after their test file ends and animation loops (ScoreRing's rAF)
+    // keep scheduling React work past jsdom teardown → "window is not defined".
+    globals: true,
     // e2e/ holds Playwright specs (run via `npm run test:e2e`), not Vitest specs —
     // exclude them so `vitest run` doesn't try to execute test() from @playwright/test.
     exclude: [...configDefaults.exclude, 'e2e/**', '.claude/**'],
