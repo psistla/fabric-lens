@@ -464,7 +464,7 @@ const itemsMap: Record<string, Item[]> = {
     { id: 'item-5', displayName: 'Forecast Notebook', description: 'ML-based sales forecasting', type: 'Notebook', workspaceId: 'ws-1', tags: [TAG_APPROVED] },
     { id: 'item-6', displayName: 'Sales Dashboard', description: 'Executive overview', type: 'Dashboard', workspaceId: 'ws-1', tags: [TAG_CERTIFIED] },
     { id: 'item-7', displayName: 'SQL Endpoint', description: 'Analytics SQL endpoint', type: 'SQLEndpoint', workspaceId: 'ws-1' },
-    { id: 'item-8', displayName: 'Churn Pipeline', description: 'Customer churn prediction', type: 'Pipeline', workspaceId: 'ws-1' },
+    { id: 'item-8', displayName: 'Churn Data Agent', description: 'AI agent for churn analysis Q&A', type: 'DataAgent', workspaceId: 'ws-1' },
   ],
 
   // ws-8: 4/5 = 80% tagged → full tag pts. Total: 110/110 = 100% → A
@@ -498,7 +498,7 @@ const itemsMap: Record<string, Item[]> = {
   // description(10) + capacity(15) + no domain(0) + git(15) + naming(10) + items(10) + dataLayer(10) + reasonable(10) + identity(10) + tags(0) = 90/110 = 82% → B
   // Actually want A. Let me make 5/5 tagged → full pts → 100/110 = 91% → A
   'ws-15': [
-    { id: 'item-150', displayName: 'Sensor Data', description: 'IoT sensor ingestion', type: 'Eventstream', workspaceId: 'ws-15', tags: [TAG_PRODUCTION] },
+    { id: 'item-150', displayName: 'Sensor Eventhouse', description: 'IoT sensor real-time store', type: 'Eventhouse', workspaceId: 'ws-15', tags: [TAG_PRODUCTION] },
     { id: 'item-151', displayName: 'Telemetry Lakehouse', description: 'Device telemetry store', type: 'Lakehouse', workspaceId: 'ws-15', tags: [TAG_PRODUCTION, TAG_CERTIFIED] },
     { id: 'item-152', displayName: 'Device Dashboard', description: 'IoT device monitoring', type: 'Dashboard', workspaceId: 'ws-15', tags: [TAG_APPROVED] },
     { id: 'item-153', displayName: 'Alert Pipeline', description: 'Anomaly detection pipeline', type: 'Pipeline', workspaceId: 'ws-15', tags: [TAG_CERTIFIED] },

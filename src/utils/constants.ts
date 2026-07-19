@@ -95,6 +95,68 @@ export const ROLE_COLORS: Record<string, string> = {
 /** Default fallback color for unknown chart categories. */
 export const CHART_FALLBACK_COLOR = '#495057';
 
+// -- Item types --
+
+/**
+ * Maps a Fabric item type to an existing `--item-*` color token suffix (see
+ * index.css for the light/dark values). Related workloads share the eight
+ * established tokens by family; unknown/long-tail types fall through to
+ * 'default' (neutral gray) in {@link itemTypeToken}.
+ * // ponytail: family-reuse of the 8 existing tokens; the makeover (Phase 3
+ * // item 2) replaces this with a per-workload signature palette.
+ */
+const ITEM_TYPE_TOKENS: Record<string, string> = {
+  // Power BI
+  Report: 'report',
+  PaginatedReport: 'report',
+  Dashboard: 'dashboard',
+  SemanticModel: 'semantic-model',
+  Datamart: 'semantic-model',
+  // Data engineering
+  Lakehouse: 'lakehouse',
+  Notebook: 'notebook',
+  SparkJobDefinition: 'notebook',
+  Environment: 'notebook',
+  // Data integration
+  DataPipeline: 'pipeline',
+  Pipeline: 'pipeline',
+  Dataflow: 'pipeline',
+  CopyJob: 'pipeline',
+  MountedDataFactory: 'pipeline',
+  ApacheAirflowJob: 'pipeline',
+  DataBuildToolJob: 'pipeline',
+  // Warehouse / databases / mirroring
+  Warehouse: 'warehouse',
+  WarehouseSnapshot: 'warehouse',
+  SQLEndpoint: 'warehouse',
+  SQLDatabase: 'warehouse',
+  MirroredWarehouse: 'warehouse',
+  MirroredDatabase: 'warehouse',
+  MirroredAzureDatabricksCatalog: 'warehouse',
+  MirroredCatalog: 'warehouse',
+  SnowflakeDatabase: 'warehouse',
+  CosmosDBDatabase: 'warehouse',
+  AzureDatabricksStorage: 'warehouse',
+  // Real-time intelligence
+  Eventhouse: 'warehouse',
+  Eventstream: 'warehouse',
+  KQLDatabase: 'warehouse',
+  KQLQueryset: 'warehouse',
+  KQLDashboard: 'warehouse',
+  Reflex: 'warehouse',
+  // AI / data science
+  DataAgent: 'notebook',
+  MLExperiment: 'notebook',
+  MLModel: 'notebook',
+  GraphModel: 'notebook',
+  GraphQuerySet: 'notebook',
+};
+
+/** Color token suffix for a Fabric item type; 'default' for unmapped types. */
+export function itemTypeToken(type: string): string {
+  return ITEM_TYPE_TOKENS[type] ?? 'default';
+}
+
 /** Shared Recharts tooltip style object (dark themed, uses design tokens). */
 export const CHART_TOOLTIP_STYLE: CSSProperties = {
   backgroundColor: 'var(--m-neutral-900, #16191D)',
