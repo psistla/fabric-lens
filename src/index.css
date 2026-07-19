@@ -34,17 +34,20 @@
   --m-neutral-900: #16191D;
   --m-neutral-950: #0D0F12;
 
-  /* ─── PRIMARY PALETTE (Deep Indigo) ─────────────────────── */
-  --m-primary-50:  #EEF2FF;
-  --m-primary-100: #E0E7FF;
-  --m-primary-200: #C7D2FE;
-  --m-primary-300: #A5B4FC;
-  --m-primary-400: #818CF8;
-  --m-primary-500: #6366F1;
-  --m-primary-600: #4F46E5;
-  --m-primary-700: #4338CA;
-  --m-primary-800: #3730A3;
-  --m-primary-900: #312E81;
+  /* ─── PRIMARY PALETTE (Cobalt) ───────────────────────────── */
+  --m-primary-50:  #EFF6FF;
+  --m-primary-100: #DBEAFE;
+  --m-primary-200: #BFDBFE;
+  --m-primary-300: #93C5FD;
+  --m-primary-400: #60A5FA;
+  --m-primary-500: #3B82F6;
+  --m-primary-600: #2563EB;
+  --m-primary-700: #1D4ED8;
+  --m-primary-800: #1E40AF;
+  --m-primary-900: #1E3A8A;
+
+  --m-secondary: #06B6D4;
+  --m-gradient-brand: linear-gradient(90deg, #2563EB, #06B6D4);
 
   /* ─── ACCENT PALETTE (Warm Amber) ───────────────────────── */
   --m-accent-50:  #FFFBEB;
