@@ -223,6 +223,8 @@
   --m-primary:        var(--m-primary-400);
   --m-primary-hover:  var(--m-primary-300);
   --m-primary-subtle: var(--m-primary-900);
+  --m-secondary:       #22D3EE;  /* cyan-400: high contrast on #0D0F12 */
+  --m-gradient-brand:  linear-gradient(90deg, #60A5FA, #22D3EE);
   --m-accent:         var(--m-accent-400);
   --m-accent-vivid:   var(--m-accent-300);
   --m-accent-subtle:  var(--m-accent-900);
