@@ -317,6 +317,19 @@
   border-radius: var(--m-radius-sm);
 }
 
+/* ── Display Typography ── */
+
+.m-display {
+  font-family: var(--m-font-primary);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.04;
+}
+
+.m-display-hero {
+  font-size: clamp(2.25rem, 5vw, 3.5rem); /* 36px to 56px */
+}
+
 /* ── Accessibility ── */
 
 :focus-visible {
