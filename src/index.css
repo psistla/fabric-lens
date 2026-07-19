@@ -151,6 +151,11 @@
   --m-transition-enter: 250ms ease-out;
   --m-transition-exit:  150ms ease-in;
 
+  /* ─── MOTION (entrance/hero animations) ──────────────────── */
+  --m-motion-hero-duration: 400ms;
+  --m-motion-hero-ease: cubic-bezier(0.16, 1, 0.3, 1); /* ease-out, no overshoot */
+  --m-motion-stagger-step: 40ms; /* per-item delay, e.g. health-grid tiles */
+
   /* ─── Z-INDEX SCALE ──────────────────────────────────────── */
   --m-z-base:     0;
   --m-z-raised:   10;
@@ -373,6 +378,15 @@
 
 .animate-skeleton {
   animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes m-enter-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.m-enter-up {
+  animation: m-enter-up var(--m-motion-hero-duration) var(--m-motion-hero-ease) both;
 }
 
 /* ── Print styles (Report page) ─────────────────────────────────────── */
