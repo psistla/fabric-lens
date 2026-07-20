@@ -8,6 +8,8 @@ import { DataTable, type Column } from '@/components/shared/DataTable';
 import { SearchBar } from '@/components/shared/SearchBar';
 import { StateBadge } from '@/components/shared/StateBadge';
 import { ExportButton } from '@/components/shared/ExportButton';
+import { HealthBadge } from '@/components/workspace/HealthBadge';
+import { calculateWorkspaceHealth, type HealthScore } from '@/utils/healthScore';
 import { exportToCSV } from '@/utils/export';
 import { getCurrentUserEmail } from '@/auth/currentUser';
 import { getMyWorkspaceIds } from '@/utils/myWorkspaces';
@@ -18,7 +20,14 @@ import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 export function WorkspacesPage() {
   useDocumentTitle('Workspaces');
   const navigate = useNavigate();
-  const { workspaces, loading, error, fetchWorkspaces } = useWorkspaceStore();
+  const {
+    workspaces,
+    allItemsByWorkspace,
+    loading,
+    error,
+    fetchWorkspaces,
+    fetchAllItems,
+  } = useWorkspaceStore();
   const { fetchCapacities, getCapacityById } = useCapacityStore();
   const { workspaceUsers, populateDemoUsers } = useSecurityStore();
   const [search, setSearch] = useState('');
@@ -31,12 +40,32 @@ export function WorkspacesPage() {
   useEffect(() => {
     void fetchWorkspaces();
     void fetchCapacities();
+    void fetchAllItems();
     populateDemoUsers();
-  }, [fetchWorkspaces, fetchCapacities, populateDemoUsers]);
+  }, [fetchWorkspaces, fetchCapacities, fetchAllItems, populateDemoUsers]);
+
+  // Health per workspace, from the same scorer the dashboard and detail pages use.
+  const healthMap = useMemo(
+    () =>
+      new Map<string, HealthScore>(
+        workspaces.map((w) => [
+          w.id,
+          calculateWorkspaceHealth(w, allItemsByWorkspace[w.id] ?? []),
+        ]),
+      ),
+    [workspaces, allItemsByWorkspace],
+  );
 
   const myWorkspaceIds = useMemo(
     () => (myOnly && userEmail ? getMyWorkspaceIds(userEmail, workspaceUsers) : null),
     [myOnly, userEmail, workspaceUsers],
+  );
+
+  const atRiskCount = useMemo(
+    () =>
+      [...healthMap.values()].filter((h) => h.grade === 'D' || h.grade === 'F')
+        .length,
+    [healthMap],
   );
 
   const filtered = useMemo(() => {
@@ -126,8 +155,22 @@ export function WorkspacesPage() {
         sortable: true,
         render: (_val, row) => <StateBadge state={row.state} />,
       },
+      {
+        // Health is derived, not a Workspace field, so it borrows `id` as its
+        // column key and opts out of sorting rather than widening Column<T>.
+        key: 'id',
+        header: 'Health',
+        sortable: false,
+        render: (_val, row) => {
+          const health = healthMap.get(row.id);
+          if (!health) return null;
+          return (
+            <HealthBadge grade={health.grade} percentage={health.percentage} />
+          );
+        },
+      },
     ],
-    [getCapacityById],
+    [getCapacityById, healthMap],
   );
 
   return (
@@ -138,7 +181,24 @@ export function WorkspacesPage() {
             Workspaces
           </h1>
           <p className="mt-1 text-sm text-[var(--m-text-secondary)]">
-            Browse and manage tenant workspaces.
+            {workspaces.length > 0 ? (
+              <>
+                {workspaces.length} workspace{workspaces.length !== 1 ? 's' : ''}
+                {atRiskCount > 0 ? (
+                  <>
+                    {', '}
+                    <span className="font-semibold text-[var(--m-error)]">
+                      {atRiskCount} at risk
+                    </span>
+                    {' (grade D or F)'}
+                  </>
+                ) : (
+                  ', all grade C or better'
+                )}
+              </>
+            ) : (
+              'Browse and manage tenant workspaces.'
+            )}
           </p>
         </div>
         {workspaces.length > 0 && (

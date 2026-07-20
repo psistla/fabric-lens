@@ -235,6 +235,9 @@ export const GROUP_EXPAND_INITIAL_COUNT = 10;
 /** Base rate per Capacity Unit per hour (USD). All SKU rates derive from this. */
 export const CU_RATE_PER_HOUR = 0.18;
 
+/** Hours in an average month (365 days / 12), for 24/7 run-rate estimates. */
+export const HOURS_PER_MONTH = 730;
+
 
 // -- Principal types --
 

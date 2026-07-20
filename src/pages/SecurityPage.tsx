@@ -11,7 +11,6 @@ import {
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
-  ChevronDown,
   ChevronLeft,
   ChevronRight,
   UsersRound,
@@ -42,6 +41,7 @@ import { SpofWorkspacesPanel } from '@/components/security/SpofWorkspacesPanel';
 import { AccessConcentrationChart } from '@/components/security/AccessConcentrationChart';
 import { WorkspacePivotTable } from '@/components/security/WorkspacePivotTable';
 import { SecurityAreaSection } from '@/components/security/SecurityAreaSection';
+import { CollapsibleSection } from '@/components/shared/CollapsibleSection';
 import { deriveSecurityFindings, computeSecurityPosture } from '@/utils/securityFindings';
 import {
   groupSecurityAreas,
@@ -906,17 +906,11 @@ export function SecurityPage() {
 
           {/* Directory: the raw user/workspace pivot, one level down from the
               summary because it answers "show me everything", not "what is wrong". */}
-          <details className="group overflow-hidden rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)]">
-            <summary className="flex cursor-pointer list-none items-center gap-4 p-4 transition-colors hover:bg-[var(--m-surface-hover)]">
-              <div className="min-w-0 flex-1">
-                <h2 className="text-sm font-semibold text-[var(--m-text)]">Directory</h2>
-                <p className="mt-0.5 text-xs text-[var(--m-text-secondary)]">
-                  Every principal and workspace, searchable and exportable.
-                </p>
-              </div>
-              <ChevronDown className="h-4 w-4 shrink-0 text-[var(--m-text-tertiary)] transition-transform duration-200 group-open:rotate-180" />
-            </summary>
-          <div className="border-t border-[var(--m-border)]">
+          <CollapsibleSection
+            title="Directory"
+            description="Every principal and workspace, searchable and exportable."
+          >
+          <div>
               {/* Header with toggle */}
               <div className="flex items-center justify-between border-b border-[var(--m-border)] px-4 py-3">
                 <h2 className="text-sm font-medium text-[var(--m-text)]">
@@ -1225,7 +1219,7 @@ export function SecurityPage() {
               </>
               )}
             </div>
-          </details>
+          </CollapsibleSection>
         </>
       )}
     </div>

@@ -26,6 +26,7 @@ import { aggregateGovernanceIssues } from '@/utils/governanceIssues';
 import { calculateWorkspaceHealth } from '@/utils/healthScore';
 import type { HealthScore } from '@/utils/healthScore';
 import { ExportButton } from '@/components/shared/ExportButton';
+import { CollapsibleSection } from '@/components/shared/CollapsibleSection';
 import { HealthGrid } from '@/components/dashboard/HealthGrid';
 import { SecurityQuickView } from '@/components/dashboard/SecurityQuickView';
 import { ScoreRing } from '@/components/dashboard/ScoreRing';
@@ -281,7 +282,7 @@ export function DashboardPage() {
       )}
 
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold tracking-[-0.02em] text-[var(--m-text)]">
             Governance Posture Assessment
@@ -358,9 +359,7 @@ export function DashboardPage() {
         />
       </div>
 
-      <SecurityQuickView />
-
-      {/* Section 2: Health Grid */}
+      {/* Section 2: Health Grid — the signature view, directly under the score */}
       {workspaces.length > 0 && (
         <HealthGrid
           workspaces={healthGridData}
@@ -368,14 +367,21 @@ export function DashboardPage() {
         />
       )}
 
-      {/* Section 3: Governance Issues */}
+      {/* Section 3: what to do about it */}
       <GovernanceIssuesPanel issues={aggregatedIssues} workspaces={workspaces} />
 
-      {/* Section 4: Health Grade Distribution */}
-      <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)] p-4">
-        <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.04em] text-[var(--m-text-secondary)]">
+      <SecurityQuickView />
+
+      {/* Section 4: distributions. Useful context, but they answer "how is the
+          tenant shaped", not "what needs attention", so they sit behind a fold. */}
+      <CollapsibleSection
+        title="Distributions"
+        description="Health grades and item types across the tenant."
+      >
+      <div>
+        <h3 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.04em] text-[var(--m-text-secondary)]">
           Health Grade Distribution
-        </h2>
+        </h3>
         {gradeDist.length > 0 ? (
           <ResponsiveContainer width="100%" height={180}>
             <BarChart
@@ -417,10 +423,10 @@ export function DashboardPage() {
 
       {/* Section 5: Item Distribution */}
       {itemDist.length > 0 && (
-        <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)] p-4">
-          <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.04em] text-[var(--m-text-secondary)]">
+        <div>
+          <h3 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.04em] text-[var(--m-text-secondary)]">
             Item Distribution
-          </h2>
+          </h3>
           <div className="flex flex-wrap gap-2">
             {itemDist.map((entry) => (
               <div
@@ -445,6 +451,7 @@ export function DashboardPage() {
           </div>
         </div>
       )}
+      </CollapsibleSection>
     </div>
   );
 }

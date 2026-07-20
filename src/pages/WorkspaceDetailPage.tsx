@@ -193,6 +193,10 @@ export function WorkspaceDetailPage() {
         </div>
       </div>
 
+      {/* Health leads: the score and the checks that failed are the reason to
+          open a workspace, so they sit above the inventory counts. */}
+      {healthScore && <HealthDetail score={healthScore} />}
+
       {/* Stat cards */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         <StatCard
@@ -221,9 +225,6 @@ export function WorkspaceDetailPage() {
           }
         />
       </div>
-
-      {/* Health Score */}
-      {healthScore && <HealthDetail score={healthScore} />}
 
       {/* OneLake Endpoints */}
       {workspace.oneLakeEndpoints && (
