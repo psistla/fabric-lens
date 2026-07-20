@@ -62,7 +62,7 @@ export function calculateWorkspaceHealth(
     maxPoints: w.capacity,
     detail: hasCapacity
       ? `Assigned to capacity ${workspace.capacityId}`
-      : 'No capacity assigned — workspace runs on shared capacity',
+      : 'No capacity assigned; workspace runs on shared capacity',
   });
 
   // Domain assigned
@@ -88,8 +88,8 @@ export function calculateWorkspaceHealth(
     points: hasIdentity ? w.workspaceIdentity : 0,
     maxPoints: w.workspaceIdentity,
     detail: hasIdentity
-      ? 'Service principal configured — enables Git integration and automation'
-      : 'No workspace identity — configure SPN to enable Git integration and automation',
+      ? 'Service principal configured, enabling Git integration and automation'
+      : 'No workspace identity; configure SPN to enable Git integration and automation',
   });
 
   // Naming convention
@@ -113,7 +113,7 @@ export function calculateWorkspaceHealth(
     maxPoints: w.activeItems,
     detail: hasItems
       ? `${items.length} item${items.length === 1 ? '' : 's'} in workspace`
-      : 'Workspace has no items — consider adding content or archiving',
+      : 'Workspace has no items; consider adding content or archiving',
   });
 
   // Data layer present
@@ -127,7 +127,7 @@ export function calculateWorkspaceHealth(
     maxPoints: w.dataLayer,
     detail: hasDataLayer
       ? 'Workspace includes a Lakehouse or Warehouse'
-      : 'No Lakehouse or Warehouse found — consider adding a data layer',
+      : 'No Lakehouse or Warehouse found; consider adding a data layer',
   });
 
   // Reasonable item count
@@ -139,7 +139,7 @@ export function calculateWorkspaceHealth(
     maxPoints: w.reasonableCount,
     detail: reasonableCount
       ? `${items.length} items (within recommended limit of ${MAX_REASONABLE_ITEM_COUNT})`
-      : `${items.length} items exceeds recommended limit of ${MAX_REASONABLE_ITEM_COUNT} — consider splitting`,
+      : `${items.length} items exceeds recommended limit of ${MAX_REASONABLE_ITEM_COUNT}; consider splitting`,
   });
 
 
@@ -164,7 +164,7 @@ export function calculateWorkspaceHealth(
       maxPoints: w.tagCoverage,
       detail: tagPassed
         ? `${taggedCount} of ${items.length} items tagged (${tagPctDisplay}%)`
-        : `Only ${taggedCount} of ${items.length} items tagged (${tagPctDisplay}%) — apply tags to improve item discoverability and governance`,
+        : `Only ${taggedCount} of ${items.length} items tagged (${tagPctDisplay}%); apply tags to improve item discoverability and governance`,
     });
   }
 

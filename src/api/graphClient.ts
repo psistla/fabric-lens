@@ -89,7 +89,7 @@ export async function getGroupMemberCount(
   if (isDemoMode) {
     throw new Error(
       'graphClient: API call attempted in demo mode. ' +
-      'This is a bug — demo mode should use mock data exclusively.',
+      'This is a bug. Demo mode should use mock data exclusively.',
     );
   }
   const token = await getGraphToken();
@@ -165,7 +165,7 @@ export async function getGroupMembers(
   if (isDemoMode) {
     throw new Error(
       'graphClient: API call attempted in demo mode. ' +
-      'This is a bug — demo mode should use mock data exclusively.',
+      'This is a bug. Demo mode should use mock data exclusively.',
     );
   }
   const token = await getGraphToken();

@@ -330,8 +330,8 @@ export const HEALTH_GRID_STAGGER_MAX_MS = 400;
 
 // -- App metadata --
 
-/** Application version (mirrors package.json). */
-export const APP_VERSION = '1.4.0';
+/** Application version. Injected from package.json at build time by vite `define`. */
+export const APP_VERSION = __APP_VERSION__;
 
 // -- Tenant Settings Risk --
 

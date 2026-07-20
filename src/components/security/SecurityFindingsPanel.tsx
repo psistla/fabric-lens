@@ -170,7 +170,7 @@ export function SecurityFindingsPanel({ findings }: Props) {
           <ShieldCheck className="h-8 w-8 text-[var(--m-success)]" />
           <p className="text-sm font-medium text-[var(--m-text)]">No security findings.</p>
           <p className="text-xs text-[var(--m-text-secondary)]">
-            All checks passed — access looks clean.
+            All checks passed. Access looks clean.
           </p>
         </div>
       ) : (

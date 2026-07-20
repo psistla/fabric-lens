@@ -3,8 +3,19 @@ import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { fileURLToPath, URL } from 'url';
 import { configDefaults } from 'vitest/config';
+import { readFileSync } from 'node:fs';
+
+// Read rather than `import ... with { type: 'json' }`: the import-attribute form
+// needs Node 20.10+ (CI pins Node 20) and an implicit resolveJsonModule that
+// tsconfig.node.json does not actually set. readFileSync has neither constraint.
+const pkgVersion = JSON.parse(
+  readFileSync(new URL('./package.json', import.meta.url), 'utf-8'),
+).version as string;
 
 export default defineConfig({
+  // Single source of truth for the version shown in Settings. Hardcoding it in
+  // constants.ts let it drift (stuck at 1.4.0 through the 2.0.0 release).
+  define: { __APP_VERSION__: JSON.stringify(pkgVersion) },
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {

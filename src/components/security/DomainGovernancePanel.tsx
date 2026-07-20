@@ -100,7 +100,7 @@ export function DomainGovernancePanel({
         <div className="flex items-center gap-2 border-b border-[var(--m-border)] bg-[var(--m-accent-subtle)] px-4 py-2.5">
           <Share2 className="h-4 w-4 shrink-0 text-[var(--m-accent)]" />
           <p className="text-xs text-[var(--m-accent)]">
-            Org-wide shared content detected — artifacts shared to all users bypass domain access boundaries.
+            Org-wide shared content detected. Artifacts shared to all users bypass domain access boundaries.
           </p>
         </div>
       )}

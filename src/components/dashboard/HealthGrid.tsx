@@ -312,7 +312,7 @@ export function HealthGrid({ workspaces, onWorkspaceClick }: HealthGridProps) {
                 onMouseMove={(e) => handleMouseMove(e, entry)}
                 onMouseEnter={handleTileEnter}
                 onMouseLeave={handleTileOut}
-                aria-label={`${entry.name} — Grade ${entry.grade}, ${entry.score}%`}
+                aria-label={`${entry.name}: Grade ${entry.grade}, ${entry.score}%`}
                 style={{
                   animationDelay: `${Math.min(
                     i * HEALTH_GRID_STAGGER_STEP_MS,

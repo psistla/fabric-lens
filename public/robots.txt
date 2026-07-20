@@ -1,6 +1,7 @@
 User-agent: *
 Allow: /$
 Allow: /about
+Disallow: /dashboard
 Disallow: /workspaces
 Disallow: /capacity
 Disallow: /security
