@@ -11,6 +11,7 @@ import {
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
   UsersRound,
@@ -40,7 +41,13 @@ import { SpnGovernancePanel } from '@/components/security/SpnGovernancePanel';
 import { SpofWorkspacesPanel } from '@/components/security/SpofWorkspacesPanel';
 import { AccessConcentrationChart } from '@/components/security/AccessConcentrationChart';
 import { WorkspacePivotTable } from '@/components/security/WorkspacePivotTable';
+import { SecurityAreaSection } from '@/components/security/SecurityAreaSection';
 import { deriveSecurityFindings, computeSecurityPosture } from '@/utils/securityFindings';
+import {
+  groupSecurityAreas,
+  type SecurityArea,
+  type SecurityAreaId,
+} from '@/utils/securityAreas';
 import { deriveRiskySettings } from '@/utils/tenantSettingRisks';
 import { exportToCSV } from '@/utils/export';
 import { isEffectiveDemoMode } from '@/auth/AuthProvider';
@@ -402,6 +409,35 @@ export function SecurityPage() {
       ),
     [userSummaries],
   );
+
+  // Drill-in areas for the page IA. The SPOF and elevated-SPN counts come off
+  // the findings that already derive them, rather than re-deriving here.
+  const areas = useMemo(() => {
+    const affected = (id: string) =>
+      securityFindings.find((f) => f.id === id)?.affectedItems.length ?? 0;
+
+    const grouped = groupSecurityAreas({
+      findings: securityFindings,
+      overPermissionedCount: overPermissioned.length,
+      spofCount: affected('spof-single-admin'),
+      spnElevatedCount: affected('spn-admin-role'),
+      riskySettingsCount: riskySettings.length,
+      widelySharedCount: artifacts.length,
+      unassignedDomainCount: unassignedCount,
+      ghostCount: ghostWorkspaces.length,
+    });
+    return Object.fromEntries(grouped.map((a) => [a.id, a])) as Record<
+      SecurityAreaId,
+      SecurityArea
+    >;
+  }, [
+    securityFindings,
+    overPermissioned,
+    riskySettings,
+    artifacts,
+    unassignedCount,
+    ghostWorkspaces,
+  ]);
 
   // --- Expanded groups state ---
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
@@ -786,41 +822,18 @@ export function SecurityPage() {
           {/* Security Findings Panel */}
           <SecurityFindingsPanel findings={securityFindings} />
 
-          {/* Tenant Settings Risk Panel */}
-          <TenantSettingsRiskPanel
-            settings={riskySettings}
-            loading={settingsLoading}
-            error={settingsError}
-            onRetry={fetchTenantSettings}
-          />
-
-          {/* Widely Shared Panel */}
-          <WidelySharedPanel
-            artifacts={artifacts}
-            loading={widelySharedLoading}
-            error={widelySharedError}
-            onRetry={fetchWidelySharedArtifacts}
-          />
-
-          {/* Domain Governance Panel */}
-          <DomainGovernancePanel
-            domainStats={domainStats}
-            unassignedCount={unassignedCount}
-            totalWorkspaces={domainTotalWorkspaces}
-            hasCrossDomainSharing={artifacts.length > 0}
-          />
-
-          {/* SPOF Workspaces Panel */}
-          <SpofWorkspacesPanel workspaceUsers={workspaceUsers} workspaces={filteredWorkspaces} />
-
-          {/* SPN Governance Panel */}
-          <SpnGovernancePanel userSummaries={userSummaries} />
-
-          {/* Access Concentration Charts */}
-          <AccessConcentrationChart
-            workspaceUsers={workspaceUsers}
-            userSummaries={userSummaries}
-          />
+          {/* Drill-in areas. Every panel that used to sit on the page still
+              renders, grouped under the area it belongs to. */}
+          <SecurityAreaSection area={areas.access}>
+            <SpofWorkspacesPanel workspaceUsers={workspaceUsers} workspaces={filteredWorkspaces} />
+            <SpnGovernancePanel userSummaries={userSummaries} />
+            <AccessConcentrationChart
+              workspaceUsers={workspaceUsers}
+              userSummaries={userSummaries}
+            />
+            {effectiveAccessSummary && (
+              <EffectiveAccessCard summary={effectiveAccessSummary} />
+            )}
 
           {/* Over-permissioned alert */}
           {overPermissioned.length > 0 && (
@@ -855,23 +868,55 @@ export function SecurityPage() {
               </ul>
             </div>
           )}
+          </SecurityAreaSection>
 
-          {/* Effective Access Card */}
-          {effectiveAccessSummary && (
-            <EffectiveAccessCard summary={effectiveAccessSummary} />
-          )}
+          <SecurityAreaSection area={areas.sharing}>
+            <WidelySharedPanel
+              artifacts={artifacts}
+              loading={widelySharedLoading}
+              error={widelySharedError}
+              onRetry={fetchWidelySharedArtifacts}
+            />
+            <DomainGovernancePanel
+              domainStats={domainStats}
+              unassignedCount={unassignedCount}
+              totalWorkspaces={domainTotalWorkspaces}
+              hasCrossDomainSharing={artifacts.length > 0}
+            />
+          </SecurityAreaSection>
 
-          {/* Ghost Workspaces Panel */}
-          <GhostWorkspacesPanel
-            ghostWorkspaces={ghostWorkspaces}
-            workspaces={workspaces}
-            loading={ghostLoading}
-            error={ghostError}
-            onRetry={() => void fetchActivityEvents(workspaces)}
-          />
+          <SecurityAreaSection area={areas.settings}>
+            <TenantSettingsRiskPanel
+              settings={riskySettings}
+              loading={settingsLoading}
+              error={settingsError}
+              onRetry={fetchTenantSettings}
+            />
+          </SecurityAreaSection>
 
-          {/* User / Workspace pivot table */}
-          <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)]">
+          <SecurityAreaSection area={areas.lifecycle}>
+            <GhostWorkspacesPanel
+              ghostWorkspaces={ghostWorkspaces}
+              workspaces={workspaces}
+              loading={ghostLoading}
+              error={ghostError}
+              onRetry={() => void fetchActivityEvents(workspaces)}
+            />
+          </SecurityAreaSection>
+
+          {/* Directory: the raw user/workspace pivot, one level down from the
+              summary because it answers "show me everything", not "what is wrong". */}
+          <details className="group overflow-hidden rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)]">
+            <summary className="flex cursor-pointer list-none items-center gap-4 p-4 transition-colors hover:bg-[var(--m-surface-hover)]">
+              <div className="min-w-0 flex-1">
+                <h2 className="text-sm font-semibold text-[var(--m-text)]">Directory</h2>
+                <p className="mt-0.5 text-xs text-[var(--m-text-secondary)]">
+                  Every principal and workspace, searchable and exportable.
+                </p>
+              </div>
+              <ChevronDown className="h-4 w-4 shrink-0 text-[var(--m-text-tertiary)] transition-transform duration-200 group-open:rotate-180" />
+            </summary>
+          <div className="border-t border-[var(--m-border)]">
               {/* Header with toggle */}
               <div className="flex items-center justify-between border-b border-[var(--m-border)] px-4 py-3">
                 <h2 className="text-sm font-medium text-[var(--m-text)]">
@@ -1180,6 +1225,7 @@ export function SecurityPage() {
               </>
               )}
             </div>
+          </details>
         </>
       )}
     </div>
