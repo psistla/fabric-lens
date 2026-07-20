@@ -1125,7 +1125,7 @@ export function SecurityPage() {
                                         `/workspaces/${a.workspaceId}`,
                                       );
                                     }}
-                                    className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide transition-colors hover:ring-1 ${
+                                    className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-[11px] font-semibold uppercase tracking-wide transition-colors hover:ring-1 ${
                                       a.role === 'Admin'
                                         ? 'bg-[var(--m-error-bg)] text-[var(--m-error-text)] hover:ring-[var(--m-error)]/40'
                                         : a.role === 'Member'

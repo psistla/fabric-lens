@@ -19,7 +19,7 @@ export function MarketingNav() {
   return (
     <header className="sticky top-0 z-40 border-b border-[var(--m-border)] bg-[var(--m-bg)]/90 backdrop-blur">
       <nav className="mx-auto flex max-w-6xl items-center gap-6 px-6 py-4">
-        <Link to="/" className="m-display text-lg">
+        <Link to="/" className="m-display whitespace-nowrap text-lg">
           fabric-<span className="m-gradient-text">lens</span>
         </Link>
 
@@ -55,7 +55,7 @@ export function MarketingNav() {
           {isAuthenticated ? (
             <Link
               to="/dashboard"
-              className="m-cta px-4 py-2"
+              className="m-cta whitespace-nowrap px-4 py-2"
             >
               Open dashboard
             </Link>
@@ -70,13 +70,13 @@ export function MarketingNav() {
                     );
                   });
                 }}
-                className="text-sm font-medium text-[var(--m-text-secondary)] transition-colors duration-[120ms] hover:text-[var(--m-text)]"
+                className="whitespace-nowrap text-sm font-medium text-[var(--m-text-secondary)] transition-colors duration-[120ms] hover:text-[var(--m-text)]"
               >
                 Sign in
               </button>
               <Link
                 to="/dashboard"
-                className="m-cta px-4 py-2"
+                className="m-cta whitespace-nowrap px-4 py-2"
               >
                 Try the demo
               </Link>

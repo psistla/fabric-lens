@@ -83,7 +83,7 @@ export function SecurityPostureCard({ posture }: Props) {
                 onMouseLeave={() => setShowTooltip(false)}
                 onFocus={() => setShowTooltip(true)}
                 onBlur={() => setShowTooltip(false)}
-                className="flex items-center text-[var(--m-text-tertiary)] transition-colors hover:text-[var(--m-text-secondary)]"
+                className="-m-1.5 flex items-center p-1.5 text-[var(--m-text-tertiary)] transition-colors hover:text-[var(--m-text-secondary)]"
                 aria-label="How scoring works"
               >
                 <Info className="h-3.5 w-3.5" />
