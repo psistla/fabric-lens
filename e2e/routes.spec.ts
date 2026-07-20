@@ -2,7 +2,8 @@ import { test, expect } from '@playwright/test';
 import { collectConsoleErrors } from './helpers';
 
 const ROUTES = [
-  '/',
+  '/', // public landing (MarketingShell)
+  '/dashboard',
   '/workspaces',
   '/capacity',
   '/security',

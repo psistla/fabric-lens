@@ -131,14 +131,14 @@ export function ReportPage() {
         </div>
         <div className="flex items-center gap-2">
           <Link
-            to="/"
+            to="/dashboard"
             className="text-sm px-3 py-1.5 rounded-md border border-[var(--m-border)] text-[var(--m-text-secondary)] hover:text-[var(--m-text)]"
           >
             ← Back to Dashboard
           </Link>
           <button
             onClick={() => window.print()}
-            className="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-md bg-[var(--m-primary)] text-white hover:opacity-90"
+            className="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-md bg-[var(--m-primary-600)] text-white hover:opacity-90"
           >
             <Printer className="h-3.5 w-3.5" />
             Print / Save PDF

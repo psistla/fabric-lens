@@ -4,6 +4,8 @@ import {
   HEALTH_GRID_GAP,
   HEALTH_GRID_MAX_TILES,
   HEALTH_GRID_HOVER_SCALE,
+  HEALTH_GRID_STAGGER_STEP_MS,
+  HEALTH_GRID_STAGGER_MAX_MS,
 } from '@/utils/constants';
 
 // Grade ordering: worst → best
@@ -15,7 +17,7 @@ const GRADE_PRIMARY: Record<Grade, string> = {
   A: '#15803D',
   B: '#4F46E5',
   C: '#B45309',
-  D: '#EA580C',
+  D: '#C2410C',
   F: '#DC2626',
 };
 
@@ -258,7 +260,9 @@ export function HealthGrid({ workspaces, onWorkspaceClick }: HealthGridProps) {
           className="rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-wide transition-colors"
           style={
             activeGrade === null
-              ? { backgroundColor: '#4F46E5', color: '#FFFFFF' }
+              // primary-600 rather than the --m-primary alias: the alias lightens
+              // to primary-400 in dark, which fails AA under white text.
+              ? { backgroundColor: 'var(--m-primary-600)', color: '#FFFFFF' }
               : { backgroundColor: 'var(--m-surface)', color: 'var(--m-text-secondary)' }
           }
         >
@@ -300,15 +304,20 @@ export function HealthGrid({ workspaces, onWorkspaceClick }: HealthGridProps) {
               gap: `${HEALTH_GRID_GAP}px`,
             }}
           >
-            {tiles.map((entry) => (
+            {tiles.map((entry, i) => (
               <button
                 key={entry.id}
+                className="m-tile-in"
                 onClick={() => onWorkspaceClick?.(entry.id)}
                 onMouseMove={(e) => handleMouseMove(e, entry)}
                 onMouseEnter={handleTileEnter}
                 onMouseLeave={handleTileOut}
                 aria-label={`${entry.name} — Grade ${entry.grade}, ${entry.score}%`}
                 style={{
+                  animationDelay: `${Math.min(
+                    i * HEALTH_GRID_STAGGER_STEP_MS,
+                    HEALTH_GRID_STAGGER_MAX_MS,
+                  )}ms`,
                   width: HEALTH_GRID_TILE_SIZE,
                   height: HEALTH_GRID_TILE_SIZE,
                   borderRadius: 6,

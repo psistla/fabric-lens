@@ -40,7 +40,14 @@ import { SpnGovernancePanel } from '@/components/security/SpnGovernancePanel';
 import { SpofWorkspacesPanel } from '@/components/security/SpofWorkspacesPanel';
 import { AccessConcentrationChart } from '@/components/security/AccessConcentrationChart';
 import { WorkspacePivotTable } from '@/components/security/WorkspacePivotTable';
+import { SecurityAreaSection } from '@/components/security/SecurityAreaSection';
+import { CollapsibleSection } from '@/components/shared/CollapsibleSection';
 import { deriveSecurityFindings, computeSecurityPosture } from '@/utils/securityFindings';
+import {
+  groupSecurityAreas,
+  type SecurityArea,
+  type SecurityAreaId,
+} from '@/utils/securityAreas';
 import { deriveRiskySettings } from '@/utils/tenantSettingRisks';
 import { exportToCSV } from '@/utils/export';
 import { isEffectiveDemoMode } from '@/auth/AuthProvider';
@@ -131,7 +138,7 @@ function AdminConsentCard({ onGrant, granting, error }: ConsentCardProps) {
       <button
         onClick={onGrant}
         disabled={granting}
-        className="inline-flex items-center gap-2 rounded-lg bg-[var(--m-primary)] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[var(--m-primary-hover)] disabled:opacity-50"
+        className="inline-flex items-center gap-2 rounded-lg bg-[var(--m-primary-600)] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[var(--m-primary-700)] disabled:opacity-50"
       >
         {granting ? 'Requesting access...' : 'Grant Admin Access'}
       </button>
@@ -403,6 +410,35 @@ export function SecurityPage() {
     [userSummaries],
   );
 
+  // Drill-in areas for the page IA. The SPOF and elevated-SPN counts come off
+  // the findings that already derive them, rather than re-deriving here.
+  const areas = useMemo(() => {
+    const affected = (id: string) =>
+      securityFindings.find((f) => f.id === id)?.affectedItems.length ?? 0;
+
+    const grouped = groupSecurityAreas({
+      findings: securityFindings,
+      overPermissionedCount: overPermissioned.length,
+      spofCount: affected('spof-single-admin'),
+      spnElevatedCount: affected('spn-admin-role'),
+      riskySettingsCount: riskySettings.length,
+      widelySharedCount: artifacts.length,
+      unassignedDomainCount: unassignedCount,
+      ghostCount: ghostWorkspaces.length,
+    });
+    return Object.fromEntries(grouped.map((a) => [a.id, a])) as Record<
+      SecurityAreaId,
+      SecurityArea
+    >;
+  }, [
+    securityFindings,
+    overPermissioned,
+    riskySettings,
+    artifacts,
+    unassignedCount,
+    ghostWorkspaces,
+  ]);
+
   // --- Expanded groups state ---
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
 
@@ -612,7 +648,7 @@ export function SecurityPage() {
           </p>
           <button
             onClick={() => void checkAdminAccess()}
-            className="inline-flex items-center gap-2 rounded-lg bg-[var(--m-primary)] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[var(--m-primary-hover)]"
+            className="inline-flex items-center gap-2 rounded-lg bg-[var(--m-primary-600)] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[var(--m-primary-700)]"
           >
             Retry
           </button>
@@ -684,7 +720,7 @@ export function SecurityPage() {
           <button
             onClick={() => void handleScanAll()}
             disabled={loading || wsLoading}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--m-primary)] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[var(--m-primary-hover)] disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--m-primary-600)] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[var(--m-primary-700)] disabled:opacity-50"
           >
             <ScanSearch className="h-3.5 w-3.5" />
             {hasScanned ? 'Re-scan All' : 'Scan All'}
@@ -763,7 +799,7 @@ export function SecurityPage() {
                 <button
                   onClick={() => void handleScanAll()}
                   disabled={loading || wsLoading}
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--m-primary)] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[var(--m-primary-hover)] disabled:opacity-50"
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--m-primary-600)] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[var(--m-primary-700)] disabled:opacity-50"
                 >
                   <ScanSearch className="h-3.5 w-3.5" />
                   Scan All
@@ -786,41 +822,18 @@ export function SecurityPage() {
           {/* Security Findings Panel */}
           <SecurityFindingsPanel findings={securityFindings} />
 
-          {/* Tenant Settings Risk Panel */}
-          <TenantSettingsRiskPanel
-            settings={riskySettings}
-            loading={settingsLoading}
-            error={settingsError}
-            onRetry={fetchTenantSettings}
-          />
-
-          {/* Widely Shared Panel */}
-          <WidelySharedPanel
-            artifacts={artifacts}
-            loading={widelySharedLoading}
-            error={widelySharedError}
-            onRetry={fetchWidelySharedArtifacts}
-          />
-
-          {/* Domain Governance Panel */}
-          <DomainGovernancePanel
-            domainStats={domainStats}
-            unassignedCount={unassignedCount}
-            totalWorkspaces={domainTotalWorkspaces}
-            hasCrossDomainSharing={artifacts.length > 0}
-          />
-
-          {/* SPOF Workspaces Panel */}
-          <SpofWorkspacesPanel workspaceUsers={workspaceUsers} workspaces={filteredWorkspaces} />
-
-          {/* SPN Governance Panel */}
-          <SpnGovernancePanel userSummaries={userSummaries} />
-
-          {/* Access Concentration Charts */}
-          <AccessConcentrationChart
-            workspaceUsers={workspaceUsers}
-            userSummaries={userSummaries}
-          />
+          {/* Drill-in areas. Every panel that used to sit on the page still
+              renders, grouped under the area it belongs to. */}
+          <SecurityAreaSection area={areas.access}>
+            <SpofWorkspacesPanel workspaceUsers={workspaceUsers} workspaces={filteredWorkspaces} />
+            <SpnGovernancePanel userSummaries={userSummaries} />
+            <AccessConcentrationChart
+              workspaceUsers={workspaceUsers}
+              userSummaries={userSummaries}
+            />
+            {effectiveAccessSummary && (
+              <EffectiveAccessCard summary={effectiveAccessSummary} />
+            )}
 
           {/* Over-permissioned alert */}
           {overPermissioned.length > 0 && (
@@ -855,23 +868,49 @@ export function SecurityPage() {
               </ul>
             </div>
           )}
+          </SecurityAreaSection>
 
-          {/* Effective Access Card */}
-          {effectiveAccessSummary && (
-            <EffectiveAccessCard summary={effectiveAccessSummary} />
-          )}
+          <SecurityAreaSection area={areas.sharing}>
+            <WidelySharedPanel
+              artifacts={artifacts}
+              loading={widelySharedLoading}
+              error={widelySharedError}
+              onRetry={fetchWidelySharedArtifacts}
+            />
+            <DomainGovernancePanel
+              domainStats={domainStats}
+              unassignedCount={unassignedCount}
+              totalWorkspaces={domainTotalWorkspaces}
+              hasCrossDomainSharing={artifacts.length > 0}
+            />
+          </SecurityAreaSection>
 
-          {/* Ghost Workspaces Panel */}
-          <GhostWorkspacesPanel
-            ghostWorkspaces={ghostWorkspaces}
-            workspaces={workspaces}
-            loading={ghostLoading}
-            error={ghostError}
-            onRetry={() => void fetchActivityEvents(workspaces)}
-          />
+          <SecurityAreaSection area={areas.settings}>
+            <TenantSettingsRiskPanel
+              settings={riskySettings}
+              loading={settingsLoading}
+              error={settingsError}
+              onRetry={fetchTenantSettings}
+            />
+          </SecurityAreaSection>
 
-          {/* User / Workspace pivot table */}
-          <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)]">
+          <SecurityAreaSection area={areas.lifecycle}>
+            <GhostWorkspacesPanel
+              ghostWorkspaces={ghostWorkspaces}
+              workspaces={workspaces}
+              loading={ghostLoading}
+              error={ghostError}
+              onRetry={() => void fetchActivityEvents(workspaces)}
+            />
+          </SecurityAreaSection>
+
+          {/* Directory: the raw user/workspace pivot, one level down from the
+              summary because it answers "show me everything", not "what is wrong". */}
+          <CollapsibleSection
+            title="Directory"
+            description="Every principal and workspace, searchable and exportable."
+          >
+          <div>
               {/* Header with toggle */}
               <div className="flex items-center justify-between border-b border-[var(--m-border)] px-4 py-3">
                 <h2 className="text-sm font-medium text-[var(--m-text)]">
@@ -887,7 +926,7 @@ export function SecurityPage() {
                           className={[
                             'px-3 py-1.5 text-[11px] font-semibold transition-colors',
                             (v === 'mine') === myOnly
-                              ? 'bg-[var(--m-primary)] text-white'
+                              ? 'bg-[var(--m-primary-600)] text-white'
                               : 'bg-[var(--m-surface)] text-[var(--m-text-secondary)] hover:bg-[var(--m-surface-raised)]',
                           ].join(' ')}
                         >
@@ -901,7 +940,7 @@ export function SecurityPage() {
                       onClick={() => setPivotView('users')}
                       className={`rounded-md px-2.5 py-1 transition-colors ${
                         pivotView === 'users'
-                          ? 'bg-[var(--m-primary)] text-white'
+                          ? 'bg-[var(--m-primary-600)] text-white'
                           : 'text-[var(--m-text-secondary)] hover:text-[var(--m-text)]'
                       }`}
                     >
@@ -911,7 +950,7 @@ export function SecurityPage() {
                       onClick={() => setPivotView('workspaces')}
                       className={`rounded-md px-2.5 py-1 transition-colors ${
                         pivotView === 'workspaces'
-                          ? 'bg-[var(--m-primary)] text-white'
+                          ? 'bg-[var(--m-primary-600)] text-white'
                           : 'text-[var(--m-text-secondary)] hover:text-[var(--m-text)]'
                       }`}
                     >
@@ -1086,7 +1125,7 @@ export function SecurityPage() {
                                         `/workspaces/${a.workspaceId}`,
                                       );
                                     }}
-                                    className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide transition-colors hover:ring-1 ${
+                                    className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-[11px] font-semibold uppercase tracking-wide transition-colors hover:ring-1 ${
                                       a.role === 'Admin'
                                         ? 'bg-[var(--m-error-bg)] text-[var(--m-error-text)] hover:ring-[var(--m-error)]/40'
                                         : a.role === 'Member'
@@ -1159,7 +1198,7 @@ export function SecurityPage() {
                           onClick={() => setCurrentPage(p)}
                           className={`h-7 w-7 rounded-lg text-xs font-semibold transition-colors ${
                             p === safePage
-                              ? 'bg-[var(--m-primary)] text-white'
+                              ? 'bg-[var(--m-primary-600)] text-white'
                               : 'text-[var(--m-text-secondary)] hover:bg-[var(--m-surface-hover)]'
                           }`}
                         >
@@ -1180,6 +1219,7 @@ export function SecurityPage() {
               </>
               )}
             </div>
+          </CollapsibleSection>
         </>
       )}
     </div>

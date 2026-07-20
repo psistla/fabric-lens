@@ -368,7 +368,24 @@ test: add unit tests for health score calculations
 chore: update Tailwind CSS to v3.4
 ```
 
-### 5. Submit a Pull Request
+### 5. Sign Off Your Commits (DCO)
+
+Fabric Lens uses the [Developer Certificate of Origin](https://developercertificate.org/).
+By signing off, you certify that you wrote the contribution or otherwise have the right
+to submit it under the project's MIT license. There is no CLA to sign.
+
+Add a `Signed-off-by` line to every commit with `git commit -s`:
+
+```
+feat: add pipeline monitoring page
+
+Signed-off-by: Jane Doe <jane@example.com>
+```
+
+The name and email must match the ones on the commit. To sign off a branch you already
+committed, use `git rebase --signoff master`.
+
+### 6. Submit a Pull Request
 
 1. Push your branch to your fork.
 2. Open a pull request against the `master` branch of the upstream repository.

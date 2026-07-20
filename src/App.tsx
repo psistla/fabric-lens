@@ -1,6 +1,8 @@
 import { Routes, Route } from 'react-router';
 import { ProtectedRoute } from '@/auth/ProtectedRoute';
 import { AppShell } from '@/components/layout/AppShell';
+import { MarketingShell } from '@/components/layout/MarketingShell';
+import { LandingPage } from '@/components/marketing/LandingPage';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { WorkspacesPage } from '@/pages/WorkspacesPage';
@@ -14,8 +16,11 @@ import { ReportPage } from '@/pages/ReportPage';
 export function App() {
   return (
     <Routes>
-      {/* Public route — no auth guard */}
-      <Route path="/about" element={<AboutPage />} />
+      {/* Public marketing routes — no auth guard */}
+      <Route element={<MarketingShell />}>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/about" element={<AboutPage />} />
+      </Route>
 
       {/* Protected routes */}
       <Route
@@ -25,7 +30,7 @@ export function App() {
             <AppShell>
               <ErrorBoundary>
                 <Routes>
-                  <Route path="/" element={<DashboardPage />} />
+                  <Route path="/dashboard" element={<DashboardPage />} />
                   <Route path="/workspaces" element={<WorkspacesPage />} />
                   <Route
                     path="/workspaces/:id"

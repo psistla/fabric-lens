@@ -15,6 +15,8 @@ import { useWorkspaceStore } from '@/store/workspaceStore';
 import { StateBadge } from '@/components/shared/StateBadge';
 import { ExportButton } from '@/components/shared/ExportButton';
 import { exportToCSV } from '@/utils/export';
+import { CollapsibleSection } from '@/components/shared/CollapsibleSection';
+import { HOURS_PER_MONTH } from '@/utils/constants';
 import { SKU_SPECS, SKU_NAMES, SKU_TIER_STYLES, buildSkuSpecsWithRates } from '@/data/skuSpecs';
 import type { SkuSpec } from '@/data/skuSpecs';
 import { fetchSkuRates, AZURE_REGIONS } from '@/api/azurePricing';
@@ -466,15 +468,28 @@ export function CapacityPage() {
     return counts;
   }, [workspaces]);
 
+  // Headline cost: active capacities only, at the SKU list rate for a full
+  // month. Paused capacities bill nothing, so they are left out.
+  const { activeCount, monthlyRunRate } = useMemo(() => {
+    const active = capacities.filter((c) => c.state === 'Active');
+    const hourly = active.reduce(
+      (sum, c) => sum + (SKU_SPECS[c.sku]?.rate ?? 0),
+      0,
+    );
+    return { activeCount: active.length, monthlyRunRate: hourly * HOURS_PER_MONTH };
+  }, [capacities]);
+
   return (
     <div className="space-y-6 p-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold tracking-[-0.02em] text-[var(--m-text)]">
             Capacities
           </h1>
           <p className="mt-1 text-sm text-[var(--m-text-secondary)]">
-            Monitor Fabric capacity usage and specifications.
+            {capacities.length > 0
+              ? `${activeCount} active, ${capacities.length - activeCount} paused, about $${monthlyRunRate.toLocaleString('en-US', { maximumFractionDigits: 0 })}/mo at list price if run 24/7.`
+              : 'Monitor Fabric capacity usage and specifications.'}
           </p>
         </div>
         {capacities.length > 0 && (
@@ -606,8 +621,14 @@ export function CapacityPage() {
         )}
       </div>
 
-      {/* Cost Calculator */}
-      <CostCalculator />
+      {/* Cost modelling is a what-if tool, not a status readout, so it opens on
+          request rather than competing with the capacity list. */}
+      <CollapsibleSection
+        title="Cost calculator"
+        description="Model a SKU against hours, days, and autoscale."
+      >
+        <CostCalculator />
+      </CollapsibleSection>
     </div>
   );
 }

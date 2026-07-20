@@ -77,17 +77,17 @@ export const TOAST_DISMISS_MS = 5000;
 
 // -- Charts --
 
-/** Shared chart color palette (Meridian-aligned sequence). */
+/** Shared chart color palette (Meridian-aligned sequence, cobalt/cyan brand-led). */
 export const CHART_COLORS = [
-  '#4F46E5', '#B45309', '#818CF8', '#FBBF24', '#868E96',
-  '#6366F1', '#D97706', '#15803D', '#0891B2', '#7C3AED',
-  '#DB2777', '#EA580C',
+  '#2563EB', '#06B6D4', '#60A5FA', '#B45309', '#15803D',
+  '#7C3AED', '#DB2777', '#EA580C', '#0891B2', '#FBBF24',
+  '#868E96', '#22D3EE',
 ] as const;
 
 /** Color map for workspace roles (used in Security page charts and badges). */
 export const ROLE_COLORS: Record<string, string> = {
   Admin: '#DC2626',
-  Member: '#4F46E5',
+  Member: '#2563EB',
   Contributor: '#15803D',
   Viewer: '#495057',
 };
@@ -209,7 +209,7 @@ export const HEALTH_GRADE_COLORS = {
   A: '#15803D',
   B: '#4F46E5',
   C: '#B45309',
-  D: '#EA580C',
+  D: '#C2410C',
   F: '#DC2626',
 } as const;
 
@@ -235,10 +235,18 @@ export const GROUP_EXPAND_INITIAL_COUNT = 10;
 /** Base rate per Capacity Unit per hour (USD). All SKU rates derive from this. */
 export const CU_RATE_PER_HOUR = 0.18;
 
+/** Hours in an average month (365 days / 12), for 24/7 run-rate estimates. */
+export const HOURS_PER_MONTH = 730;
+
 
 // -- Principal types --
 
-/** Color map for principal types (used in Security page badges and charts). */
+/**
+ * Color map for principal types (used in Security page badges and charts).
+ * Reviewed for the cobalt/cyan rebrand: Group's indigo is kept as-is, it
+ * reads distinctly from both the new cobalt primary and the violet
+ * ServicePrincipal entries. Revisit only if an in-context pass says otherwise.
+ */
 export const PRINCIPAL_TYPE_COLORS: Record<string, string> = {
   User: '#495057',
   Group: '#4F46E5',
@@ -314,6 +322,12 @@ export const HEALTH_GRID_MAX_TILES = 100;
 /** Scale factor applied to a tile on hover. */
 export const HEALTH_GRID_HOVER_SCALE = 1.15;
 
+/** Per-tile entrance delay (ms), mirroring `--m-motion-stagger-step` in CSS. */
+export const HEALTH_GRID_STAGGER_STEP_MS = 20;
+
+/** Ceiling on the stagger so a 100-tile grid still finishes settling quickly. */
+export const HEALTH_GRID_STAGGER_MAX_MS = 400;
+
 // -- App metadata --
 
 /** Application version (mirrors package.json). */
@@ -360,3 +374,11 @@ export const BENCHMARK_HEALTH_SCORE = 78;
 
 /** Synthetic median security posture score. Label as "typical" — never "industry average". */
 export const BENCHMARK_SECURITY_SCORE = 72;
+
+// -- External links --
+
+/** Public repository. Single source of truth for every GitHub link in the UI. */
+export const GITHUB_URL = 'https://github.com/psistla/fabric-lens';
+
+/** Issue tracker, used by the About page support links. */
+export const GITHUB_ISSUES_URL = `${GITHUB_URL}/issues`;

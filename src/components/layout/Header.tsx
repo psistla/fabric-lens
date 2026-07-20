@@ -131,7 +131,7 @@ export function Header() {
               </>
             ) : (
               <>
-                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--m-primary)] text-xs font-semibold text-white">
+                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--m-primary-600)] text-xs font-semibold text-white">
                   {initials ?? '?'}
                 </div>
                 {user && (

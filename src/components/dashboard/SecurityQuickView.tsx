@@ -158,7 +158,7 @@ export function SecurityQuickView() {
           <button
             onClick={handleLoad}
             disabled={workspaces.length === 0}
-            className="mt-5 inline-flex items-center gap-1.5 rounded-lg bg-[var(--m-primary)] px-3 py-1.5 text-xs font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+            className="mt-5 inline-flex items-center gap-1.5 rounded-lg bg-[var(--m-primary-600)] px-3 py-1.5 text-xs font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
           >
             Load security data
           </button>

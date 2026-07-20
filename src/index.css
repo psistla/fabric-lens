@@ -28,23 +28,31 @@
   --m-neutral-300: #DEE2E6;
   --m-neutral-400: #ADB5BD;
   --m-neutral-500: #868E96;
+  /* Inserted step: neutral-500 on white is 3.32:1, under AA for the small
+     helper text --m-text-tertiary drives. This lands at 5.0:1 and still reads
+     lighter than neutral-600 body text. */
+  --m-neutral-550: #67707A;
   --m-neutral-600: #495057;
   --m-neutral-700: #343A40;
   --m-neutral-800: #212529;
   --m-neutral-900: #16191D;
   --m-neutral-950: #0D0F12;
 
-  /* ─── PRIMARY PALETTE (Deep Indigo) ─────────────────────── */
-  --m-primary-50:  #EEF2FF;
-  --m-primary-100: #E0E7FF;
-  --m-primary-200: #C7D2FE;
-  --m-primary-300: #A5B4FC;
-  --m-primary-400: #818CF8;
-  --m-primary-500: #6366F1;
-  --m-primary-600: #4F46E5;
-  --m-primary-700: #4338CA;
-  --m-primary-800: #3730A3;
-  --m-primary-900: #312E81;
+  /* ─── PRIMARY PALETTE (Cobalt) ───────────────────────────── */
+  --m-primary-50:  #EFF6FF;
+  --m-primary-100: #DBEAFE;
+  --m-primary-200: #BFDBFE;
+  --m-primary-300: #93C5FD;
+  --m-primary-400: #60A5FA;
+  --m-primary-500: #3B82F6;
+  --m-primary-600: #2563EB;
+  --m-primary-700: #1D4ED8;
+  --m-primary-800: #1E40AF;
+  --m-primary-900: #1E3A8A;
+  --m-primary-950: #172554;
+
+  --m-secondary: #06B6D4;
+  --m-gradient-brand: linear-gradient(90deg, #2563EB, #06B6D4);
 
   /* ─── ACCENT PALETTE (Warm Amber) ───────────────────────── */
   --m-accent-50:  #FFFBEB;
@@ -62,7 +70,9 @@
   --m-success:      #15803D;
   --m-success-bg:   #F0FDF4;
   --m-success-text: #14532D;
-  --m-warning:      #EA580C;
+  /* orange-700, not 600: this token is used as TEXT on white in several places
+     ("None", counts), where orange-600 sits at 3.56:1. */
+  --m-warning:      #C2410C;
   --m-warning-bg:   #FFF7ED;
   --m-warning-text: #9A3412;
   --m-error:        #DC2626;
@@ -80,7 +90,7 @@
   --m-border-subtle:  var(--m-neutral-100);
   --m-text:           var(--m-neutral-800);
   --m-text-secondary: var(--m-neutral-600);
-  --m-text-tertiary:  var(--m-neutral-500);
+  --m-text-tertiary:  var(--m-neutral-550);
   --m-primary:        var(--m-primary-600);
   --m-primary-hover:  var(--m-primary-700);
   --m-primary-subtle: var(--m-primary-50);
@@ -92,8 +102,8 @@
   --health-a:    #15803D;  --health-a-bg: #F0FDF4;  /* Emerald — Meridian success */
   --health-b:    #4F46E5;  --health-b-bg: #EEF2FF;  /* Indigo  — Meridian primary */
   --health-c:    #B45309;  --health-c-bg: #FFFBEB;  /* Amber   — Meridian accent  */
-  --health-d:    #EA580C;  --health-d-bg: #FFF7ED;  /* Orange  — Meridian warning */
-  --health-f:    #DC2626;  --health-f-bg: #FEF2F2;  /* Red     — Meridian error   */
+  --health-d:    #C2410C;  --health-d-bg: #FFF7ED;  /* Orange  — Meridian warning */
+  --health-f:    #B91C1C;  --health-f-bg: #FEF2F2;  /* Red-700 — clears AA on its own bg tint */
 
   /* ─── FABRIC-LENS EXTENSIONS: Status ────────────────────── */
   --status-active:       #15803D;  --status-active-bg:   #F0FDF4;
@@ -147,6 +157,11 @@
   --m-transition-slow:  300ms ease;
   --m-transition-enter: 250ms ease-out;
   --m-transition-exit:  150ms ease-in;
+
+  /* ─── MOTION (entrance/hero animations) ──────────────────── */
+  --m-motion-hero-duration: 400ms;
+  --m-motion-hero-ease: cubic-bezier(0.16, 1, 0.3, 1); /* ease-out, no overshoot */
+  --m-motion-stagger-step: 40ms; /* per-item delay, e.g. health-grid tiles */
 
   /* ─── Z-INDEX SCALE ──────────────────────────────────────── */
   --m-z-base:     0;
@@ -219,7 +234,11 @@
   --m-text-tertiary:  var(--m-neutral-500);
   --m-primary:        var(--m-primary-400);
   --m-primary-hover:  var(--m-primary-300);
-  --m-primary-subtle: var(--m-primary-900);
+  /* 950, not 900: --m-primary (400) on 900 lands at 4.07:1, under AA for the
+     small uppercase labels that use this pair (SKU badges, role chips). */
+  --m-primary-subtle: var(--m-primary-950);
+  --m-secondary:       #22D3EE;  /* cyan-400: high contrast on #0D0F12 */
+  --m-gradient-brand:  linear-gradient(90deg, #60A5FA, #22D3EE);
   --m-accent:         var(--m-accent-400);
   --m-accent-vivid:   var(--m-accent-300);
   --m-accent-subtle:  var(--m-accent-900);
@@ -312,6 +331,67 @@
   border-radius: var(--m-radius-sm);
 }
 
+/* ── Display Typography ── */
+
+.m-display {
+  font-family: var(--m-font-primary);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.04;
+}
+
+.m-display-hero {
+  font-size: clamp(2.25rem, 5vw, 3.5rem); /* 36px to 56px */
+}
+
+/* Brand gradient on text. Reserved for "moments": wordmark, hero accent,
+   primary CTA. Never on dense surfaces. */
+.m-gradient-text {
+  background: var(--m-gradient-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Pill CTAs. `.m-cta` is the gradient primary (one per view, the conversion
+   action); `.m-cta-ghost` is the bordered companion. Sized to clear the 44px
+   touch target at the default font size. */
+.m-cta,
+.m-cta-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: opacity 120ms ease, background-color 120ms ease;
+}
+
+.m-cta {
+  background-image: var(--m-gradient-brand);
+  color: #ffffff;
+}
+
+.m-cta:hover {
+  opacity: 0.9;
+}
+
+/* The dark gradient runs light (primary-400 to cyan-400), so the label flips to
+   the dark base to keep AA. White on that gradient sits near 2.4:1. */
+.dark .m-cta {
+  color: var(--m-neutral-950);
+}
+
+.m-cta-ghost {
+  border: 1px solid var(--m-border);
+  color: var(--m-text);
+}
+
+.m-cta-ghost:hover {
+  background-color: var(--m-surface-hover);
+}
+
 /* ── Accessibility ── */
 
 :focus-visible {
@@ -324,6 +404,10 @@
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+    /* Delays too: a staggered entrance with `both` fill would otherwise hold
+       content at opacity 0 for the length of its delay before snapping in. */
+    animation-delay: 0s !important;
+    transition-delay: 0s !important;
   }
 }
 
@@ -355,6 +439,25 @@
 
 .animate-skeleton {
   animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes m-enter-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.m-enter-up {
+  animation: m-enter-up var(--m-motion-hero-duration) var(--m-motion-hero-ease) both;
+}
+
+@keyframes m-tile-in {
+  from { opacity: 0; transform: scale(0.85); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Health-grid tiles. The per-tile delay is set inline from the item index. */
+.m-tile-in {
+  animation: m-tile-in 200ms var(--m-motion-hero-ease) both;
 }
 
 /* ── Print styles (Report page) ─────────────────────────────────────── */
