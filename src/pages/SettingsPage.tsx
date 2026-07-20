@@ -21,6 +21,7 @@ import {
   HEALTH_SCORE_MAX,
   APP_VERSION,
   GRAPH_SCOPES,
+  GITHUB_URL,
 } from '@/utils/constants';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
@@ -422,7 +423,7 @@ function AboutSection() {
             About &amp; Docs
           </a>
           <a
-            href="https://github.com/psistla/fabric-lens"
+            href={GITHUB_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1 text-sm text-[var(--m-primary)]"

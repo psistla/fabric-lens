@@ -365,3 +365,11 @@ export const BENCHMARK_HEALTH_SCORE = 78;
 
 /** Synthetic median security posture score. Label as "typical" — never "industry average". */
 export const BENCHMARK_SECURITY_SCORE = 72;
+
+// -- External links --
+
+/** Public repository. Single source of truth for every GitHub link in the UI. */
+export const GITHUB_URL = 'https://github.com/psistla/fabric-lens';
+
+/** Issue tracker, used by the About page support links. */
+export const GITHUB_ISSUES_URL = `${GITHUB_URL}/issues`;

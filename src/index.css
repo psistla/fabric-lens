@@ -335,6 +335,15 @@
   font-size: clamp(2.25rem, 5vw, 3.5rem); /* 36px to 56px */
 }
 
+/* Brand gradient on text. Reserved for "moments": wordmark, hero accent,
+   primary CTA. Never on dense surfaces. */
+.m-gradient-text {
+  background: var(--m-gradient-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
 /* ── Accessibility ── */
 
 :focus-visible {

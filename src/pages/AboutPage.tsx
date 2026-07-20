@@ -1,5 +1,5 @@
-import { Link } from 'react-router';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
+import { GITHUB_URL, GITHUB_ISSUES_URL } from '@/utils/constants';
 import {
   ShieldCheck,
   LayoutDashboard,
@@ -58,30 +58,10 @@ const toc = [
 
 export function AboutPage() {
   useDocumentTitle('About');
+  // Page chrome (nav, footer, background) comes from MarketingShell.
   return (
-    <div className="min-h-screen bg-[var(--m-bg)] text-[var(--m-text)]">
-      {/* Top bar */}
-      <header className="sticky top-0 z-10 border-b border-[var(--m-border)] bg-[var(--m-bg)]/90 backdrop-blur">
-        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--m-primary)] text-xs font-bold text-white">
-              F
-            </div>
-            <span className="text-sm font-semibold text-[var(--m-text)]">fabric-lens</span>
-            <span className="text-[var(--m-text-tertiary)]">/</span>
-            <span className="text-sm text-[var(--m-text-secondary)]">About</span>
-          </div>
-          <Link
-            to="/dashboard"
-            className="flex items-center gap-1.5 rounded-lg bg-[var(--m-primary)] px-3 py-1.5 text-sm font-medium text-white transition-opacity hover:opacity-90"
-          >
-            Open dashboard
-          </Link>
-        </div>
-      </header>
-
-      <div className="mx-auto max-w-6xl px-6 py-12">
-        <div className="flex gap-12">
+    <div className="mx-auto max-w-6xl px-6 py-12">
+      <div className="flex gap-12">
           {/* Table of contents (sticky sidebar) */}
           <aside className="hidden w-52 shrink-0 lg:block">
             <div className="sticky top-24">
@@ -373,7 +353,7 @@ export function AboutPage() {
                   {
                     icon: GitFork,
                     label: 'GitHub repository',
-                    href: 'https://github.com/psistla/fabric-lens',
+                    href: GITHUB_URL,
                   },
                   {
                     icon: ExternalLink,
@@ -383,7 +363,7 @@ export function AboutPage() {
                   {
                     icon: ExternalLink,
                     label: 'Report an issue',
-                    href: 'https://github.com/psistla/fabric-lens/issues',
+                    href: GITHUB_ISSUES_URL,
                   },
                 ].map(({ icon: Icon, label, href }) => (
                   <a
@@ -401,7 +381,6 @@ export function AboutPage() {
             </Section>
           </main>
         </div>
-      </div>
     </div>
   );
 }
