@@ -4,17 +4,19 @@
 
 Fabric Lens is a standalone React SPA that connects directly to Microsoft Fabric REST APIs via MSAL.js authentication. No backend required; everything runs in your browser. Ships with a fully functional **demo mode** so you can explore immediately without an Azure tenant.
 
-[![MIT License](https://img.shields.io/badge/license-MIT-4F46E5.svg)](LICENSE)
-[![TypeScript](https://img.shields.io/badge/TypeScript-strict-4F46E5.svg)](tsconfig.app.json)
-[![React](https://img.shields.io/badge/React-19-4F46E5.svg)](package.json)
-[![Live Demo](https://img.shields.io/badge/demo-live-4F46E5.svg)](https://fabric-lens.com)
-[![Security Policy](https://img.shields.io/badge/security-policy-4F46E5.svg)](SECURITY.md)
+[![MIT License](https://img.shields.io/badge/license-MIT-2563EB.svg)](LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-strict-2563EB.svg)](tsconfig.app.json)
+[![React](https://img.shields.io/badge/React-19-2563EB.svg)](package.json)
+[![Live Demo](https://img.shields.io/badge/demo-live-2563EB.svg)](https://fabric-lens.com)
+[![Security Policy](https://img.shields.io/badge/security-policy-2563EB.svg)](SECURITY.md)
 
 > **[Try the live demo](https://fabric-lens.com)** · Explore with sample data in your browser, no setup required.
 
 ---
 
 ## Screenshots
+
+![Landing page](docs/screenshots/landing.png)
 
 | Dashboard | Workspaces |
 |-----------|------------|
@@ -37,11 +39,11 @@ Fabric Lens is a standalone React SPA that connects directly to Microsoft Fabric
 
 | Feature | Description |
 |---------|-------------|
-| **Dashboard** | Tenant-wide overview with workspace/item/capacity stats, artifact distribution charts, governance issues, average health score, and the **Health Grid**: a dense color-coded tile map showing every workspace's health grade at a glance, sorted best to worst |
+| **Dashboard** | Answer-first layout: tenant health score, then the **Health Grid** (a dense color-coded tile map of every workspace's grade, worst first), then governance issues and a security summary. Distribution charts sit behind a fold |
 | **Workspace Explorer** | Browse, search, and drill into every workspace. Toggle between all workspaces and **My workspaces** to filter by your role assignments. View items, health grades, capacity assignments, OneLake endpoints, and Git status |
 | **Health Scoring** | Automated 100-point governance assessment per workspace across 9 checks: description, capacity, domain, Git, naming, active items, data layer, item count, and tag coverage |
 | **Capacity Monitor** | Track SKUs, regions, and states with tier-based badges. Cost calculator with **live Azure pricing** from the Azure Retail Prices API |
-| **Security Audit** | Cross-workspace role mapping with search, role filter chips, sortable columns, and pagination. **My workspaces** toggle narrows the pivot table to your own assignments. Flags over-permissioned users (Admin on 5+ workspaces). Expands Azure AD group memberships via Microsoft Graph (optional) |
+| **Security Audit** | Posture score and top findings lead, then four drill-in areas: Access, Sharing, Settings, Lifecycle. The full principal/workspace directory (search, role filter chips, sortable columns, pagination, **My workspaces** toggle) sits one level down. Flags over-permissioned users and expands Azure AD group memberships via Microsoft Graph (optional) |
 | **Tenant Settings Risk** | Surfaces enabled high-risk tenant-level settings (PublishToWeb, external sharing, etc.) with risk level badges. Requires Fabric Admin role |
 | **Widely Shared Objects** | Identifies org-wide shared artifacts: reports and semantic models accessible to the entire organization via shareable links |
 | **Inactive Workspace Detection** | Flags workspaces with no recorded activity in the past 7 days using the Power BI Activity Log API. Day-by-day API calls respect the same-day constraint |
@@ -51,7 +53,7 @@ Fabric Lens is a standalone React SPA that connects directly to Microsoft Fabric
 | **Multi-tenant** | Works with any Azure AD tenant. Sign in with your organization account; no per-tenant app registration required when using the hosted version |
 | **CSV Export** | Export workspace inventories and security audit data for offline analysis |
 | **Dark Mode** | Deep dark base (`#0D0F12`) with full semantic token support. Not pure black; creates depth without blue-navy tint |
-| **Demo Mode** | Realistic mock data (3 capacities, 35 workspaces, 200+ items across all 19 item types, 8 users, 4 groups) with no Azure credentials needed |
+| **Demo Mode** | Realistic mock data (3 capacities, 35 workspaces, 200+ items, 8 users, 4 groups) with no Azure credentials needed |
 
 ---
 
@@ -171,7 +173,7 @@ flowchart TB
     FC --> ARM["ARM API\nCapacity management"]
     FC --> Prices["Azure Retail Prices\npublic · no auth\n1 hr TTL cache"]
 
-    style Browser fill:#1a1b2e,stroke:#4F46E5,stroke-width:2px,color:#e2e8f0
+    style Browser fill:#1a1b2e,stroke:#2563EB,stroke-width:2px,color:#e2e8f0
     style Router fill:#312e81,stroke:#818cf8,color:#e2e8f0
     style Stores fill:#312e81,stroke:#818cf8,color:#e2e8f0
     style MSAL fill:#3730a3,stroke:#818cf8,color:#e2e8f0
@@ -222,21 +224,25 @@ src/
   store/          Zustand stores (workspace, capacity, security, ui,
                   tenantSettings, widelyShared, activity, domain)
   components/
-    layout/       AppShell, Sidebar, Header (demo-mode-aware)
+    layout/       AppShell (authenticated), MarketingShell (public), Sidebar, Header
+    marketing/    LandingPage, MarketingNav, MarketingFooter
     dashboard/    GovernanceIssuesPanel, HealthGrid, ScoreRing, SecurityQuickView
     workspace/    GovernanceIssues, HealthBadge, HealthDetail
-    shared/       DataTable, StatCard, SearchBar, EmptyState, ExportButton, ItemTypeBadge, ...
+    shared/       DataTable, StatCard, SearchBar, EmptyState, ExportButton, ItemTypeBadge,
+                  CollapsibleSection, ...
     charts/       ItemsByTypeChart, WorkspacesByCapacityChart
-    security/     AccessConcentrationChart, EffectiveAccessCard, SecurityFindingsPanel,
+    security/     SecurityAreaSection, AccessConcentrationChart, EffectiveAccessCard,
+                  SecurityFindingsPanel,
                   TenantSettingsRiskPanel, WidelySharedPanel, DomainGovernancePanel,
                   GhostWorkspacesPanel, ...
     report/       ReportCover, ExecutiveSummarySection, HealthSection, SecuritySection,
                   TenantSettingsSection, WidelySharedSection, GhostWorkspacesSection,
                   RecommendationsSection
   pages/          Dashboard, Workspaces, WorkspaceDetail, Capacity, Security, Settings,
-                  Report, About (public, no auth guard)
+                  Report, About (public, no auth guard). The landing page at `/` lives
+                  in components/marketing/
   utils/          healthScore, export (CSV), constants (single source of truth),
-                  ghostWorkspaces, tenantSettingRisks, domainGovernance,
+                  securityAreas, ghostWorkspaces, tenantSettingRisks, domainGovernance,
                   reportData, reportSummary
 ```
 
@@ -307,7 +313,7 @@ MIT. Use it, fork it, ship it.
 
 **Prasanth Sistla** · Senior Architect Consultant
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-prasanthsistla-4F46E5?logo=linkedin)](https://www.linkedin.com/in/prasanthsistla/)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-prasanthsistla-2563EB?logo=linkedin)](https://www.linkedin.com/in/prasanthsistla/)
 
 ---
 
