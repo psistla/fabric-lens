@@ -404,7 +404,7 @@ export const mockWorkspaces: Workspace[] = [
   {
     id: 'ws-32',
     displayName: 'Field Operations',
-    description: 'Field service data — migration to Operations Excellence in progress',
+    description: 'Field service data; migration to Operations Excellence in progress',
     type: 'Workspace',
     state: 'Active',
     capacityId: 'cap-2',
@@ -413,7 +413,7 @@ export const mockWorkspaces: Workspace[] = [
   {
     id: 'ws-33',
     displayName: 'Partner Analytics',
-    description: 'Partner portal data — governance handoff pending',
+    description: 'Partner portal data; governance handoff pending',
     type: 'Workspace',
     state: 'Active',
     capacityId: 'cap-3',

@@ -137,7 +137,7 @@ export function deriveSecurityFindings(
     findings.push({
       id: 'unresolved-admin-groups',
       severity: 'warning',
-      title: `${unresolvedAdminGroups.length} group${unresolvedAdminGroups.length > 1 ? 's' : ''} with Admin role — membership unknown`,
+      title: `${unresolvedAdminGroups.length} group${unresolvedAdminGroups.length > 1 ? 's' : ''} with Admin role, membership unknown`,
       detail: 'Expand these groups to verify who has effective admin access. Unknown group membership is an audit gap.',
       affectedItems: unresolvedAdminGroups.map((u) => ({
         label: u.displayName,
@@ -305,7 +305,7 @@ export function computeSecurityPosture(
     label: 'Admin assignment ratio',
     earned: ratioHealthy ? 10 : 0,
     max: 10,
-    status: `${Math.round(adminPct)}% of assignments are Admin${ratioHealthy ? ' (healthy)' : ` — target <${ADMIN_ASSIGNMENT_PCT_THRESHOLD}%`}`,
+    status: `${Math.round(adminPct)}% of assignments are Admin${ratioHealthy ? ' (healthy)' : `, target <${ADMIN_ASSIGNMENT_PCT_THRESHOLD}%`}`,
   });
 
   // 6. No admin-less workspaces (10 pts) — binary

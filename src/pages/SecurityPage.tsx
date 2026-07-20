@@ -179,7 +179,7 @@ function AdminRequiredCard() {
           <li>5. Sign out of fabric-lens, then sign back in</li>
         </ol>
         <p className="mt-3 text-[11px] text-[var(--m-text-tertiary)]">
-          Already have the role? A page refresh is not enough — sign out and sign back
+          Already have the role? A page refresh is not enough; sign out and sign back
           in to get a fresh token that reflects your current role assignment.
         </p>
       </div>

@@ -166,7 +166,7 @@ export class FabricClient {
     if (isEffectiveDemoMode()) {
       throw new Error(
         'fabricClient: API call attempted in demo mode. ' +
-        'This is a bug — demo mode should use mock data exclusively.',
+        'This is a bug. Demo mode should use mock data exclusively.',
       );
     }
     return this.request<T>('GET', path, undefined, 0, scopes);
@@ -176,7 +176,7 @@ export class FabricClient {
     if (isEffectiveDemoMode()) {
       throw new Error(
         'fabricClient: API call attempted in demo mode. ' +
-        'This is a bug — demo mode should use mock data exclusively.',
+        'This is a bug. Demo mode should use mock data exclusively.',
       );
     }
     return this.request<T>('POST', path, body, 0, scopes);
@@ -194,7 +194,7 @@ export class FabricClient {
         // The API returned an unexpected response shape. Log in dev so we can
         // diagnose, then bail out with what we have rather than crashing.
         if (import.meta.env.DEV) {
-          console.warn('[FabricClient] listAll: unexpected response — no "value" array', path, response);
+          console.warn('[FabricClient] listAll: unexpected response, no "value" array', path, response);
         }
         break;
       }

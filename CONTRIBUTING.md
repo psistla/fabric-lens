@@ -255,17 +255,17 @@ const StatCard: React.FC<Props> = ({ title, count }) => { ... };
 ### Styling
 
 - Use **Tailwind CSS utility classes**. Avoid writing custom CSS unless absolutely necessary.
-- Use the **`--m-*` semantic token system** for all colors — never raw hex values or `gray-*` / `slate-*` scales in components. Tokens automatically resolve for both light and dark mode.
+- Use the **`--m-*` semantic token system** for all colors. Never raw hex values or `gray-*` / `slate-*` scales in components. Tokens automatically resolve for both light and dark mode.
 - Use **Radix UI primitives** with **class-variance-authority** and **tailwind-merge** for all interactive elements (buttons, dialogs, dropdowns, etc.).
-- Use `.m-skeleton` for loading skeletons — **never** `animate-pulse`.
+- Use `.m-skeleton` for loading skeletons, **never** `animate-pulse`.
 
 ```tsx
-// Correct — semantic tokens, automatic dark mode
+// Correct: semantic tokens, automatic dark mode
 <div className="bg-[var(--m-bg)] text-[var(--m-text)]">
   <p className="text-[var(--m-text-secondary)]">Subtitle</p>
 </div>
 
-// Incorrect — raw color scales, manual dark: variants
+// Incorrect: raw color scales, manual dark: variants
 <div className="bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100">
   <p className="text-gray-500 dark:text-gray-400">Subtitle</p>
 </div>
