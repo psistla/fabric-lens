@@ -120,17 +120,23 @@ export function LandingPage() {
     <main>
       {/* Hero */}
       <section className="mx-auto max-w-6xl px-6 pt-20 pb-16 sm:pt-28">
-        <h1 className="m-display m-display-hero max-w-3xl">
+        <h1 className="m-display m-display-hero m-enter-up max-w-3xl">
           Know what your Fabric tenant is{' '}
           <span className="m-gradient-text">actually doing</span>
         </h1>
-        <p className="mt-6 max-w-2xl text-lg leading-relaxed text-[var(--m-text-secondary)]">
+        <p
+          className="m-enter-up mt-6 max-w-2xl text-lg leading-relaxed text-[var(--m-text-secondary)]"
+          style={{ animationDelay: '80ms' }}
+        >
           Governance, security posture, and health intelligence for Microsoft
           Fabric. It runs entirely in your browser against the Fabric REST APIs,
           so tenant data never passes through anyone else's servers.
         </p>
 
-        <div className="mt-10 flex flex-wrap items-center gap-4">
+        <div
+          className="m-enter-up mt-10 flex flex-wrap items-center gap-4"
+          style={{ animationDelay: '160ms' }}
+        >
           <Link
             to="/dashboard"
             className="m-cta"

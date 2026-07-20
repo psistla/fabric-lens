@@ -4,6 +4,8 @@ import {
   HEALTH_GRID_GAP,
   HEALTH_GRID_MAX_TILES,
   HEALTH_GRID_HOVER_SCALE,
+  HEALTH_GRID_STAGGER_STEP_MS,
+  HEALTH_GRID_STAGGER_MAX_MS,
 } from '@/utils/constants';
 
 // Grade ordering: worst → best
@@ -302,15 +304,20 @@ export function HealthGrid({ workspaces, onWorkspaceClick }: HealthGridProps) {
               gap: `${HEALTH_GRID_GAP}px`,
             }}
           >
-            {tiles.map((entry) => (
+            {tiles.map((entry, i) => (
               <button
                 key={entry.id}
+                className="m-tile-in"
                 onClick={() => onWorkspaceClick?.(entry.id)}
                 onMouseMove={(e) => handleMouseMove(e, entry)}
                 onMouseEnter={handleTileEnter}
                 onMouseLeave={handleTileOut}
                 aria-label={`${entry.name} — Grade ${entry.grade}, ${entry.score}%`}
                 style={{
+                  animationDelay: `${Math.min(
+                    i * HEALTH_GRID_STAGGER_STEP_MS,
+                    HEALTH_GRID_STAGGER_MAX_MS,
+                  )}ms`,
                   width: HEALTH_GRID_TILE_SIZE,
                   height: HEALTH_GRID_TILE_SIZE,
                   borderRadius: 6,

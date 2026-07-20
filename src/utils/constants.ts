@@ -322,6 +322,12 @@ export const HEALTH_GRID_MAX_TILES = 100;
 /** Scale factor applied to a tile on hover. */
 export const HEALTH_GRID_HOVER_SCALE = 1.15;
 
+/** Per-tile entrance delay (ms), mirroring `--m-motion-stagger-step` in CSS. */
+export const HEALTH_GRID_STAGGER_STEP_MS = 20;
+
+/** Ceiling on the stagger so a 100-tile grid still finishes settling quickly. */
+export const HEALTH_GRID_STAGGER_MAX_MS = 400;
+
 // -- App metadata --
 
 /** Application version (mirrors package.json). */
