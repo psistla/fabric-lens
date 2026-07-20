@@ -1,4 +1,5 @@
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
+import { usePageMeta } from '@/hooks/usePageMeta';
 import { GITHUB_URL, GITHUB_ISSUES_URL } from '@/utils/constants';
 import {
   ShieldCheck,
@@ -58,6 +59,12 @@ const toc = [
 
 export function AboutPage() {
   useDocumentTitle('About');
+  usePageMeta({
+    path: '/about',
+    title: 'About fabric-lens | How health scoring and the security audit work',
+    description:
+      'How fabric-lens scores workspace health, what the security audit checks, which Fabric REST APIs it calls, and why it runs entirely in your browser with no backend.',
+  });
   // Page chrome (nav, footer, background) comes from MarketingShell.
   return (
     <div className="mx-auto max-w-6xl px-6 py-12">
