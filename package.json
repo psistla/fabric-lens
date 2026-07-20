@@ -15,6 +15,7 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
+    "screenshots": "node scripts/screenshots.mjs",
     "verify": "npm run lint && npm run build && npm run test:coverage && npm run test:e2e"
   },
   "dependencies": {
