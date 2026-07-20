@@ -16,21 +16,13 @@ dist-ssr
 *.swp
 *.swo
 
-# Claude Code
-.claude/
+# Local workspace, not part of the project
+/.local/
 CLAUDE.md
+.claude/
 .superpowers/
-
-# Understand Anything knowledge graph (generated output)
 .understand-anything/
-
-# Git worktrees
 .worktrees/
-DESIGN_GUIDE.md
-
-# Meridian design system reference files (local only — copy from your design system repo)
-meridian-tokens.css
-meridian-prompt-stem.md
 
 # OS
 .DS_Store
@@ -42,20 +34,6 @@ npm-debug.log*
 
 # TypeScript
 *.tsbuildinfo
-
-# Audit reports
-SECURITY_AUDIT.md
-
-# Local planning docs
-SECURITY_PAGE_PLAN.md
-STRATEGY.md
-TASKS*.md
-NEXT.md
-AUTONOMY.md
-docs/superpowers/
-
-# Local dev scripts
-scripts/
 
 # Playwright
 /test-results/
