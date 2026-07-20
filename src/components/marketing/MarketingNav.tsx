@@ -1,6 +1,8 @@
 import { Link } from 'react-router';
+import { Sun, Moon } from 'lucide-react';
 import { useAuth } from '@/auth/useAuth';
 import { useToastStore } from '@/components/shared/Toast';
+import { useUiStore } from '@/store/uiStore';
 import { GITHUB_URL } from '@/utils/constants';
 
 /**
@@ -11,6 +13,8 @@ import { GITHUB_URL } from '@/utils/constants';
 export function MarketingNav() {
   const { isAuthenticated, login } = useAuth();
   const addToast = useToastStore((s) => s.addToast);
+  const theme = useUiStore((s) => s.theme);
+  const setTheme = useUiStore((s) => s.setTheme);
 
   return (
     <header className="sticky top-0 z-40 border-b border-[var(--m-border)] bg-[var(--m-bg)]/90 backdrop-blur">
@@ -34,6 +38,19 @@ export function MarketingNav() {
           >
             GitHub
           </a>
+
+          <button
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            className="rounded-lg p-2 text-[var(--m-text-tertiary)] transition-colors duration-[120ms] hover:bg-[var(--m-surface-hover)] hover:text-[var(--m-text-secondary)]"
+          >
+            {theme === 'dark' ? (
+              <Sun className="h-4 w-4" />
+            ) : (
+              <Moon className="h-4 w-4" />
+            )}
+          </button>
 
           {isAuthenticated ? (
             <Link
