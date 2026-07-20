@@ -209,7 +209,7 @@ export const HEALTH_GRADE_COLORS = {
   A: '#15803D',
   B: '#4F46E5',
   C: '#B45309',
-  D: '#EA580C',
+  D: '#C2410C',
   F: '#DC2626',
 } as const;
 

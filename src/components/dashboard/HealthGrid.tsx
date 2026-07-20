@@ -17,7 +17,7 @@ const GRADE_PRIMARY: Record<Grade, string> = {
   A: '#15803D',
   B: '#4F46E5',
   C: '#B45309',
-  D: '#EA580C',
+  D: '#C2410C',
   F: '#DC2626',
 };
 

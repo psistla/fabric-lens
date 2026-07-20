@@ -279,7 +279,7 @@ export function AboutPage() {
                   { grade: 'A', label: '≥ 90%', color: 'bg-[#15803D] text-white' },
                   { grade: 'B', label: '≥ 80%', color: 'bg-[#4F46E5] text-white' },
                   { grade: 'C', label: '≥ 65%', color: 'bg-[#B45309] text-white' },
-                  { grade: 'D', label: '≥ 50%', color: 'bg-[#EA580C] text-white' },
+                  { grade: 'D', label: '≥ 50%', color: 'bg-[#C2410C] text-white' },
                   { grade: 'F', label: '< 50%', color: 'bg-[#DC2626] text-white' },
                 ].map(({ grade, label, color }) => (
                   <div key={grade} className="flex items-center gap-2">
