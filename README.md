@@ -1,108 +1,124 @@
-# Fabric Lens
+# fabric-lens
 
-**Open-source tenant governance & health intelligence for Microsoft Fabric.**
+**Governance, security posture, and health intelligence for Microsoft Fabric. Runs entirely in your browser.**
 
-Fabric Lens is a standalone React SPA that connects directly to Microsoft Fabric REST APIs via MSAL.js authentication. No backend required; everything runs in your browser. Ships with a fully functional **demo mode** so you can explore immediately without an Azure tenant.
+[![Try the live demo](https://img.shields.io/badge/Try%20the%20live%20demo-2563EB?style=for-the-badge)](https://fabric-lens.com)
 
-[![MIT License](https://img.shields.io/badge/license-MIT-2563EB.svg)](LICENSE)
-[![TypeScript](https://img.shields.io/badge/TypeScript-strict-2563EB.svg)](tsconfig.app.json)
-[![React](https://img.shields.io/badge/React-19-2563EB.svg)](package.json)
-[![Live Demo](https://img.shields.io/badge/demo-live-2563EB.svg)](https://fabric-lens.com)
-[![Security Policy](https://img.shields.io/badge/security-policy-2563EB.svg)](SECURITY.md)
+[![No backend](https://img.shields.io/badge/no%20backend-67707A?style=for-the-badge)](#your-tenant-data-never-leaves-your-browser)
+[![No database](https://img.shields.io/badge/no%20database-67707A?style=for-the-badge)](#your-tenant-data-never-leaves-your-browser)
+[![No telemetry](https://img.shields.io/badge/no%20telemetry-67707A?style=for-the-badge)](SECURITY.md)
+[![MIT](https://img.shields.io/badge/MIT-2563EB?style=for-the-badge)](LICENSE)
 
-> **[Try the live demo](https://fabric-lens.com)** · Explore with sample data in your browser, no setup required.
+Point it at your tenant and it tells you which workspaces are ungoverned, who has more access than
+they should, what your capacities cost, and which settings are quietly exposing data to the whole
+organization.
+
+Nothing to deploy. No capacity to provision. No pipeline to schedule. Sign in and you have answers
+in about a minute, or **[try the live demo](https://fabric-lens.com)** with sample data and no
+sign-in at all.
+
+![fabric-lens landing page](docs/screenshots/landing.png)
 
 ---
 
-## Screenshots
+## Your tenant data never leaves your browser
 
-![Landing page](docs/screenshots/landing.png)
+This is the first question a governance tool should answer, so: fabric-lens is a static single-page
+app with **no backend**. It calls the Microsoft Fabric REST APIs directly from your browser using
+delegated permissions, over your own session. There is no server to send results to, because there
+is no server.
 
-| Dashboard | Workspaces |
-|-----------|------------|
-| ![Dashboard](docs/screenshots/dashboard.png) | ![Workspaces](docs/screenshots/workspaces.png) |
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/architecture-dark.png">
+  <img alt="You sign in with Entra ID; fabric-lens runs in your browser and calls the Fabric, Admin, ARM, and Azure Retail Prices APIs directly over read-only HTTPS. No server, no database, no telemetry sits in between." src="docs/architecture-light.png">
+</picture>
 
-| Capacity Monitor | Security Audit |
-|-----------------|----------------|
-| ![Capacity](docs/screenshots/capacity.png) | ![Security](docs/screenshots/security.png) |
+- **Read-only.** Every Fabric and Graph scope is a `*.Read.All` delegated permission, and the app
+  issues no writes. The one exception in naming is Azure Service Management, where `user_impersonation`
+  is the only delegated scope Azure offers; it is used solely for capacity read calls.
+- **Nothing stored.** Tenant data lives in memory for the session and is never persisted or sent
+  anywhere. The only things written to browser storage are your theme preference and the MSAL token
+  cache, which uses `sessionStorage` so tokens die with the tab.
+- **You see only what you can already see.** Delegated permissions mean the app inherits your
+  access, not more.
+- **Auditable.** The whole thing is MIT-licensed and in this repo. Read it, fork it, self-host it.
+
+Details in [SECURITY.md](SECURITY.md).
+
+---
+
+## What it shows you
+
+| | |
+|--|--|
+| **Tenant health at a glance** | A single tenant score, then the Health Grid: a dense tile map of every workspace's grade, worst first. Governance issues and a security summary follow; distribution charts sit behind a fold |
+| **Workspace health scoring** | Every workspace scored across 9 governance checks (description, capacity, domain, workspace identity, naming, active items, data layer, item count, tag coverage) and graded A to F. [How scoring works](https://fabric-lens.com/about) |
+| **Security posture** | A posture score and top findings lead, then drill-in areas for Access, Sharing, Settings, and Lifecycle. Flags over-permissioned users and expands Entra ID group membership via Microsoft Graph (opt-in) |
+| **Exposure detection** | Widely shared reports and semantic models reachable by the entire organization, high-risk tenant settings (PublishToWeb, external sharing), and org-wide sharing that bypasses domain boundaries |
+| **Ghost workspaces** | Workspaces with no recorded activity, detected through the Power BI Activity Log |
+| **Capacity and cost** | SKUs, regions, and states with a cost calculator driven by **live Azure retail pricing**, not hardcoded rates |
+| **Item inventory** | 51 recognized Fabric item types across every workload, including the newest GA additions (Data Agents, Eventhouse, Digital Twin Builder). Unknown types flow through rather than breaking |
+| **Governance report** | A printable multi-section report: executive summary, health distribution, security findings, tenant settings, exposure, inactive workspaces, and prioritized recommendations |
+| **CSV export** | Workspace inventories and security audit data, for whatever you do next with them |
+
+Dark mode throughout. Demo mode with a realistic 35-workspace tenant, so you can evaluate the whole
+thing before asking anyone for consent.
+
+| Dashboard | Security audit |
+|-----------|----------------|
+| ![Dashboard](docs/screenshots/dashboard.png) | ![Security audit](docs/screenshots/security.png) |
+
+| Workspaces | Capacity monitor |
+|------------|------------------|
+| ![Workspaces](docs/screenshots/workspaces.png) | ![Capacity monitor](docs/screenshots/capacity.png) |
 
 <details>
-<summary>Dark Mode</summary>
+<summary>Dark mode</summary>
 
-![Dashboard Dark Mode](docs/screenshots/dashboard-dark.png)
+![Dashboard in dark mode](docs/screenshots/dashboard-dark.png)
 
 </details>
 
 ---
 
-## Features
+## Get started
 
-| Feature | Description |
-|---------|-------------|
-| **Dashboard** | Answer-first layout: tenant health score, then the **Health Grid** (a dense color-coded tile map of every workspace's grade, worst first), then governance issues and a security summary. Distribution charts sit behind a fold |
-| **Workspace Explorer** | Browse, search, and drill into every workspace. Toggle between all workspaces and **My workspaces** to filter by your role assignments. View items, health grades, capacity assignments, OneLake endpoints, and Git status |
-| **Health Scoring** | Automated 100-point governance assessment per workspace across 9 checks: description, capacity, domain, Git, naming, active items, data layer, item count, and tag coverage |
-| **Capacity Monitor** | Track SKUs, regions, and states with tier-based badges. Cost calculator with **live Azure pricing** from the Azure Retail Prices API |
-| **Security Audit** | Posture score and top findings lead, then four drill-in areas: Access, Sharing, Settings, Lifecycle. The full principal/workspace directory (search, role filter chips, sortable columns, pagination, **My workspaces** toggle) sits one level down. Flags over-permissioned users and expands Azure AD group memberships via Microsoft Graph (optional) |
-| **Tenant Settings Risk** | Surfaces enabled high-risk tenant-level settings (PublishToWeb, external sharing, etc.) with risk level badges. Requires Fabric Admin role |
-| **Widely Shared Objects** | Identifies org-wide shared artifacts: reports and semantic models accessible to the entire organization via shareable links |
-| **Inactive Workspace Detection** | Flags workspaces with no recorded activity in the past 7 days using the Power BI Activity Log API. Day-by-day API calls respect the same-day constraint |
-| **Domain Governance** | Shows workspaces-per-domain distribution, flags unassigned workspaces, and highlights org-wide sharing that bypasses domain access boundaries |
-| **Governance Report** | Printable multi-section report with executive summary, health distribution, security findings, tenant settings, widely shared objects, inactive workspaces, and top recommendations |
-| **Incremental Consent** | Core API scopes are acquired at sign-in. Admin API (`Tenant.Read.All`) and Graph API (`GroupMember.Read.All`) scopes are requested on-demand the first time you use those features, so users are never prompted for permissions they don't need |
-| **Multi-tenant** | Works with any Azure AD tenant. Sign in with your organization account; no per-tenant app registration required when using the hosted version |
-| **CSV Export** | Export workspace inventories and security audit data for offline analysis |
-| **Dark Mode** | Deep dark base (`#0D0F12`) with full semantic token support. Not pure black; creates depth without blue-navy tint |
-| **Demo Mode** | Realistic mock data (3 capacities, 35 workspaces, 200+ items, 8 users, 4 groups) with no Azure credentials needed |
+### Use the hosted version
 
----
+1. Go to [fabric-lens.com](https://fabric-lens.com)
+2. Click **Sign in with Microsoft** and authenticate with your work account
+3. Approve the one-time consent prompt (your tenant admin may need to grant it)
 
-## Getting Started
+That's the whole setup. Core scopes are requested at sign-in; admin and Graph scopes are requested
+only when you first open a feature that needs them, so you are never prompted for permissions you
+don't use.
 
-### Option 1: Use the hosted version (recommended)
-
-The fastest way to connect your Fabric tenant. No installation, no configuration, no app registration required.
-
-1. Visit [fabric-lens.com](https://fabric-lens.com)
-2. Click **Sign in with Microsoft**
-3. Authenticate with your Azure AD account
-4. Your tenant admin approves the one-time consent prompt
-5. Start exploring your governance posture
-
-> **Note:** Your tenant admin may need to grant admin consent on first sign-in. Fabric Lens requests read-only access to workspace, item, and capacity data. Admin API and Microsoft Graph scopes are requested separately, only when you first use those features.
-
----
-
-### Option 2: Self-host
-
-For organizations that require self-hosted deployments or want to customize the tool.
+### Or run it yourself
 
 ```bash
 git clone https://github.com/psistla/fabric-lens.git
 cd fabric-lens
-cp .env.example .env.local
-# Edit .env.local with your Azure AD App Registration details
 npm install
 npm run dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173). Without any configuration, the app launches in **demo mode** automatically.
+Open [http://localhost:5173](http://localhost:5173). With no configuration it starts in **demo
+mode** against sample data. To point it at a real tenant, `cp .env.example .env.local` and fill in
+your Entra ID app registration details.
 
-#### App Registration Setup
+<details>
+<summary><b>Self-hosting: app registration and permissions</b></summary>
 
-1. Go to [Azure Portal](https://portal.azure.com) > **Microsoft Entra ID** > **App registrations** > **New registration**
-2. Name: `Fabric Lens` (or any name)
-3. Supported account types: match your tenant strategy (single or multi-tenant)
-4. Redirect URI: select **Single-page application (SPA)** and add both URIs:
-   - `http://localhost:5173` (local development)
-   - Your production URL (if deploying)
-5. Click **Register**
+#### App registration
 
-#### API Permissions
+1. [Azure Portal](https://portal.azure.com) → **Microsoft Entra ID** → **App registrations** → **New registration**
+2. Supported account types: match your tenant strategy (single or multi-tenant)
+3. Redirect URI: choose **Single-page application (SPA)**, add `http://localhost:5173` and your production URL
+4. **Register**
 
-In your App Registration > **API permissions** > **Add a permission**:
+#### API permissions
 
-**Core (required on sign-in):**
+**Core, requested at sign-in:**
 
 | API | Permission | Type |
 |-----|-----------|------|
@@ -111,195 +127,108 @@ In your App Registration > **API permissions** > **Add a permission**:
 | Microsoft Fabric | `Capacity.Read.All` | Delegated |
 | Azure Service Management | `user_impersonation` | Delegated |
 
-**Security Audit (requested on demand, first visit to Security page):**
+**Requested on demand, first visit to the Security page:**
 
 | API | Permission | Type |
 |-----|-----------|------|
 | Microsoft Fabric | `Tenant.Read.All` | Delegated |
 
-**Group Expansion (requested on demand, opt-in from Settings):**
+**Requested on demand, opt-in from Settings:**
 
 | API | Permission | Type |
 |-----|-----------|------|
 | Microsoft Graph | `GroupMember.Read.All` | Delegated |
 
-Click **Grant admin consent** for all permissions (requires admin privileges).
+Then **Grant admin consent** (requires admin privileges). Do not add Power BI Service permissions;
+that is a different service principal and it breaks admin consent in tenants without a Power BI
+subscription.
 
-> **Incremental consent:** Fabric Lens only requests elevated permissions when you navigate to features that need them. Users are never prompted for scopes they don't use.
-
-#### Environment Variables
-
-Create `.env.local` in the project root:
+#### Environment
 
 | Variable | Description |
 |----------|-------------|
-| `VITE_MSAL_CLIENT_ID` | Your App Registration client ID |
-| `VITE_MSAL_TENANT_ID` | Your Azure AD tenant ID (or `common` for multi-tenant) |
-| `VITE_MSAL_REDIRECT_URI` | Your deployment URL (e.g. `http://localhost:5173`) |
+| `VITE_MSAL_CLIENT_ID` | App registration client ID. Omit or set to `demo` for demo mode |
+| `VITE_MSAL_TENANT_ID` | Your tenant ID, or `common` for multi-tenant |
+| `VITE_MSAL_REDIRECT_URI` | Your deployment URL |
 
-Full example (copy from `.env.example`):
+See [.env.example](.env.example) for the full set. On Azure Static Web Apps, set these as
+Application Settings in the portal rather than shipping a `.env.local`.
 
-```env
-VITE_MSAL_CLIENT_ID=<your-client-id>
-VITE_MSAL_TENANT_ID=<your-tenant-id-or-common>
-VITE_MSAL_REDIRECT_URI=http://localhost:5173
-VITE_FABRIC_API_BASE=https://api.fabric.microsoft.com/v1
-VITE_ARM_API_BASE=https://management.azure.com
-```
-
-For production deployments on Azure Static Web Apps, set these as Application Settings in the portal (Configuration > Application settings). Do not use `.env.local` for deployed environments.
+</details>
 
 ---
 
-## Architecture
+## How it's built
 
-```mermaid
-flowchart TB
-    subgraph Browser["Browser SPA · React 19 · TypeScript · Vite"]
-        Router["React Router\n/dashboard · /workspaces\n/capacity · /security\n/settings · /report · /about"]
-        Stores["Zustand Stores\nworkspace · capacity\nsecurity · tenantSettings\nwidelyShared · activity · ui"]
-        Demo["Demo Mode\nbypasses auth · serves mocks\n3 capacities · 35 workspaces\n200+ items · 21 item types"]
-        MSAL["MSAL.js 5\ncore scopes on login\nAdmin + Graph: on-demand"]
-        FC["fabricClient\ntoken injection · pagination\nrate limiting"]
-    end
+React 19 and TypeScript in strict mode, built with Vite, deployed as static files. Routes split into
+a public marketing shell (`/`, `/about`) and an authenticated app shell; state lives in one Zustand
+store per domain; every Fabric call goes through a single client that handles token injection,
+continuation-token pagination, and admin rate limits.
 
-    Router <--> Stores
-    Stores --> FC
-    MSAL -->|incremental consent| FC
-    Demo -. mock data .-> Stores
+**Decisions worth knowing:**
 
-    FC --> Core["Fabric Core API\nWorkspaces · Items\nCapacities"]
-    FC --> Admin["Admin API\nTenant settings · Scanner\nActivity log"]
-    FC --> ARM["ARM API\nCapacity management"]
-    FC --> Prices["Azure Retail Prices\npublic · no auth\n1 hr TTL cache"]
+- **No backend.** A pure SPA with delegated permissions. Static hosting, no server-side secrets, and
+  nothing that could become a processor of your tenant's security findings.
+- **Incremental consent.** Elevated scopes are acquired the first time a feature needs them, not up
+  front, so the initial consent prompt stays small.
+- **Multi-tenant.** MSAL authority set to `common`; any Entra ID tenant authenticates against a
+  single app registration.
+- **Live pricing.** The Azure Retail Prices API (public, no auth) with a 1-hour cache and a graceful
+  fallback to derived rates.
+- **Open item-type union.** Microsoft adds Fabric item types continuously, so unrecognized types
+  render and count correctly instead of requiring a release.
 
-    style Browser fill:#1a1b2e,stroke:#2563EB,stroke-width:2px,color:#e2e8f0
-    style Router fill:#312e81,stroke:#818cf8,color:#e2e8f0
-    style Stores fill:#312e81,stroke:#818cf8,color:#e2e8f0
-    style MSAL fill:#3730a3,stroke:#818cf8,color:#e2e8f0
-    style Demo fill:#78350f,stroke:#fbbf24,color:#fef3c7
-    style FC fill:#4338ca,stroke:#a5b4fc,color:#ffffff
-    style Core fill:#064e3b,stroke:#34d399,color:#d1fae5
-    style Admin fill:#064e3b,stroke:#34d399,color:#d1fae5
-    style ARM fill:#064e3b,stroke:#34d399,color:#d1fae5
-    style Prices fill:#064e3b,stroke:#34d399,color:#d1fae5
-```
-
-**Key design decisions:**
-- **No backend.** Pure SPA with delegated permissions. Simplest deployment (static hosting), no server-side secrets.
-- **Incremental consent.** Core Fabric + ARM scopes at login; Admin (`Tenant.Read.All`) and Graph (`GroupMember.Read.All`) scopes acquired on-demand the first time a user navigates to a feature that requires them. Consent state persists for the session with no re-prompts on navigation.
-- **Multi-tenant.** MSAL authority set to `common`; any Azure AD tenant can authenticate against a single app registration. Set `VITE_MSAL_TENANT_ID=common` when self-hosting for the same behavior.
-- **Live pricing.** Azure Retail Prices API (public, no auth) with 1-hour in-memory cache and graceful fallback.
-
----
-
-## Health Scoring
-
-Each workspace is scored across nine governance checks. When items are present, the raw score is normalized against a 110-point maximum; when there are no items, tag coverage is skipped and the maximum is 100.
-
-| Check | Points | Description |
-|-------|--------|-------------|
-| Has description | 10 | Workspace has a non-empty description |
-| Assigned to capacity | 15 | Workspace is linked to a Fabric capacity |
-| Assigned to domain | 10 | Workspace belongs to a defined domain |
-| Workspace identity (SPN + Git) | 25 | SPN configured, enables Git integration and automation |
-| Naming convention | 10 | Name follows the configured pattern |
-| Active items | 10 | Workspace contains at least one item |
-| Data layer present | 10 | Contains at least one Lakehouse or Warehouse |
-| Reasonable item count | 10 | Fewer than 100 items |
-| Tag coverage | 10 | >=80% of items tagged (full); >=50% (half credit); skipped if no items |
-
-**Grades:** A (>=90%) · B (>=80%) · C (>=65%) · D (>=50%) · F (<50%)
-
----
-
-## Project Structure
-
-```
-src/
-  auth/           MSAL config, AuthProvider, useAuth (with incremental consent), ProtectedRoute
-  api/            fabricClient, resource modules, azurePricing, activityEvents, widelyShared,
-                  tenantSettings, demo, types/
-  data/           SKU specifications and derived pricing (skuSpecs.ts)
-  store/          Zustand stores (workspace, capacity, security, ui,
-                  tenantSettings, widelyShared, activity, domain)
-  components/
-    layout/       AppShell (authenticated), MarketingShell (public), Sidebar, Header
-    marketing/    LandingPage, MarketingNav, MarketingFooter
-    dashboard/    GovernanceIssuesPanel, HealthGrid, ScoreRing, SecurityQuickView
-    workspace/    GovernanceIssues, HealthBadge, HealthDetail
-    shared/       DataTable, StatCard, SearchBar, EmptyState, ExportButton, ItemTypeBadge,
-                  CollapsibleSection, ...
-    charts/       ItemsByTypeChart, WorkspacesByCapacityChart
-    security/     SecurityAreaSection, AccessConcentrationChart, EffectiveAccessCard,
-                  SecurityFindingsPanel,
-                  TenantSettingsRiskPanel, WidelySharedPanel, DomainGovernancePanel,
-                  GhostWorkspacesPanel, ...
-    report/       ReportCover, ExecutiveSummarySection, HealthSection, SecuritySection,
-                  TenantSettingsSection, WidelySharedSection, GhostWorkspacesSection,
-                  RecommendationsSection
-  pages/          Dashboard, Workspaces, WorkspaceDetail, Capacity, Security, Settings,
-                  Report, About (public, no auth guard). The landing page at `/` lives
-                  in components/marketing/
-  utils/          healthScore, export (CSV), constants (single source of truth),
-                  securityAreas, ghostWorkspaces, tenantSettingRisks, domainGovernance,
-                  reportData, reportSummary
-```
-
----
-
-## Scripts
-
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Dev server at `http://localhost:5173` |
-| `npm run build` | `tsc -b && vite build` (strict TypeScript + production build) |
-| `npm run type-check` | `tsc --noEmit` (type checking only) |
-| `npm run lint` | ESLint |
-| `npm run test` | Vitest (single run) |
-| `npm run test:watch` | Vitest (watch mode) |
-
-> **Note:** `npm run build` uses `tsc -b` which is stricter than `type-check`. Always run build before committing; it catches unused parameters and locals that type-check may miss.
-
----
-
-## Tech Stack
-
-| | Technology |
-|--|-----------|
+| | |
+|--|--|
 | Framework | React 19 + TypeScript (strict) |
 | Build | Vite 8 |
-| Styling | Tailwind CSS v4 (`@tailwindcss/vite`) |
-| Typography | Manrope variable (UI) + JetBrains Mono variable (code/IDs), self-hosted |
-| UI Primitives | Radix UI + class-variance-authority + tailwind-merge |
+| Styling | Tailwind CSS v4 |
 | State | Zustand 5 |
 | Charts | Recharts 3 |
-| Auth | @azure/msal-browser 5 + @azure/msal-react 5 |
+| Auth | MSAL browser 5 + msal-react 5 |
 | Router | React Router v7 |
-| Icons | lucide-react |
-| Testing | Vitest + React Testing Library |
-
----
-
-## Security
-
-See [SECURITY.md](SECURITY.md) for the vulnerability reporting process, response timelines, and security architecture details.
+| Testing | Vitest + React Testing Library + Playwright |
 
 ---
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, coding standards, and the pull request process.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, coding standards, and the PR process.
 
-A few things worth knowing before diving in:
-- Run `npm run build` (not just `type-check`) before submitting. The strict `tsc -b` build catches unused parameters and locals.
-- Constants go in `src/utils/constants.ts`. Never inline magic numbers or threshold values in components.
+Every change has to clear one gate before it merges, locally and in CI:
 
----
+```bash
+npm run verify   # lint → strict build (tsc -b) → unit tests + coverage floor → Playwright e2e
+```
 
-## Star This Repo
+The e2e suite loads every route in demo mode and fails on any console error. Two conventions catch
+most review comments before they happen: run `npm run build` rather than `type-check` (the strict
+build catches unused locals and parameters), and put every threshold, color, and magic number in
+`src/utils/constants.ts` instead of inlining it.
 
-If fabric-lens saves you time governing your Fabric tenant, consider starring the repo. It helps others discover the tool and keeps the project visible.
+<details>
+<summary>All scripts</summary>
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Dev server at `http://localhost:5173` |
+| `npm run build` | `tsc -b && vite build` (strict) |
+| `npm run build:demo` | Production build pinned to demo mode |
+| `npm run preview` | Serve the production build locally |
+| `npm run lint` | ESLint |
+| `npm run type-check` | `tsc --noEmit` (looser than `build`) |
+| `npm run test` | Vitest, single run |
+| `npm run test:watch` | Vitest, watch mode |
+| `npm run test:coverage` | Vitest with coverage, enforces the floor |
+| `npm run test:e2e` | Playwright end-to-end suite |
+| `npm run verify` | The full gate, in order |
+| `npm run screenshots` | Regenerate the README screenshots |
+| `npm run og-image` | Regenerate the social share image |
+| `npm run diagram` | Regenerate the architecture diagram (light and dark) |
+
+</details>
+
+If fabric-lens saves you time governing your tenant, a star helps other people find it.
 
 ---
 
@@ -307,9 +236,7 @@ If fabric-lens saves you time governing your Fabric tenant, consider starring th
 
 MIT. Use it, fork it, ship it.
 
----
-
-## Built By
+## Built by
 
 **Prasanth Sistla** · Senior Architect Consultant
 
@@ -317,6 +244,5 @@ MIT. Use it, fork it, ship it.
 
 ---
 
-## Disclaimer
-
-Fabric Lens is an independent, community-driven project. It is **not** affiliated with, endorsed by, or sponsored by Microsoft Corporation. "Microsoft Fabric" is a trademark of Microsoft Corporation.
+fabric-lens is an independent, community-driven project. It is **not** affiliated with, endorsed by,
+or sponsored by Microsoft Corporation. "Microsoft Fabric" is a trademark of Microsoft Corporation.
