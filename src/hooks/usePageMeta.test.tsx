@@ -22,6 +22,8 @@ describe('usePageMeta', () => {
       <meta name="twitter:title" content="Root title" />
       <meta name="twitter:description" content="Root description." />
     `;
+    // After head.innerHTML, since replacing it drops the <title> element.
+    document.title = 'fabric-lens';
   });
 
   it('points canonical and og:url at the route', () => {
@@ -30,10 +32,16 @@ describe('usePageMeta', () => {
     expect(ogUrl()).toBe('https://www.fabric-lens.com/about');
   });
 
+  it('sets document.title to the given title verbatim', () => {
+    render(<Probe />);
+    expect(document.title).toBe('About');
+  });
+
   it('restores the root values on unmount', () => {
     const { unmount } = render(<Probe />);
     unmount();
     expect(canonical()).toBe('https://www.fabric-lens.com');
     expect(ogUrl()).toBe('https://www.fabric-lens.com');
+    expect(document.title).toBe('fabric-lens');
   });
 });
