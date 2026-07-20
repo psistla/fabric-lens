@@ -72,7 +72,7 @@ export function AboutPage() {
             <span className="text-sm text-[var(--m-text-secondary)]">About</span>
           </div>
           <Link
-            to="/"
+            to="/dashboard"
             className="flex items-center gap-1.5 rounded-lg bg-[var(--m-primary)] px-3 py-1.5 text-sm font-medium text-white transition-opacity hover:opacity-90"
           >
             Open dashboard

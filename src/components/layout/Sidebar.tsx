@@ -23,7 +23,7 @@ interface NavItem {
 }
 
 const BASE_NAV_ITEMS: Omit<NavItem, 'badge'>[] = [
-  { label: 'Dashboard', path: '/', icon: LayoutDashboard },
+  { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
   { label: 'Workspaces', path: '/workspaces', icon: FolderOpen },
   { label: 'Capacity', path: '/capacity', icon: Gauge },
   { label: 'Security', path: '/security', icon: Shield },
@@ -97,7 +97,6 @@ export function Sidebar() {
           <NavLink
             key={item.path}
             to={item.path}
-            end={item.path === '/'}
             title={collapsed ? item.label : undefined}
             className={({ isActive }) =>
               `flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors duration-[120ms] ${
