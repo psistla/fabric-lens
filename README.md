@@ -155,10 +155,10 @@ For production deployments on Azure Static Web Apps, set these as Application Se
 
 ```mermaid
 flowchart TB
-    subgraph Browser["Browser SPA — React 19 · TypeScript · Vite"]
+    subgraph Browser["Browser SPA · React 19 · TypeScript · Vite"]
         Router["React Router\n/dashboard · /workspaces\n/capacity · /security\n/settings · /report · /about"]
         Stores["Zustand Stores\nworkspace · capacity\nsecurity · tenantSettings\nwidelyShared · activity · ui"]
-        Demo["Demo Mode\nbypasses auth · serves mocks\n3 capacities · 35 workspaces\n200+ items · 19 item types"]
+        Demo["Demo Mode\nbypasses auth · serves mocks\n3 capacities · 35 workspaces\n200+ items · 21 item types"]
         MSAL["MSAL.js 5\ncore scopes on login\nAdmin + Graph: on-demand"]
         FC["fabricClient\ntoken injection · pagination\nrate limiting"]
     end

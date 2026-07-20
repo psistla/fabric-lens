@@ -342,7 +342,7 @@ export function AboutPage() {
               <p className="text-sm leading-relaxed text-[var(--m-text-secondary)]">
                 No credentials needed. The app opens in demo mode automatically, with a complete
                 audit of a realistic mock Fabric tenant: 35 workspaces, 3 capacities, 200+
-                items across all 19 item types, and pre-loaded security findings.
+                items across 21 item types, and pre-loaded security findings.
               </p>
             </Section>
 
