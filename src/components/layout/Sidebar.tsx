@@ -81,7 +81,7 @@ export function Sidebar() {
     >
       {/* Logo */}
       <div className="flex h-14 items-center gap-2 border-b border-[var(--m-border)] px-4">
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[var(--m-primary)] text-sm font-bold text-white">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[var(--m-primary-600)] text-sm font-bold text-white">
           F
         </div>
         {!collapsed && (
@@ -111,7 +111,7 @@ export function Sidebar() {
               <span className="flex flex-1 items-center justify-between">
                 <span>{item.label}</span>
                 {item.badge && (
-                  <span className="rounded-full bg-[var(--m-primary)] px-1.5 py-0.5 text-[10px] font-semibold text-white">
+                  <span className="rounded-full bg-[var(--m-primary-600)] px-1.5 py-0.5 text-[10px] font-semibold text-white">
                     {item.badge}
                   </span>
                 )}

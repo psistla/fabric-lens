@@ -55,7 +55,7 @@ export function MarketingNav() {
           {isAuthenticated ? (
             <Link
               to="/dashboard"
-              className="rounded-full px-4 py-2 text-sm font-semibold text-white [background-image:var(--m-gradient-brand)] transition-opacity duration-[120ms] hover:opacity-90"
+              className="m-cta px-4 py-2"
             >
               Open dashboard
             </Link>
@@ -76,7 +76,7 @@ export function MarketingNav() {
               </button>
               <Link
                 to="/dashboard"
-                className="rounded-full px-4 py-2 text-sm font-semibold text-white [background-image:var(--m-gradient-brand)] transition-opacity duration-[120ms] hover:opacity-90"
+                className="m-cta px-4 py-2"
               >
                 Try the demo
               </Link>

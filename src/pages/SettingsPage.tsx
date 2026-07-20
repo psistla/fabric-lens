@@ -225,7 +225,7 @@ function PermissionsSection() {
                 <button
                   onClick={row.onGrant}
                   disabled={row.granting}
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--m-primary)] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[var(--m-primary-hover)] disabled:opacity-50"
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--m-primary-600)] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[var(--m-primary-700)] disabled:opacity-50"
                 >
                   {row.granting ? 'Granting...' : 'Grant Access'}
                 </button>
@@ -372,7 +372,7 @@ function AboutSection() {
       </div>
       <div className="space-y-3 px-5 py-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--m-primary)] text-lg font-bold text-white">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--m-primary-600)] text-lg font-bold text-white">
             F
           </div>
           <div>

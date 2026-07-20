@@ -49,7 +49,7 @@ export class ErrorBoundary extends Component<Props, State> {
             </p>
             <button
               onClick={this.handleRetry}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--m-primary)] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[var(--m-primary-hover)]"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--m-primary-600)] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[var(--m-primary-700)]"
             >
               Try Again
             </button>

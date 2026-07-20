@@ -182,7 +182,7 @@ export function WorkspacesPage() {
                   className={[
                     'px-3 py-1.5 text-xs font-semibold transition-colors',
                     (v === 'mine') === myOnly
-                      ? 'bg-[var(--m-primary)] text-white'
+                      ? 'bg-[var(--m-primary-600)] text-white'
                       : 'bg-[var(--m-surface)] text-[var(--m-text-secondary)] hover:bg-[var(--m-surface-raised)]',
                   ].join(' ')}
                 >

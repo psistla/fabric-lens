@@ -131,7 +131,7 @@ function AdminConsentCard({ onGrant, granting, error }: ConsentCardProps) {
       <button
         onClick={onGrant}
         disabled={granting}
-        className="inline-flex items-center gap-2 rounded-lg bg-[var(--m-primary)] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[var(--m-primary-hover)] disabled:opacity-50"
+        className="inline-flex items-center gap-2 rounded-lg bg-[var(--m-primary-600)] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[var(--m-primary-700)] disabled:opacity-50"
       >
         {granting ? 'Requesting access...' : 'Grant Admin Access'}
       </button>
@@ -612,7 +612,7 @@ export function SecurityPage() {
           </p>
           <button
             onClick={() => void checkAdminAccess()}
-            className="inline-flex items-center gap-2 rounded-lg bg-[var(--m-primary)] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[var(--m-primary-hover)]"
+            className="inline-flex items-center gap-2 rounded-lg bg-[var(--m-primary-600)] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[var(--m-primary-700)]"
           >
             Retry
           </button>
@@ -684,7 +684,7 @@ export function SecurityPage() {
           <button
             onClick={() => void handleScanAll()}
             disabled={loading || wsLoading}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--m-primary)] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[var(--m-primary-hover)] disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--m-primary-600)] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[var(--m-primary-700)] disabled:opacity-50"
           >
             <ScanSearch className="h-3.5 w-3.5" />
             {hasScanned ? 'Re-scan All' : 'Scan All'}
@@ -763,7 +763,7 @@ export function SecurityPage() {
                 <button
                   onClick={() => void handleScanAll()}
                   disabled={loading || wsLoading}
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--m-primary)] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[var(--m-primary-hover)] disabled:opacity-50"
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--m-primary-600)] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[var(--m-primary-700)] disabled:opacity-50"
                 >
                   <ScanSearch className="h-3.5 w-3.5" />
                   Scan All
@@ -887,7 +887,7 @@ export function SecurityPage() {
                           className={[
                             'px-3 py-1.5 text-[11px] font-semibold transition-colors',
                             (v === 'mine') === myOnly
-                              ? 'bg-[var(--m-primary)] text-white'
+                              ? 'bg-[var(--m-primary-600)] text-white'
                               : 'bg-[var(--m-surface)] text-[var(--m-text-secondary)] hover:bg-[var(--m-surface-raised)]',
                           ].join(' ')}
                         >
@@ -901,7 +901,7 @@ export function SecurityPage() {
                       onClick={() => setPivotView('users')}
                       className={`rounded-md px-2.5 py-1 transition-colors ${
                         pivotView === 'users'
-                          ? 'bg-[var(--m-primary)] text-white'
+                          ? 'bg-[var(--m-primary-600)] text-white'
                           : 'text-[var(--m-text-secondary)] hover:text-[var(--m-text)]'
                       }`}
                     >
@@ -911,7 +911,7 @@ export function SecurityPage() {
                       onClick={() => setPivotView('workspaces')}
                       className={`rounded-md px-2.5 py-1 transition-colors ${
                         pivotView === 'workspaces'
-                          ? 'bg-[var(--m-primary)] text-white'
+                          ? 'bg-[var(--m-primary-600)] text-white'
                           : 'text-[var(--m-text-secondary)] hover:text-[var(--m-text)]'
                       }`}
                     >
@@ -1159,7 +1159,7 @@ export function SecurityPage() {
                           onClick={() => setCurrentPage(p)}
                           className={`h-7 w-7 rounded-lg text-xs font-semibold transition-colors ${
                             p === safePage
-                              ? 'bg-[var(--m-primary)] text-white'
+                              ? 'bg-[var(--m-primary-600)] text-white'
                               : 'text-[var(--m-text-secondary)] hover:bg-[var(--m-surface-hover)]'
                           }`}
                         >

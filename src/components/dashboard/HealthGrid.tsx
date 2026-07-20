@@ -258,7 +258,9 @@ export function HealthGrid({ workspaces, onWorkspaceClick }: HealthGridProps) {
           className="rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-wide transition-colors"
           style={
             activeGrade === null
-              ? { backgroundColor: '#4F46E5', color: '#FFFFFF' }
+              // primary-600 rather than the --m-primary alias: the alias lightens
+              // to primary-400 in dark, which fails AA under white text.
+              ? { backgroundColor: 'var(--m-primary-600)', color: '#FFFFFF' }
               : { backgroundColor: 'var(--m-surface)', color: 'var(--m-text-secondary)' }
           }
         >

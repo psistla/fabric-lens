@@ -300,7 +300,7 @@ export function DashboardPage() {
           {workspaces.length > 0 && (
             <button
               onClick={() => navigate('/report')}
-              className="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-lg bg-[var(--m-primary)] text-white hover:opacity-90 transition-opacity"
+              className="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-lg bg-[var(--m-primary-600)] text-white hover:opacity-90 transition-opacity"
             >
               <FileText className="h-3.5 w-3.5" />
               Generate Report

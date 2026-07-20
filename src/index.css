@@ -344,6 +344,45 @@
   color: transparent;
 }
 
+/* Pill CTAs. `.m-cta` is the gradient primary (one per view, the conversion
+   action); `.m-cta-ghost` is the bordered companion. Sized to clear the 44px
+   touch target at the default font size. */
+.m-cta,
+.m-cta-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: opacity 120ms ease, background-color 120ms ease;
+}
+
+.m-cta {
+  background-image: var(--m-gradient-brand);
+  color: #ffffff;
+}
+
+.m-cta:hover {
+  opacity: 0.9;
+}
+
+/* The dark gradient runs light (primary-400 to cyan-400), so the label flips to
+   the dark base to keep AA. White on that gradient sits near 2.4:1. */
+.dark .m-cta {
+  color: var(--m-neutral-950);
+}
+
+.m-cta-ghost {
+  border: 1px solid var(--m-border);
+  color: var(--m-text);
+}
+
+.m-cta-ghost:hover {
+  background-color: var(--m-surface-hover);
+}
+
 /* ── Accessibility ── */
 
 :focus-visible {

@@ -133,7 +133,7 @@ export function LandingPage() {
         <div className="mt-10 flex flex-wrap items-center gap-4">
           <Link
             to="/dashboard"
-            className="rounded-full px-6 py-3 text-sm font-semibold text-white [background-image:var(--m-gradient-brand)] transition-opacity duration-[120ms] hover:opacity-90"
+            className="m-cta"
           >
             Try the demo
           </Link>
@@ -141,7 +141,7 @@ export function LandingPage() {
             href={GITHUB_URL}
             target="_blank"
             rel="noreferrer"
-            className="rounded-full border border-[var(--m-border)] px-6 py-3 text-sm font-semibold text-[var(--m-text)] transition-colors duration-[120ms] hover:bg-[var(--m-surface-hover)]"
+            className="m-cta-ghost"
           >
             View the source
           </a>
@@ -172,13 +172,13 @@ export function LandingPage() {
         <div className="mt-8 flex flex-wrap justify-center gap-4">
           <Link
             to="/dashboard"
-            className="rounded-full px-6 py-3 text-sm font-semibold text-white [background-image:var(--m-gradient-brand)] transition-opacity duration-[120ms] hover:opacity-90"
+            className="m-cta"
           >
             Try the demo
           </Link>
           <Link
             to="/about"
-            className="rounded-full border border-[var(--m-border)] px-6 py-3 text-sm font-semibold text-[var(--m-text)] transition-colors duration-[120ms] hover:bg-[var(--m-surface-hover)]"
+            className="m-cta-ghost"
           >
             How scoring works
           </Link>
