@@ -206,6 +206,10 @@ most review comments before they happen: run `npm run build` rather than `type-c
 build catches unused locals and parameters), and put every threshold, color, and magic number in
 `src/utils/constants.ts` instead of inlining it.
 
+Commits need a `Signed-off-by` line, which `git commit -s` adds for you. That is the
+[DCO](CONTRIBUTING.md#5-sign-off-your-commits-dco), not a CLA; there is no paperwork and you keep
+the copyright to your own work.
+
 <details>
 <summary>All scripts</summary>
 

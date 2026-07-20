@@ -5,7 +5,7 @@ const SITE = 'https://www.fabric-lens.com';
 interface PageMeta {
   /** Route path, e.g. '/about'. Becomes the canonical and og:url. */
   path: string;
-  /** Full page title. Also used for og:title and twitter:title. */
+  /** Full page title. Sets document.title as well as og:title and twitter:title. */
   title: string;
   description: string;
 }
@@ -40,10 +40,16 @@ export function usePageMeta({ path, title, description }: PageMeta) {
       ['meta[name="twitter:description"]', 'content', setAttr('meta[name="twitter:description"]', 'content', description)],
     ] as const;
 
+    // Owns document.title too, so the crafted SEO title is what ships in <title>.
+    // Pages using this must NOT also call useDocumentTitle, which would win the race.
+    const previousTitle = document.title;
+    document.title = title;
+
     return () => {
       for (const [selector, attr, previous] of restore) {
         if (previous !== null) setAttr(selector, attr, previous);
       }
+      document.title = previousTitle;
     };
   }, [path, title, description]);
 }

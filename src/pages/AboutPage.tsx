@@ -1,4 +1,3 @@
-import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { usePageMeta } from '@/hooks/usePageMeta';
 import { GITHUB_URL, GITHUB_ISSUES_URL } from '@/utils/constants';
 import {
@@ -51,17 +50,16 @@ const toc = [
   { id: 'capabilities', label: 'Key capabilities' },
   { id: 'how-to-use', label: 'How to use this site' },
   { id: 'requirements', label: 'What you need for a tenant audit' },
-  { id: 'health-scoring', label: 'Health scoring explained' },
-  { id: 'security-audit', label: 'Security audit explained' },
+  { id: 'health-scoring', label: 'Workspace health scoring' },
+  { id: 'security-audit', label: 'Tenant security audit' },
   { id: 'demo-mode', label: 'Demo mode' },
   { id: 'links', label: 'Links' },
 ];
 
 export function AboutPage() {
-  useDocumentTitle('About');
   usePageMeta({
     path: '/about',
-    title: 'About fabric-lens | How health scoring and the security audit work',
+    title: 'Microsoft Fabric governance and tenant auditing | fabric-lens',
     description:
       'How fabric-lens scores workspace health, what the security audit checks, which Fabric REST APIs it calls, and why it runs entirely in your browser with no backend.',
   });
@@ -94,10 +92,11 @@ export function AboutPage() {
             {/* Page title */}
             <div>
               <h1 className="mb-3 text-3xl font-bold text-[var(--m-text)]">
-                About fabric-lens
+                About fabric-lens: Microsoft Fabric governance and tenant auditing
               </h1>
               <p className="text-base leading-relaxed text-[var(--m-text-secondary)]">
-                A reference guide for Fabric admins and consultants.
+                How workspace health scoring, the security audit, and capacity monitoring work,
+                and what access each one needs.
               </p>
             </div>
 
@@ -241,7 +240,7 @@ export function AboutPage() {
             </Section>
 
             {/* Health scoring */}
-            <Section id="health-scoring" title="Health scoring explained">
+            <Section id="health-scoring" title="Fabric workspace health scoring explained">
               <p className="mb-4 text-sm leading-relaxed text-[var(--m-text-secondary)]">
                 Every workspace is scored across nine governance checks, worth a combined maximum of
                 110 points when the workspace has items (100 points when empty; tag coverage is
@@ -300,7 +299,7 @@ export function AboutPage() {
             </Section>
 
             {/* Security audit */}
-            <Section id="security-audit" title="Security audit explained">
+            <Section id="security-audit" title="Fabric tenant security audit explained">
               <p className="mb-4 text-sm leading-relaxed text-[var(--m-text-secondary)]">
                 The security audit runs when you click "Scan All" on the Security page. It requires
                 Fabric Administrator role for most checks. The overall posture score is a weighted
