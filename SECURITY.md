@@ -11,7 +11,7 @@
 
 **Do not open a public GitHub issue for security vulnerabilities.**
 
-Email security reports to: [TBD — author's security contact email]
+Email security reports to: psistlaw@gmail.com
 
 Include:
 - Description of the vulnerability
@@ -46,7 +46,7 @@ fabric-lens is a client-side SPA with no backend. Key security properties:
 
 - **Authentication:** MSAL.js v5 with PKCE (authorization code flow)
 - **Token storage:** Browser sessionStorage (cleared on tab close)
-- **API access:** Delegated permissions only — the app can never access
+- **API access:** Delegated permissions only. The app can never access
   more than the signed-in user can access directly
 - **No secrets:** No client secrets, no API keys, no backend credentials.
   The app registration uses SPA redirect (public client).
