@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router';
 import { Printer } from 'lucide-react';
+import { LensMark } from '@/components/shared/LensMark';
 import { useWorkspaceStore } from '@/store/workspaceStore';
 import { useSecurityStore } from '@/store/securityStore';
 import { useTenantSettingsStore } from '@/store/tenantSettingsStore';
@@ -125,7 +126,7 @@ export function ReportPage() {
       {/* Toolbar — hidden on print */}
       <div className="print:hidden sticky top-0 z-10 bg-[var(--m-surface)] border-b border-[var(--m-border)] px-5 py-2.5 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <div className="w-5 h-5 rounded bg-[var(--m-primary)]" />
+          <LensMark className="h-5 w-5" />
           <span className="text-sm font-semibold text-[var(--m-text)]">fabric-lens</span>
           <span className="text-sm text-[var(--m-text-secondary)]">/ Report</span>
         </div>

@@ -2,6 +2,7 @@ import { Link } from 'react-router';
 import { Sun, Moon } from 'lucide-react';
 import { useAuth } from '@/auth/useAuth';
 import { useToastStore } from '@/components/shared/Toast';
+import { LensMark } from '@/components/shared/LensMark';
 import { useUiStore } from '@/store/uiStore';
 import { GITHUB_URL } from '@/utils/constants';
 
@@ -19,8 +20,11 @@ export function MarketingNav() {
   return (
     <header className="sticky top-0 z-40 border-b border-[var(--m-border)] bg-[var(--m-bg)]/90 backdrop-blur">
       <nav className="mx-auto flex max-w-6xl items-center gap-6 px-6 py-4">
-        <Link to="/" className="m-display whitespace-nowrap text-lg">
-          fabric-<span className="m-gradient-text">lens</span>
+        <Link to="/" className="flex items-center gap-2.5">
+          <LensMark className="h-7 w-7 shrink-0" />
+          <span className="m-display whitespace-nowrap text-lg">
+            fabric-<span className="m-gradient-text">lens</span>
+          </span>
         </Link>
 
         <div className="ml-auto flex items-center gap-5">

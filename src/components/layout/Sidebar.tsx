@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { NavLink, useLocation } from 'react-router';
+import { LensMark } from '@/components/shared/LensMark';
 import {
   LayoutDashboard,
   FolderOpen,
@@ -81,9 +82,7 @@ export function Sidebar() {
     >
       {/* Logo */}
       <div className="flex h-14 items-center gap-2 border-b border-[var(--m-border)] px-4">
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[var(--m-primary-600)] text-sm font-bold text-white">
-          F
-        </div>
+        <LensMark className="h-8 w-8 shrink-0" />
         {!collapsed && (
           <span className="text-sm font-semibold text-[var(--m-text)]">
             fabric-lens
