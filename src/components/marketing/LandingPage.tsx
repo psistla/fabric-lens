@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { ShieldCheck, Activity, Boxes, Gauge } from 'lucide-react';
+import { ShieldCheck, Activity, Boxes, FileText } from 'lucide-react';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { HealthGrid } from '@/components/dashboard/HealthGrid';
 import { mockWorkspaces, getMockAllWorkspaceItems } from '@/api/demo';
@@ -24,16 +24,16 @@ const VALUE_PROPS = [
     body: 'Workspaces, items, capacities, and domains in one searchable view, exportable to CSV for the client deck.',
   },
   {
-    icon: Gauge,
-    title: 'Capacity cost',
-    body: 'SKU sizing and utilization against live Azure retail rates, so the capacity conversation starts from a number.',
+    icon: FileText,
+    title: 'Client-ready report',
+    body: 'One printable report with the executive summary, health distribution, findings, exposure, and prioritized recommendations, ready to hand to the tenant owner.',
   },
 ] as const;
 
 const STEPS = [
   {
     title: 'Open it',
-    body: 'No install, no backend, no trial signup. Try the demo tenant first if you want to look before you connect.',
+    body: 'No signup and no trial. The demo tenant runs on sample data, so you can see the whole tool before you connect anything.',
   },
   {
     title: 'Connect your tenant',
@@ -41,7 +41,7 @@ const STEPS = [
   },
   {
     title: 'Read the findings',
-    body: 'Scores, findings, and inventory render in the browser. Export what matters and share the page with the tenant owner.',
+    body: 'Scores, findings, and inventory render in the browser. Export the tables you need, or print the whole report to PDF.',
   },
 ] as const;
 
@@ -128,9 +128,9 @@ export function LandingPage() {
           className="m-enter-up mt-6 max-w-2xl text-lg leading-relaxed text-[var(--m-text-secondary)]"
           style={{ animationDelay: '80ms' }}
         >
-          Governance, security posture, and health intelligence for Microsoft
-          Fabric. It runs entirely in your browser against the Fabric REST APIs,
-          so tenant data never passes through anyone else's servers.
+          No install, no backend, no data leaving your browser. Get health
+          scores, security findings, and capacity run rates across your whole
+          Microsoft Fabric tenant.
         </p>
 
         <div

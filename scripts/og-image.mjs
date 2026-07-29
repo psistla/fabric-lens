@@ -138,8 +138,8 @@ const HTML = `<!DOCTYPE html>
   <div class="heading">Know what your Fabric tenant<br>is <span class="gradient">actually doing</span></div>
 
   <div class="sub">
-    Governance, security posture, and health intelligence. Runs entirely in your
-    browser, so tenant data never passes through anyone else's servers.
+    No install, no backend, no data leaving your browser. Health scores, security
+    findings, and capacity run rates for Microsoft Fabric.
   </div>
 
   <div class="grades-row">
