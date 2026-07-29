@@ -10,6 +10,11 @@
     "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
     "X-DNS-Prefetch-Control": "off"
   },
+  "_prerenderNotes": "The two public routes are prerendered by scripts/prerender.mjs and served from static snapshots so crawlers and unfurl bots get real HTML. These are rewrites, not redirects, so the URL stays / and /about. index.html is left as the empty SPA shell for every other route.",
+  "routes": [
+    { "route": "/", "rewrite": "/home.html" },
+    { "route": "/about", "rewrite": "/about.html" }
+  ],
   "navigationFallback": {
     "rewrite": "/index.html",
     "exclude": ["/assets/*", "/*.{svg,png,ico,xml,txt}", "/auth.html"]

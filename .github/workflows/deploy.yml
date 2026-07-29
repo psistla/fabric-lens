@@ -43,6 +43,11 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      # Ahead of the build, not just ahead of the e2e step: `npm run build`
+      # triggers postbuild -> scripts/prerender.mjs, which drives a real browser.
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
       - name: Build (strict TypeScript)
         run: npm run build
         env:
@@ -52,11 +57,18 @@ jobs:
           VITE_FABRIC_API_BASE: https://api.fabric.microsoft.com/v1
           VITE_ARM_API_BASE: https://management.azure.com
 
+      # Captured HERE, immediately after the production build, because the e2e
+      # step below runs build:demo and overwrites dist with a demo-mode build.
+      # Uploading any later would ship demo mode to fabric-lens.com.
+      - name: Upload built site
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+          retention-days: 1
+
       - name: Test + coverage floor
         run: npm run test:coverage
-
-      - name: Install Playwright browser
-        run: npx playwright install --with-deps chromium
 
       - name: E2E (Playwright, demo build)
         run: npm run test:e2e
@@ -72,10 +84,11 @@ jobs:
           retention-days: 7
 
   # ── Deploy ─────────────────────────────────────────────────────────────────
-  # On PR: deploys to an Azure SWA preview environment. GitHub posts the
-  #        preview URL as a PR comment — use it for end-to-end testing before
-  #        merging. Demo mode works immediately; for auth testing add the
-  #        preview URL to the Azure AD App Registration redirect URIs.
+  # On PR: deploys to an Azure SWA preview environment. The URL is NOT posted
+  #        as a PR comment; read it from this job's log, last line of the
+  #        deploy step ("Visit your site at: ..."). Demo mode works
+  #        immediately; for auth testing add the preview URL to the Azure AD
+  #        App Registration redirect URIs.
   # On merge to master: deploys to the production site (fabric-lens.com).
   # Always requires the CI gate to pass first.
   deploy:
@@ -95,22 +108,34 @@ jobs:
           submodules: true
           lfs: false
 
-      - name: Build and Deploy
+      # The site is built once, in the ci job, and shipped from that artifact.
+      # Oryx must NOT rebuild here: it has no browser, so the prerender step in
+      # postbuild would fail, and a partial success would leave the SWA rewrites
+      # pointing at snapshots that were never generated. Deploying the artifact
+      # also means production gets the exact bytes the tests ran against.
+      - name: Download built site
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+      - name: Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_LIVELY_GRASS_0FA393E10 }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          app_location: "/"
+          skip_app_build: true
+          # With skip_app_build, app_location is the prebuilt output and
+          # output_location must be empty.
+          app_location: "dist"
           api_location: ""
-          output_location: "dist"
-        env:
-          VITE_MSAL_CLIENT_ID: ${{ secrets.VITE_MSAL_CLIENT_ID }}
-          VITE_MSAL_TENANT_ID: common
-          VITE_MSAL_REDIRECT_URI: https://fabric-lens.com
-          VITE_FABRIC_API_BASE: https://api.fabric.microsoft.com/v1
-          VITE_ARM_API_BASE: https://management.azure.com
+          output_location: ""
+          # config_file_location defaults to app_location. staticwebapp.config.json
+          # lives at the repo root, so without this the CSP headers and the
+          # prerender rewrites would silently stop shipping.
+          config_file_location: "/"
 
   # ── Cleanup ─────────────────────────────────────────────────────────────────
   # Tears down the PR preview environment when the pull request is closed.
