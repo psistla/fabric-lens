@@ -18,18 +18,20 @@ jobs:
     name: Security, Lint, Build & Test
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        # 22, not 20: react-router 8 declares engines.node >=22.22.0.
-        node-version: [22]
+    # No build matrix. It only ever held one Node version, but its value was
+    # appended to the job name, so the branch protection rule on master pinned
+    # the check as "Security, Lint, Build & Test (20)". Bumping Node renamed the
+    # check and left the required one permanently unreportable, blocking merges.
+    # Without a matrix the name is stable and Node can move freely.
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js ${{ matrix.node-version }}
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          # 22, not 20: react-router 8 declares engines.node >=22.22.0.
+          node-version: 22
           cache: npm
 
       - name: Install dependencies
