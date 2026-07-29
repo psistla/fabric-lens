@@ -20,7 +20,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [20]
+        # 22, not 20: react-router 8 declares engines.node >=22.22.0.
+        node-version: [22]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
