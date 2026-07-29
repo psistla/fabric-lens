@@ -6,8 +6,8 @@ import { configDefaults } from 'vitest/config';
 import { readFileSync } from 'node:fs';
 
 // Read rather than `import ... with { type: 'json' }`: the import-attribute form
-// needs Node 20.10+ (CI pins Node 20) and an implicit resolveJsonModule that
-// tsconfig.node.json does not actually set. readFileSync has neither constraint.
+// needs an implicit resolveJsonModule that tsconfig.node.json does not actually
+// set. readFileSync has no such constraint.
 const pkgVersion = JSON.parse(
   readFileSync(new URL('./package.json', import.meta.url), 'utf-8'),
 ).version as string;
