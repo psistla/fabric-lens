@@ -1,6 +1,6 @@
 # fabric-lens
 
-**Governance, security posture, and health intelligence for Microsoft Fabric. Runs entirely in your browser.**
+**No install, no backend, no data leaving your browser. Health scores, security findings, and capacity run rates for Microsoft Fabric.**
 
 [![Try the live demo](https://img.shields.io/badge/Try%20the%20live%20demo-2563EB?style=for-the-badge)](https://fabric-lens.com)
 
