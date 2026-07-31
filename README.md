@@ -55,7 +55,7 @@ Details in [SECURITY.md](SECURITY.md).
 | **Workspace health scoring** | Every workspace scored across 9 governance checks (description, capacity, domain, workspace identity, naming, active items, data layer, item count, tag coverage) and graded A to F. [How scoring works](https://fabric-lens.com/about) |
 | **Security posture** | A posture score and top findings lead, then drill-in areas for Access, Sharing, Settings, and Lifecycle. Flags over-permissioned users and expands Entra ID group membership via Microsoft Graph (opt-in) |
 | **Exposure detection** | Widely shared reports and semantic models reachable by the entire organization, high-risk tenant settings (PublishToWeb, external sharing), and org-wide sharing that bypasses domain boundaries |
-| **Ghost workspaces** | Workspaces with no recorded activity, detected through the Power BI Activity Log |
+| **Ghost workspaces** | Workspaces with no recorded user activity in the last 28 days, the full retention window of the Power BI audit log |
 | **Capacity and cost** | SKUs, regions, and states with a cost calculator driven by **live Azure retail pricing**, not hardcoded rates |
 | **Item inventory** | 51 recognized Fabric item types across every workload, including the newest GA additions (Data Agents, Eventhouse, Digital Twin Builder). Unknown types flow through rather than breaking |
 | **Governance report** | A printable multi-section report: executive summary, health distribution, security findings, tenant settings, exposure, inactive workspaces, and prioritized recommendations |
@@ -71,6 +71,11 @@ thing before asking anyone for consent.
 | Workspaces | Capacity monitor |
 |------------|------------------|
 | ![Workspaces](docs/screenshots/workspaces.png) | ![Capacity monitor](docs/screenshots/capacity.png) |
+
+Inactive workspaces, ranked by how long they have been quiet. `28+` means no recorded activity
+anywhere in the audit log's full retention window, which is as far back as the data goes.
+
+![Inactive workspaces](docs/screenshots/inactive-workspaces.png)
 
 <details>
 <summary>Dark mode</summary>
