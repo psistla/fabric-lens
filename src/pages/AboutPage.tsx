@@ -329,7 +329,7 @@ export function AboutPage() {
                   },
                   {
                     title: 'Ghost workspace detection',
-                    desc: 'Identifies workspaces with no recorded user activity in the past 7 days by cross-referencing the Power BI activity log.',
+                    desc: 'Finds workspaces with no recorded user activity in the last 28 days, the full retention window of the Power BI audit log.',
                   },
                 ].map(({ title, desc }) => (
                   <div key={title} className="flex gap-3 rounded-xl border border-[var(--m-border)] bg-[var(--m-surface)] p-4">

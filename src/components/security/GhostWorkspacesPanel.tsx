@@ -3,15 +3,21 @@ import { Clock, AlertTriangle, ShieldCheck } from 'lucide-react';
 import { Link } from 'react-router';
 import type { GhostWorkspace } from '@/utils/ghostWorkspaces';
 import type { Workspace } from '@/api/types/workspace';
+import type { Item } from '@/api/types/item';
 import { calculateWorkspaceHealth } from '@/utils/healthScore';
 import type { HealthGrade } from '@/utils/healthScore';
-import { GHOST_WORKSPACE_THRESHOLD_DAYS } from '@/utils/constants';
+import { GHOST_WORKSPACE_THRESHOLD_DAYS, ACTIVITY_LOG_LOOKBACK_DAYS } from '@/utils/constants';
 
 interface Props {
   ghostWorkspaces: GhostWorkspace[];
   workspaces: Workspace[];
+  /** Real items per workspace. Grades computed against an empty list are systematically depressed. */
+  allItemsByWorkspace: Record<string, Item[]>;
   loading: boolean;
   error: string | null;
+  /** The window returned no events at all, so there is nothing to judge inactivity against. */
+  noActivityData: boolean;
+  scanProgress: { completed: number; total: number } | null;
   onRetry: () => void;
 }
 
@@ -43,8 +49,11 @@ const HEADER_TITLE = (
 export function GhostWorkspacesPanel({
   ghostWorkspaces,
   workspaces,
+  allItemsByWorkspace,
   loading,
   error,
+  noActivityData,
+  scanProgress,
   onRetry,
 }: Props) {
   // Build a lookup map from workspaceId → Workspace for health grade computation
@@ -64,9 +73,16 @@ export function GhostWorkspacesPanel({
   if (loading) {
     return (
       <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)]">
-        <div className="flex items-center gap-2 border-b border-[var(--m-border)] px-4 py-3">
-          <Clock className="h-4 w-4 text-[var(--m-text-tertiary)]" />
-          {HEADER_TITLE}
+        <div className="flex items-center justify-between border-b border-[var(--m-border)] px-4 py-3">
+          <div className="flex items-center gap-2">
+            <Clock className="h-4 w-4 text-[var(--m-text-tertiary)]" />
+            {HEADER_TITLE}
+          </div>
+          {scanProgress && (
+            <span className="text-[11px] tabular-nums text-[var(--m-text-tertiary)]">
+              Reading audit log, day {scanProgress.completed} of {scanProgress.total}
+            </span>
+          )}
         </div>
         <div className="divide-y divide-[var(--m-border)]">
           {[0, 1, 2].map((i) => (
@@ -94,6 +110,33 @@ export function GhostWorkspacesPanel({
           <div className="flex items-center gap-2 text-sm text-[var(--m-warning-text)]">
             <AlertTriangle className="h-4 w-4 shrink-0 text-[var(--m-warning)]" />
             Ghost workspace data unavailable. Check admin permissions.
+          </div>
+          <button
+            onClick={onRetry}
+            aria-label="Retry loading ghost workspaces"
+            className="shrink-0 rounded-lg px-3 py-1 text-xs font-semibold text-[var(--m-primary)] ring-1 ring-[var(--m-primary)]/40 transition-colors hover:bg-[var(--m-primary-subtle)]"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // No data state — distinct from "nothing found". An empty window means the audit log returned
+  // nothing at all, which would otherwise mark every workspace in the tenant as inactive.
+  if (noActivityData) {
+    return (
+      <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)]">
+        <div className="flex items-center gap-2 border-b border-[var(--m-border)] px-4 py-3">
+          <Clock className="h-4 w-4 text-[var(--m-text-tertiary)]" />
+          {HEADER_TITLE}
+        </div>
+        <div className="flex items-center justify-between px-4 py-4">
+          <div className="flex items-center gap-2 text-sm text-[var(--m-text-secondary)]">
+            <AlertTriangle className="h-4 w-4 shrink-0 text-[var(--m-warning)]" />
+            No activity data available. The audit log returned no events for the last{' '}
+            {ACTIVITY_LOG_LOOKBACK_DAYS} days, so inactivity cannot be assessed.
           </div>
           <button
             onClick={onRetry}
@@ -165,7 +208,7 @@ export function GhostWorkspacesPanel({
             {sorted.map((ghost) => {
               const workspace = workspaceMap.get(ghost.workspaceId);
               const grade = workspace
-                ? calculateWorkspaceHealth(workspace, []).grade
+                ? calculateWorkspaceHealth(workspace, allItemsByWorkspace[ghost.workspaceId] ?? []).grade
                 : 'F';
 
               return (
@@ -184,10 +227,13 @@ export function GhostWorkspacesPanel({
                   <td className="px-4 py-2.5 text-[var(--m-text-secondary)]">
                     {ghost.lastActivityDate
                       ? ghost.lastActivityDate.toLocaleDateString()
-                      : 'No activity detected'}
+                      : `None in ${ACTIVITY_LOG_LOOKBACK_DAYS}-day window`}
                   </td>
                   <td className="px-4 py-2.5 text-[var(--m-text-secondary)]">
-                    {ghost.daysInactive} days
+                    {/* No event in the window bounds inactivity from below; it is not a measurement. */}
+                    {ghost.lastActivityDate
+                      ? `${ghost.daysInactive} days`
+                      : `${ACTIVITY_LOG_LOOKBACK_DAYS}+ days`}
                   </td>
                 </tr>
               );
@@ -198,7 +244,9 @@ export function GhostWorkspacesPanel({
 
       {/* Footer */}
       <div className="border-t border-[var(--m-border)] bg-[var(--m-surface)] px-4 py-2 text-[11px] text-[var(--m-text-tertiary)]">
-        Workspaces with no activity in the last {GHOST_WORKSPACE_THRESHOLD_DAYS} days. Review and consider archiving.
+        Workspaces with no recorded user activity in the last {GHOST_WORKSPACE_THRESHOLD_DAYS} days.
+        The Power BI audit log retains {ACTIVITY_LOG_LOOKBACK_DAYS} days, so {ACTIVITY_LOG_LOOKBACK_DAYS}+
+        means no activity anywhere in the full window. Review and consider archiving.
       </div>
     </div>
   );
