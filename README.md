@@ -30,7 +30,7 @@ is no server.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/architecture-dark.png">
-  <img alt="You sign in with Entra ID; fabric-lens runs in your browser and calls the Fabric, Admin, ARM, and Azure Retail Prices APIs directly over read-only HTTPS. No server, no database, no telemetry sits in between." src="docs/architecture-light.png">
+  <img alt="You sign in with Entra ID; fabric-lens runs in your browser and calls the Fabric, Admin, and ARM APIs directly over read-only HTTPS. No server, no database, no telemetry sits in between." src="docs/architecture-light.png">
 </picture>
 
 - **Read-only.** Every Fabric and Graph scope is a `*.Read.All` delegated permission, and the app
@@ -56,7 +56,7 @@ Details in [SECURITY.md](SECURITY.md).
 | **Security posture** | A posture score and top findings lead, then drill-in areas for Access, Sharing, Settings, and Lifecycle. Flags over-permissioned users and expands Entra ID group membership via Microsoft Graph (opt-in) |
 | **Exposure detection** | Widely shared reports and semantic models reachable by the entire organization, high-risk tenant settings (PublishToWeb, external sharing), and org-wide sharing that bypasses domain boundaries |
 | **Ghost workspaces** | Workspaces with no recorded user activity in the last 28 days, the full retention window of the Power BI audit log |
-| **Capacity and cost** | SKUs, regions, and states with a cost calculator driven by **live Azure retail pricing**, not hardcoded rates |
+| **Capacity and cost** | SKUs, regions, and states, plus a cost calculator that opens on your own largest capacity and prices it at **that region's Azure retail rate**, not one flat number |
 | **Item inventory** | 51 recognized Fabric item types across every workload, including the newest GA additions (Data Agents, Eventhouse, Digital Twin Builder). Unknown types flow through rather than breaking |
 | **Governance report** | A printable multi-section report: executive summary, health distribution, security findings, tenant settings, exposure, inactive workspaces, and prioritized recommendations |
 | **CSV export** | Workspace inventories and security audit data, for whatever you do next with them |
@@ -178,8 +178,8 @@ continuation-token pagination, and admin rate limits.
   front, so the initial consent prompt stays small.
 - **Multi-tenant.** MSAL authority set to `common`; any Entra ID tenant authenticates against a
   single app registration.
-- **Live pricing.** The Azure Retail Prices API (public, no auth) with a 1-hour cache and a graceful
-  fallback to derived rates.
+- **Regional pricing.** Azure retail list rates for 56 regions, snapshotted at build time, so cost
+  estimates track the region a capacity actually runs in without adding a server to proxy them.
 - **Open item-type union.** Microsoft adds Fabric item types continuously, so unrecognized types
   render and count correctly instead of requiring a release.
 

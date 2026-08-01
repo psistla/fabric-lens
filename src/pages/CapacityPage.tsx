@@ -6,9 +6,6 @@ import {
   Package,
   Calculator,
   Info,
-  RefreshCw,
-  CheckCircle2,
-  AlertCircle,
 } from 'lucide-react';
 import { useCapacityStore } from '@/store/capacityStore';
 import { useWorkspaceStore } from '@/store/workspaceStore';
@@ -17,10 +14,15 @@ import { ExportButton } from '@/components/shared/ExportButton';
 import { exportToCSV } from '@/utils/export';
 import { CollapsibleSection } from '@/components/shared/CollapsibleSection';
 import { HOURS_PER_MONTH } from '@/utils/constants';
-import { SKU_SPECS, SKU_NAMES, SKU_TIER_STYLES, buildSkuSpecsWithRates } from '@/data/skuSpecs';
-import type { SkuSpec } from '@/data/skuSpecs';
-import { fetchSkuRates, AZURE_REGIONS } from '@/api/azurePricing';
-import { isEffectiveDemoMode } from '@/auth/AuthProvider';
+import {
+  SKU_SPECS,
+  SKU_NAMES,
+  SKU_TIER_STYLES,
+  AZURE_REGIONS,
+  specsForRegion,
+  normalizeRegion,
+} from '@/data/skuSpecs';
+import { PRICING_FETCHED_ON } from '@/data/regionRates.generated';
 import type { Capacity } from '@/api/types/capacity';
 import type { Item } from '@/api/types/item';
 import type { Workspace } from '@/api/types/workspace';
@@ -40,60 +42,31 @@ function SkuBadge({ sku }: { sku: string }) {
 
 // --- Cost Calculator ---
 
-type PricingStatus = 'idle' | 'loading' | 'live' | 'error';
-
-function useLivePricing(region: string) {
-  const [specs, setSpecs] = useState<Record<string, SkuSpec>>(SKU_SPECS);
-  const [status, setStatus] = useState<PricingStatus>('idle');
-  const [retryCount, setRetryCount] = useState(0);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function load() {
-      if (isEffectiveDemoMode()) {
-        if (!cancelled) {
-          setSpecs(SKU_SPECS);
-          setStatus('live');
-        }
-        return;
-      }
-
-      if (!cancelled) setStatus('loading');
-      try {
-        const rates = await fetchSkuRates(region);
-        if (cancelled) return;
-        if (rates && rates.length > 0) {
-          setSpecs(buildSkuSpecsWithRates(rates));
-          setStatus('live');
-        } else {
-          setSpecs(SKU_SPECS);
-          setStatus('error');
-        }
-      } catch {
-        if (!cancelled) {
-          setSpecs(SKU_SPECS);
-          setStatus('error');
-        }
-      }
-    }
-
-    void load();
-    return () => { cancelled = true; };
-  }, [region, retryCount]);
-
-  return { specs, status, retry: () => setRetryCount((c) => c + 1) };
+interface CostCalculatorProps {
+  /** Region and SKU of the tenant's largest active capacity, when there is one. */
+  initialRegion: string;
+  initialSku: string;
 }
 
-function CostCalculator() {
-  const [region, setRegion] = useState('eastus');
-  const [sku, setSku] = useState('F64');
+function CostCalculator({ initialRegion, initialSku }: CostCalculatorProps) {
+  const [region, setRegion] = useState(initialRegion);
+  const [sku, setSku] = useState(initialSku);
   const [hoursPerDay, setHoursPerDay] = useState(24);
   const [daysPerMonth, setDaysPerMonth] = useState(30);
   const [showAutoscale, setShowAutoscale] = useState(false);
   const [utilization, setUtilization] = useState(40);
 
-  const { specs, status, retry } = useLivePricing(region);
+  const specs = useMemo(() => specsForRegion(region), [region]);
+
+  // A capacity can sit in a region outside the curated list. Prepend it rather
+  // than let the select fall through to a blank value.
+  const regionOptions = useMemo(
+    () =>
+      AZURE_REGIONS.some((r) => r.name === region)
+        ? AZURE_REGIONS
+        : [{ name: region, displayName: region }, ...AZURE_REGIONS],
+    [region],
+  );
 
   const spec = specs[sku];
   const reservedCost = spec ? spec.rate * hoursPerDay * daysPerMonth : 0;
@@ -101,36 +74,11 @@ function CostCalculator() {
 
   return (
     <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)] p-5">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Calculator className="h-4 w-4 text-[var(--m-text-secondary)]" />
-          <h2 className="text-sm font-medium text-[var(--m-text)]">
-            Cost Calculator
-          </h2>
-        </div>
-
-        {/* Pricing status badge */}
-        {status === 'loading' && (
-          <span className="inline-flex items-center gap-1.5 text-xs text-[var(--m-text-tertiary)]">
-            <RefreshCw className="h-3 w-3 animate-spin" />
-            Fetching live rates…
-          </span>
-        )}
-        {status === 'live' && (
-          <span className="inline-flex items-center gap-1.5 text-xs text-[var(--m-success)]">
-            <CheckCircle2 className="h-3 w-3" />
-            Live pricing (USD)
-          </span>
-        )}
-        {status === 'error' && (
-          <button
-            onClick={retry}
-            className="inline-flex items-center gap-1.5 text-xs text-[var(--m-warning)] hover:opacity-80"
-          >
-            <AlertCircle className="h-3 w-3" />
-            Using fallback rates. Click to retry.
-          </button>
-        )}
+      <div className="flex items-center gap-2">
+        <Calculator className="h-4 w-4 text-[var(--m-text-secondary)]" />
+        <h2 className="text-sm font-medium text-[var(--m-text)]">
+          Cost Calculator
+        </h2>
       </div>
 
       <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -144,7 +92,7 @@ function CostCalculator() {
             onChange={(e) => setRegion(e.target.value)}
             className="w-full rounded-lg border border-[var(--m-border)] bg-[var(--m-bg)] px-3 py-1.5 text-sm text-[var(--m-text)]"
           >
-            {AZURE_REGIONS.map((r) => (
+            {regionOptions.map((r) => (
               <option key={r.name} value={r.name}>
                 {r.displayName}
               </option>
@@ -233,14 +181,16 @@ function CostCalculator() {
             <div className="flex items-start gap-2 text-xs text-[var(--m-text-secondary)]">
               <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--m-info)]" />
               <span>
-                With Spark Autoscale, you pay only for the CU-seconds consumed.
-                Costs scale with actual utilization rather than reserved capacity.
+                With Spark Autoscale you pay only for the CU-seconds consumed, so
+                cost scales with utilization rather than reserved capacity. This
+                models a figure you supply. Actual CU consumption is not available
+                from the Fabric REST APIs; the Fabric Capacity Metrics app reports it.
               </span>
             </div>
 
             <div>
               <label className="mb-1 block text-xs font-medium text-[var(--m-text-secondary)]">
-                Average utilization (%)
+                Assumed average utilization (%)
               </label>
               <input
                 type="number"
@@ -254,7 +204,7 @@ function CostCalculator() {
 
             <div className="flex items-center justify-between rounded-lg bg-[var(--m-info-bg)] px-3 py-2">
               <span className="text-xs text-[var(--m-info-text)]">
-                Est. autoscale cost
+                Modelled autoscale cost
               </span>
               <span className="text-sm font-semibold text-[var(--m-info-text)]">
                 ${autoscaleCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -263,7 +213,7 @@ function CostCalculator() {
             </div>
 
             <div className="flex items-center justify-between text-xs text-[var(--m-text-secondary)]">
-              <span>Potential savings</span>
+              <span>Modelled savings</span>
               <span className="font-semibold text-[var(--m-success)]">
                 ${(reservedCost - autoscaleCost).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 {' '}({Math.round(100 - utilization)}%)
@@ -274,10 +224,8 @@ function CostCalculator() {
       </div>
 
       <p className="mt-3 text-[10px] text-[var(--m-text-tertiary)]">
-        {status === 'live'
-          ? 'Rates from Azure Retail Prices API (USD). Cached for 1 hour.'
-          : 'Using estimated USD rates. Select a region for live pricing.'}
-        {' '}Verify on the{' '}
+        Azure retail list price in USD, snapshot taken {PRICING_FETCHED_ON}.
+        Pay-as-you-go only, before any reservation or discount. Verify on the{' '}
         <a
           href="https://azure.microsoft.com/en-us/pricing/details/microsoft-fabric/"
           target="_blank"
@@ -310,7 +258,7 @@ function CapacityDetail({
     (sum, ws) => sum + (allItemsByWorkspace[ws.id]?.length ?? 0),
     0,
   );
-  const spec = SKU_SPECS[capacity.sku];
+  const spec = specsForRegion(capacity.region)[capacity.sku];
 
   return (
     <tr>
@@ -321,7 +269,7 @@ function CapacityDetail({
             <div className="flex items-center gap-4">
               <SkuBadge sku={capacity.sku} />
               <span className="text-sm text-[var(--m-text-secondary)]">
-                {spec.cu} Capacity Units · ${spec.rate}/hr
+                {spec.cu} Capacity Units · ${spec.rate.toFixed(2)}/hr in {capacity.region}
               </span>
             </div>
           )}
@@ -468,15 +416,32 @@ export function CapacityPage() {
     return counts;
   }, [workspaces]);
 
-  // Headline cost: active capacities only, at the SKU list rate for a full
-  // month. Paused capacities bill nothing, so they are left out.
+  // Headline cost: active capacities only, each at its own region's list rate for
+  // a full month. Paused capacities bill nothing, so they are left out.
   const { activeCount, monthlyRunRate } = useMemo(() => {
     const active = capacities.filter((c) => c.state === 'Active');
     const hourly = active.reduce(
-      (sum, c) => sum + (SKU_SPECS[c.sku]?.rate ?? 0),
+      (sum, c) => sum + (specsForRegion(c.region)[c.sku]?.rate ?? 0),
       0,
     );
     return { activeCount: active.length, monthlyRunRate: hourly * HOURS_PER_MONTH };
+  }, [capacities]);
+
+  // Open the calculator on the tenant's own largest active capacity. Modelling
+  // an F64 in East US for someone running one F8 in UK South is a worse starting
+  // point than no default at all.
+  const { defaultRegion, defaultSku } = useMemo(() => {
+    const largest = capacities
+      .filter((c) => c.state === 'Active' && SKU_SPECS[c.sku])
+      .reduce<Capacity | null>(
+        (max, c) =>
+          !max || SKU_SPECS[c.sku].cu > SKU_SPECS[max.sku].cu ? c : max,
+        null,
+      );
+    return {
+      defaultRegion: largest ? normalizeRegion(largest.region) : 'eastus',
+      defaultSku: largest ? largest.sku : 'F64',
+    };
   }, [capacities]);
 
   return (
@@ -627,7 +592,13 @@ export function CapacityPage() {
         title="Cost calculator"
         description="Model a SKU against hours, days, and autoscale."
       >
-        <CostCalculator />
+        {/* Remount when the defaults resolve, so the inputs pick up the tenant's
+            own capacity once it has loaded. */}
+        <CostCalculator
+          key={`${defaultRegion}-${defaultSku}`}
+          initialRegion={defaultRegion}
+          initialSku={defaultSku}
+        />
       </CollapsibleSection>
     </div>
   );
