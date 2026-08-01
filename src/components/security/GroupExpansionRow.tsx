@@ -18,7 +18,7 @@ export function GroupBadge({ group, expanded, onToggle }: BadgeProps) {
         e.stopPropagation();
         onToggle();
       }}
-      className="inline-flex items-center gap-1 rounded-lg px-1.5 py-0.5 text-xs text-[var(--m-text-secondary)] transition-colors hover:bg-[var(--m-surface-hover)]"
+      className="inline-flex min-h-6 items-center gap-1 rounded-lg px-1.5 text-xs text-[var(--m-text-secondary)] transition-colors hover:bg-[var(--m-surface-hover)]"
     >
       <ChevronRight
         className="h-3 w-3 transition-transform"
@@ -162,7 +162,7 @@ export function GroupExpansionRow({ group, onRetry }: Props) {
                           e.stopPropagation();
                           setShowAll(true);
                         }}
-                        className="text-xs font-semibold text-[var(--m-primary)] transition-colors hover:text-[var(--m-primary-hover)]"
+                        className="-my-1 py-1 text-xs font-semibold text-[var(--m-primary)] transition-colors hover:text-[var(--m-primary-hover)]"
                       >
                         Show all {group.members.length} members
                       </button>
@@ -175,7 +175,7 @@ export function GroupExpansionRow({ group, onRetry }: Props) {
                           e.stopPropagation();
                           setShowAll(false);
                         }}
-                        className="text-xs font-semibold text-[var(--m-text-secondary)] transition-colors hover:text-[var(--m-text)]"
+                        className="-my-1 py-1 text-xs font-semibold text-[var(--m-text-secondary)] transition-colors hover:text-[var(--m-text)]"
                       >
                         Show fewer
                       </button>

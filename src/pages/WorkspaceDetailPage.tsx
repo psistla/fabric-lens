@@ -30,7 +30,7 @@ function CopyText({ text }: { text: string }) {
       <button
         onClick={() => void navigator.clipboard.writeText(text)}
         title="Copy"
-        className="opacity-0 transition-opacity group-hover:opacity-100"
+        className="-m-1.5 p-1.5 opacity-0 transition-opacity group-hover:opacity-100"
       >
         <Copy className="h-3 w-3 text-[var(--m-text-tertiary)] hover:text-[var(--m-text)]" />
       </button>
@@ -119,7 +119,7 @@ export function WorkspaceDetailPage() {
       <div className="p-6">
         <button
           onClick={() => void navigate('/workspaces')}
-          className="mb-4 flex items-center gap-1 text-sm text-[var(--m-text-secondary)] hover:text-[var(--m-text)]"
+          className="mb-4 flex items-center gap-1 py-1 text-sm text-[var(--m-text-secondary)] hover:text-[var(--m-text)]"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Workspaces
@@ -154,7 +154,7 @@ export function WorkspaceDetailPage() {
       {/* Back button */}
       <button
         onClick={() => void navigate('/workspaces')}
-        className="flex items-center gap-1 text-sm text-[var(--m-text-secondary)] hover:text-[var(--m-text)]"
+        className="-my-1 flex items-center gap-1 py-1 text-sm text-[var(--m-text-secondary)] hover:text-[var(--m-text)]"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to Workspaces

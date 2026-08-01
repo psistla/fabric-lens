@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useMemo, useState, useCallback } from 'react';
-import { useNavigate } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import {
   ChevronDown,
   ChevronRight,
@@ -166,7 +166,7 @@ function CostCalculator({ initialRegion, initialSku }: CostCalculatorProps) {
       <div className="mt-3">
         <button
           onClick={() => setShowAutoscale(!showAutoscale)}
-          className="flex items-center gap-1.5 text-xs font-semibold text-[var(--m-primary)]"
+          className="-my-1 flex items-center gap-1.5 py-1 text-xs font-semibold text-[var(--m-primary)]"
         >
           {showAutoscale ? (
             <ChevronDown className="h-3 w-3" />
@@ -314,8 +314,14 @@ function CapacityDetail({
                       onClick={() => void navigate(`/workspaces/${ws.id}`)}
                       className="cursor-pointer hover:bg-[var(--m-surface-hover)]"
                     >
-                      <td className="px-4 py-2.5 font-medium text-[var(--m-primary)]">
-                        {ws.displayName}
+                      <td className="px-4 py-2.5">
+                        <Link
+                          to={`/workspaces/${ws.id}`}
+                          onClick={(e) => e.stopPropagation()}
+                          className="-my-1 inline-block py-1 font-medium text-[var(--m-primary)]"
+                        >
+                          {ws.displayName}
+                        </Link>
                       </td>
                       <td className="px-4 py-2.5 text-[var(--m-text-secondary)]">
                         {allItemsByWorkspace[ws.id]?.length ?? 0}
@@ -524,16 +530,25 @@ export function CapacityPage() {
 
               {capacities.map((cap) => {
                 const isExpanded = expandedId === cap.id;
+                const toggle = () => setExpandedId(isExpanded ? null : cap.id);
                 return (
                   <Fragment key={cap.id}>
                     <tr
-                      onClick={() =>
-                        setExpandedId(isExpanded ? null : cap.id)
-                      }
+                      onClick={toggle}
                       className="cursor-pointer hover:bg-[var(--m-surface-hover)]"
                     >
                       <td className="px-4 py-3">
-                        <div className="flex items-center gap-2">
+                        {/* The row stays clickable for the mouse, but the
+                            disclosure itself has to be a real button so it can
+                            be reached and operated from the keyboard. */}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggle();
+                          }}
+                          aria-expanded={isExpanded}
+                          className="-my-1 flex items-center gap-2 py-1 text-left"
+                        >
                           {isExpanded ? (
                             <ChevronDown className="h-3.5 w-3.5 text-[var(--m-text-tertiary)]" />
                           ) : (
@@ -542,7 +557,7 @@ export function CapacityPage() {
                           <span className="font-medium text-[var(--m-text)]">
                             {cap.displayName}
                           </span>
-                        </div>
+                        </button>
                       </td>
                       <td className="px-4 py-3">
                         <SkuBadge sku={cap.sku} />
