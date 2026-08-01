@@ -216,7 +216,9 @@ export function SecurityPage() {
   } = useSecurityStore();
   const {
     workspaces,
+    allItemsByWorkspace,
     fetchWorkspaces,
+    fetchAllItems,
     loading: wsLoading,
   } = useWorkspaceStore();
   const {
@@ -235,6 +237,8 @@ export function SecurityPage() {
     ghostWorkspaces,
     loading: ghostLoading,
     error: ghostError,
+    noActivityData: ghostNoData,
+    scanProgress: ghostScanProgress,
     fetchActivityEvents,
   } = useActivityStore();
   const {
@@ -269,6 +273,14 @@ export function SecurityPage() {
   useEffect(() => {
     if (workspaces.length === 0) void fetchWorkspaces();
   }, [workspaces.length, fetchWorkspaces]);
+
+  // The inactive-workspace panel grades each row, and a grade computed without items is
+  // systematically depressed. Same guarded load the other pages use.
+  useEffect(() => {
+    if (workspaces.length > 0 && Object.keys(allItemsByWorkspace).length === 0) {
+      void fetchAllItems();
+    }
+  }, [workspaces.length, allItemsByWorkspace, fetchAllItems]);
 
   // In demo mode, trigger admin access check (bypasses auth entirely).
   useEffect(() => {
@@ -898,8 +910,11 @@ export function SecurityPage() {
             <GhostWorkspacesPanel
               ghostWorkspaces={ghostWorkspaces}
               workspaces={workspaces}
+              allItemsByWorkspace={allItemsByWorkspace}
               loading={ghostLoading}
               error={ghostError}
+              noActivityData={ghostNoData}
+              scanProgress={ghostScanProgress}
               onRetry={() => void fetchActivityEvents(workspaces)}
             />
           </SecurityAreaSection>

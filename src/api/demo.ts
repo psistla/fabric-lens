@@ -1358,12 +1358,18 @@ export function getMockWidelySharedArtifacts(): WidelySharedArtifact[] {
 /**
  * Returns ~200 realistic mock activity events for demo mode.
  *
- * Inactive workspaces (Grade D — daysInactive 95-180):
- *   ws-6  (My Workspace), ws-7  (Legacy Reports),
- *   ws-32 (Field Operations), ws-33 (Partner Analytics)
+ * EVERY event must fall inside ACTIVITY_LOG_LOOKBACK_DAYS (28), because that is the hard ceiling
+ * on the Power BI activity log and therefore the widest window a live tenant can ever produce.
+ * Demo data older than the window would show the demo doing something the real product cannot,
+ * which matters because demo screenshots are what marketing uses.
  *
- * No-event workspaces (Grade F — 0 events, not visible in 7-day live lookback
- * but still inactive candidates because daysInactive is effectively ∞):
+ * Inactive workspaces (daysInactive 16-27, so they rank rather than tie):
+ *   ws-6  (My Workspace, 16), ws-32 (Field Operations, 19),
+ *   ws-7  (Legacy Reports, 23), ws-33 (Partner Analytics, 27)
+ * Note the event counts thin out toward the window edge, exactly as a real 28-day window does:
+ * a workspace last touched on day 27 has had its older events age out.
+ *
+ * No-event workspaces (0 events in the window, so they report "28+ days"):
  *   ws-5  (HR Dashboard), ws-34 (Temp Workspace), ws-35 (Archive Q3 2024)
  *
  * Active workspaces (daysInactive 1-14, not inactive): all remaining 28 workspaces.
@@ -1600,35 +1606,32 @@ export function getMockWorkspaceActivity(): ActivityEvent[] {
     { id: 'evt-282', creationTime: daysAgo(14), activity: 'EditDataset',     workspaceId: 'ws-31', workspaceName: 'Vendor Management',        userId: 'usr-005' },
 
     // ------------------------------------------------------------------
-    // Grade D workspaces — GHOST: 2-3 events each, 95-180 days ago
+    // GHOST workspaces — last activity 16-27 days ago, all inside the 28-day window.
+    // Event counts thin toward the edge because older events age out of the window.
     // ------------------------------------------------------------------
 
-    // ws-6: My Workspace (last active 110 days ago → ghost)
-    { id: 'evt-300', creationTime: daysAgo(95),  activity: 'ViewReport',     workspaceId: 'ws-6',  workspaceName: 'My Workspace',             userId: 'usr-002' },
-    { id: 'evt-301', creationTime: daysAgo(108), activity: 'EditDataset',    workspaceId: 'ws-6',  workspaceName: 'My Workspace',             userId: 'usr-002' },
-    { id: 'evt-302', creationTime: daysAgo(110), activity: 'ViewDashboard',  workspaceId: 'ws-6',  workspaceName: 'My Workspace',             userId: 'usr-002' },
+    // ws-6: My Workspace (last active 16 days ago → ghost)
+    { id: 'evt-300', creationTime: daysAgo(16), activity: 'ViewReport',     workspaceId: 'ws-6',  workspaceName: 'My Workspace',             userId: 'usr-002' },
+    { id: 'evt-301', creationTime: daysAgo(20), activity: 'EditDataset',    workspaceId: 'ws-6',  workspaceName: 'My Workspace',             userId: 'usr-002' },
+    { id: 'evt-302', creationTime: daysAgo(25), activity: 'ViewDashboard',  workspaceId: 'ws-6',  workspaceName: 'My Workspace',             userId: 'usr-002' },
 
-    // ws-7: Legacy Reports (last active 145 days ago → ghost)
-    { id: 'evt-310', creationTime: daysAgo(130), activity: 'ViewReport',     workspaceId: 'ws-7',  workspaceName: 'Legacy Reports',           userId: 'usr-001' },
-    { id: 'evt-311', creationTime: daysAgo(142), activity: 'ViewDashboard',  workspaceId: 'ws-7',  workspaceName: 'Legacy Reports',           userId: 'usr-003' },
-    { id: 'evt-312', creationTime: daysAgo(145), activity: 'RefreshDataset', workspaceId: 'ws-7',  workspaceName: 'Legacy Reports',           userId: 'usr-007' },
+    // ws-32: Field Operations (last active 19 days ago → ghost)
+    { id: 'evt-320', creationTime: daysAgo(19), activity: 'RunPipeline',    workspaceId: 'ws-32', workspaceName: 'Field Operations',         userId: 'usr-006' },
+    { id: 'evt-321', creationTime: daysAgo(24), activity: 'ViewReport',     workspaceId: 'ws-32', workspaceName: 'Field Operations',         userId: 'usr-005' },
 
-    // ws-32: Field Operations (last active 120 days ago → ghost)
-    { id: 'evt-320', creationTime: daysAgo(105), activity: 'RunPipeline',    workspaceId: 'ws-32', workspaceName: 'Field Operations',         userId: 'usr-006' },
-    { id: 'evt-321', creationTime: daysAgo(115), activity: 'ViewReport',     workspaceId: 'ws-32', workspaceName: 'Field Operations',         userId: 'usr-005' },
-    { id: 'evt-322', creationTime: daysAgo(120), activity: 'EditDataset',    workspaceId: 'ws-32', workspaceName: 'Field Operations',         userId: 'usr-006' },
+    // ws-7: Legacy Reports (last active 23 days ago → ghost)
+    { id: 'evt-310', creationTime: daysAgo(23), activity: 'ViewReport',     workspaceId: 'ws-7',  workspaceName: 'Legacy Reports',           userId: 'usr-001' },
+    { id: 'evt-311', creationTime: daysAgo(26), activity: 'ViewDashboard',  workspaceId: 'ws-7',  workspaceName: 'Legacy Reports',           userId: 'usr-003' },
 
-    // ws-33: Partner Analytics (last active 180 days ago → ghost)
-    { id: 'evt-330', creationTime: daysAgo(165), activity: 'ViewReport',     workspaceId: 'ws-33', workspaceName: 'Partner Analytics',        userId: 'usr-003' },
-    { id: 'evt-331', creationTime: daysAgo(172), activity: 'EditReport',     workspaceId: 'ws-33', workspaceName: 'Partner Analytics',        userId: 'usr-005' },
-    { id: 'evt-332', creationTime: daysAgo(180), activity: 'RefreshDataset', workspaceId: 'ws-33', workspaceName: 'Partner Analytics',        userId: 'usr-004' },
+    // ws-33: Partner Analytics (last active 27 days ago → ghost, at the window edge)
+    { id: 'evt-330', creationTime: daysAgo(27), activity: 'ViewReport',     workspaceId: 'ws-33', workspaceName: 'Partner Analytics',        userId: 'usr-003' },
 
     // ------------------------------------------------------------------
-    // Grade F workspaces — NO EVENTS
+    // NO-EVENT workspaces
     // ws-5  (HR Dashboard), ws-34 (Temp Workspace), ws-35 (Archive Q3 2024)
-    // These have 0 events. In live mode (7-day lookback) they'd be invisible.
-    // In demo mode deriveGhostWorkspaces sees them via the workspace list
-    // (not via events), so they still surface as inactive with daysInactive=lookbackDays.
+    // Zero events in the window. deriveGhostWorkspaces sees them via the workspace list
+    // (not via events), so they surface with daysInactive = lookbackDays and the panel
+    // renders them as "28+ days" — a lower bound, not a measurement.
     // ------------------------------------------------------------------
   ];
 

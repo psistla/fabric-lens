@@ -15,11 +15,3 @@ export interface ActivityEventsResponse {
   continuationUri?: string;
   continuationToken?: string; // defensive — primary pagination uses continuationUri
 }
-
-/** Derived summary of activity for a single workspace, computed from ActivityEvent records. */
-export interface WorkspaceActivity {
-  workspaceId: string;
-  workspaceName: string; // denormalized for display convenience
-  lastActivityDate: Date;
-  eventCount: number;
-}

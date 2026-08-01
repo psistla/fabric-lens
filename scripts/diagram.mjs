@@ -159,7 +159,6 @@ const html = (t) => `<!DOCTYPE html>
         <div class="pill">Fabric Core API</div>
         <div class="pill">Admin API</div>
         <div class="pill">ARM</div>
-        <div class="pill">Azure Retail Prices</div>
       </div>
     </div>
   </div>

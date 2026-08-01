@@ -1,7 +1,7 @@
 {
   "name": "fabric-lens",
   "private": true,
-  "version": "2.2.0",
+  "version": "2.3.0",
   "license": "MIT",
   "type": "module",
   "scripts": {
@@ -20,6 +20,7 @@
     "test:e2e": "playwright test",
     "screenshots": "node scripts/screenshots.mjs",
     "og-image": "node scripts/og-image.mjs",
+    "pricing": "node scripts/fetch-pricing.mjs",
     "verify": "npm run lint && npm run build && npm run test:coverage && npm run test:e2e",
     "diagram": "node scripts/diagram.mjs"
   },

@@ -34,15 +34,22 @@ export const POWERBI_SCOPES = ['https://analysis.windows.net/powerbi/api/.defaul
 
 // -- Ghost workspaces --
 
-/** Number of days of inactivity after which a workspace is considered inactive/stale. */
-export const GHOST_WORKSPACE_THRESHOLD_DAYS = 7;
+/**
+ * Number of days of inactivity after which a workspace is considered inactive/stale.
+ * Must stay comfortably below ACTIVITY_LOG_LOOKBACK_DAYS: at the lookback value the
+ * feature goes binary (every ghost reads the same number) and loses its ranking.
+ */
+export const GHOST_WORKSPACE_THRESHOLD_DAYS = 14;
 
 /**
  * Number of days to look back when fetching activity events from the Power BI activity log.
  * The API requires start/end within the same UTC day, so each day is a separate request.
- * Keep this value low to minimise API calls against the 200 req/hr admin rate limit.
+ *
+ * 28 is the platform maximum: Get Activity Events documents "within the last 28 days", so no
+ * larger window exists and no longer inactivity figure can be reported. Costs ~29 requests per
+ * scan out of the 200/hr admin budget.
  */
-export const ACTIVITY_LOG_LOOKBACK_DAYS = 7;
+export const ACTIVITY_LOG_LOOKBACK_DAYS = 28;
 
 // -- Rate limiting --
 
