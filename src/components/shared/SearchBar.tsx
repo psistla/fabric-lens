@@ -43,7 +43,7 @@ export function SearchBar({
       {local && (
         <button
           onClick={() => handleChange('')}
-          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-0.5 text-[var(--m-text-tertiary)] hover:text-[var(--m-text-secondary)]"
+          className="absolute right-1 top-1/2 -translate-y-1/2 rounded-full p-1.5 text-[var(--m-text-tertiary)] hover:text-[var(--m-text-secondary)]"
         >
           <X className="h-3.5 w-3.5" />
         </button>

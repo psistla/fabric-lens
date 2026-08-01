@@ -206,7 +206,7 @@ export function SecurityQuickView() {
       <div className="border-t border-[var(--m-border)] px-4 py-2.5">
         <button
           onClick={() => void navigate('/security')}
-          className="inline-flex items-center gap-1 text-xs font-medium text-[var(--m-primary)] transition-opacity hover:opacity-75"
+          className="-my-1 inline-flex items-center gap-1 py-1 text-xs font-medium text-[var(--m-primary)] transition-opacity hover:opacity-75"
         >
           View Security Audit
           <ArrowRight className="h-3.5 w-3.5" />

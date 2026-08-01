@@ -246,7 +246,7 @@ export function HealthGrid({ workspaces, onWorkspaceClick }: HealthGridProps) {
         {isCompact && (
           <button
             onClick={() => setShowGrid((v) => !v)}
-            className="text-xs font-semibold text-[var(--m-primary)] transition-colors hover:underline"
+            className="-my-1 py-1 text-xs font-semibold text-[var(--m-primary)] transition-colors hover:underline"
           >
             {showGrid ? 'Show summary' : 'Show grid'}
           </button>

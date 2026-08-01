@@ -1051,7 +1051,7 @@ export function SecurityPage() {
                   {activeRoles.size > 0 && (
                     <button
                       onClick={clearRoleFilter}
-                      className="ml-1 text-xs text-[var(--m-text-secondary)] hover:text-[var(--m-text)]"
+                      className="-my-1 ml-1 py-1 text-xs text-[var(--m-text-secondary)] hover:text-[var(--m-text)]"
                     >
                       Clear
                     </button>

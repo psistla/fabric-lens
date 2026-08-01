@@ -72,7 +72,7 @@ function IssueRow({
               <button
                 key={wsId}
                 onClick={() => onWorkspaceClick(wsId)}
-                className="rounded-full border border-[var(--m-border)] bg-[var(--m-surface)] px-2.5 py-0.5 text-[11px] font-medium text-[var(--m-text-secondary)] transition-colors hover:border-[var(--m-primary)] hover:text-[var(--m-primary)]"
+                className="inline-flex min-h-6 items-center rounded-full border border-[var(--m-border)] bg-[var(--m-surface)] px-2.5 text-[11px] font-medium text-[var(--m-text-secondary)] transition-colors hover:border-[var(--m-primary)] hover:text-[var(--m-primary)]"
               >
                 {name}
               </button>

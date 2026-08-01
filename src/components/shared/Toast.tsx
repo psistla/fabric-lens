@@ -67,7 +67,7 @@ function ToastItemCard({ toast }: { toast: ToastItem }) {
       <p className="flex-1 text-sm">{toast.message}</p>
       <button
         onClick={() => removeToast(toast.id)}
-        className="shrink-0 rounded-full p-0.5 opacity-60 transition-opacity hover:opacity-100"
+        className="-m-1.5 shrink-0 rounded-full p-1.5 opacity-60 transition-opacity hover:opacity-100"
         aria-label="Dismiss"
       >
         <X className="h-3.5 w-3.5" />
