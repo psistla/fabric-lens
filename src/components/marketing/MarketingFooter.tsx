@@ -6,8 +6,7 @@ import { GITHUB_URL } from '@/utils/constants';
  *
  * The privacy line states what is architecturally true today: fabric-lens is a
  * client-side SPA that calls Fabric APIs straight from the browser, so tenant
- * data never reaches a server of ours. Revisit this wording if the Cloudflare
- * analytics beacon lands on the public shell.
+ * data never reaches a server of ours.
  */
 export function MarketingFooter() {
   return (
