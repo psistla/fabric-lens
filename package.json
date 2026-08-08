@@ -21,7 +21,8 @@
     "screenshots": "node scripts/screenshots.mjs",
     "og-image": "node scripts/og-image.mjs",
     "pricing": "node scripts/fetch-pricing.mjs",
-    "verify": "npm run lint && npm run build && npm run test:coverage && npm run test:e2e",
+    "docs:check": "node scripts/check-docs.mjs",
+    "verify": "npm run docs:check && npm run lint && npm run build && npm run test:coverage && npm run test:e2e",
     "diagram": "node scripts/diagram.mjs"
   },
   "dependencies": {
