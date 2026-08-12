@@ -105,12 +105,16 @@ export const CHART_FALLBACK_COLOR = '#495057';
 // -- Item types --
 
 /**
- * Maps a Fabric item type to an existing `--item-*` color token suffix (see
- * index.css for the light/dark values). Related workloads share the eight
- * established tokens by family; unknown/long-tail types fall through to
- * 'default' (neutral gray) in {@link itemTypeToken}.
- * // ponytail: family-reuse of the 8 existing tokens; the makeover (Phase 3
- * // item 2) replaces this with a per-workload signature palette.
+ * Maps a Fabric item type to an `--item-*` color token suffix (see index.css
+ * for the light/dark values). Related workloads share a token by family, one
+ * family per Fabric workload group. Every member of `KnownItemType` is mapped;
+ * 'default' (neutral gray) is reserved for the open union's long tail — item
+ * types Microsoft adds after this list was written.
+ *
+ * Families are grouped, not per-type: the badge renders the type name, so color
+ * carries the workload grouping rather than the identity. A per-type palette
+ * would need 51 hues that stay distinguishable AND pass contrast on both
+ * themes, for no added information.
  */
 const ITEM_TYPE_TOKENS: Record<string, string> = {
   // Power BI
@@ -145,18 +149,33 @@ const ITEM_TYPE_TOKENS: Record<string, string> = {
   CosmosDBDatabase: 'warehouse',
   AzureDatabricksStorage: 'warehouse',
   // Real-time intelligence
-  Eventhouse: 'warehouse',
-  Eventstream: 'warehouse',
-  KQLDatabase: 'warehouse',
-  KQLQueryset: 'warehouse',
-  KQLDashboard: 'warehouse',
-  Reflex: 'warehouse',
+  Eventhouse: 'rti',
+  Eventstream: 'rti',
+  KQLDatabase: 'rti',
+  KQLQueryset: 'rti',
+  KQLDashboard: 'rti',
+  Reflex: 'rti',
+  EventSchemaSet: 'rti',
   // AI / data science
-  DataAgent: 'notebook',
-  MLExperiment: 'notebook',
-  MLModel: 'notebook',
-  GraphModel: 'notebook',
-  GraphQuerySet: 'notebook',
+  DataAgent: 'ai',
+  MLExperiment: 'ai',
+  MLModel: 'ai',
+  GraphModel: 'ai',
+  GraphQuerySet: 'ai',
+  AnomalyDetector: 'ai',
+  // Industry solutions / digital twin
+  DigitalTwinBuilder: 'industry',
+  DigitalTwinBuilderFlow: 'industry',
+  Ontology: 'industry',
+  Map: 'industry',
+  // Developer surfaces and org apps
+  GraphQLApi: 'platform',
+  UserDataFunction: 'platform',
+  AppBackend: 'platform',
+  VariableLibrary: 'platform',
+  OrgApp: 'platform',
+  OrgAppAudience: 'platform',
+  OperationsAgent: 'platform',
 };
 
 /** Color token suffix for a Fabric item type; 'default' for unmapped types. */
