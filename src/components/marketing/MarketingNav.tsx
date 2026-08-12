@@ -30,7 +30,7 @@ export function MarketingNav() {
         <div className="ml-auto flex items-center gap-5">
           <Link
             to="/about"
-            className="hidden text-sm text-[var(--m-text-secondary)] transition-colors duration-[120ms] hover:text-[var(--m-text)] sm:inline"
+            className="-my-1 hidden py-1 text-sm text-[var(--m-text-secondary)] transition-colors duration-[120ms] hover:text-[var(--m-text)] sm:inline"
           >
             About
           </Link>
@@ -38,7 +38,7 @@ export function MarketingNav() {
             href={GITHUB_URL}
             target="_blank"
             rel="noreferrer"
-            className="hidden text-sm text-[var(--m-text-secondary)] transition-colors duration-[120ms] hover:text-[var(--m-text)] sm:inline"
+            className="-my-1 hidden py-1 text-sm text-[var(--m-text-secondary)] transition-colors duration-[120ms] hover:text-[var(--m-text)] sm:inline"
           >
             GitHub
           </a>
@@ -74,7 +74,7 @@ export function MarketingNav() {
                     );
                   });
                 }}
-                className="whitespace-nowrap text-sm font-medium text-[var(--m-text-secondary)] transition-colors duration-[120ms] hover:text-[var(--m-text)]"
+                className="-my-1 whitespace-nowrap py-1 text-sm font-medium text-[var(--m-text-secondary)] transition-colors duration-[120ms] hover:text-[var(--m-text)]"
               >
                 Sign in
               </button>

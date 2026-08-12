@@ -25,7 +25,7 @@ export function MarketingFooter() {
         <nav className="flex flex-col gap-2 text-sm">
           <Link
             to="/about"
-            className="text-[var(--m-text-secondary)] transition-colors duration-[120ms] hover:text-[var(--m-text)]"
+            className="-my-1 py-1 text-[var(--m-text-secondary)] transition-colors duration-[120ms] hover:text-[var(--m-text)]"
           >
             About
           </Link>
@@ -33,7 +33,7 @@ export function MarketingFooter() {
             href={GITHUB_URL}
             target="_blank"
             rel="noreferrer"
-            className="text-[var(--m-text-secondary)] transition-colors duration-[120ms] hover:text-[var(--m-text)]"
+            className="-my-1 py-1 text-[var(--m-text-secondary)] transition-colors duration-[120ms] hover:text-[var(--m-text)]"
           >
             Source on GitHub
           </a>
