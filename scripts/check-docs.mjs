@@ -48,6 +48,39 @@ check('README item-type count matches KnownItemType', () => {
   }
 });
 
+// --- Item colour families vs their CSS tokens -------------------------------
+// ItemTypeBadge composes `var(--item-${token})` at runtime, so a family in the
+// map with no matching token in index.css yields an unstyled badge rather than
+// an error. Lives here and not in a unit test because Vitest cannot read the
+// stylesheet: the Tailwind v4 plugin intercepts `.css`, and `?raw` comes back
+// empty.
+check('every item colour family has tokens in both themes', () => {
+  const constants = readFileSync('src/utils/constants.ts', 'utf8');
+  const map = constants.match(/const ITEM_TYPE_TOKENS[\s\S]*?\n\};/);
+  if (!map) throw new Error('could not locate ITEM_TYPE_TOKENS');
+
+  const families = new Set([...map[0].matchAll(/:\s*'([a-z-]+)'/g)].map((m) => m[1]));
+  families.add('default'); // itemTypeToken's fallback, never a map value
+
+  const css = readFileSync('src/index.css', 'utf8');
+  const rootAt = css.indexOf(':root {');
+  const darkAt = css.indexOf('.dark {');
+  if (rootAt === -1 || darkAt === -1) throw new Error('could not locate :root / .dark blocks');
+  const themes = { light: css.slice(rootAt, darkAt), dark: css.slice(darkAt) };
+
+  const missing = [];
+  for (const family of families) {
+    for (const [theme, block] of Object.entries(themes)) {
+      for (const suffix of ['', '-bg']) {
+        if (!block.includes(`--item-${family}${suffix}:`)) {
+          missing.push(`--item-${family}${suffix} (${theme})`);
+        }
+      }
+    }
+  }
+  if (missing.length > 0) throw new Error(`undefined tokens: ${missing.join(', ')}`);
+});
+
 // --- The backlog's current-release line -------------------------------------
 // Drifted for four releases (v2.0.1 through v2.3.0) before anyone noticed, because
 // the top of the backlog is read far more often than it is edited. .local/ is

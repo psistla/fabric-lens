@@ -119,6 +119,10 @@
   --item-report:         #B45309;  /* Amber   — accent        */
   --item-semantic-model: #DB2777;  /* Pink                    */
   --item-dashboard:      #EA580C;  /* Orange  — warning       */
+  --item-rti:            #4D7C0F;  /* Lime    — real-time     */
+  --item-ai:             #A21CAF;  /* Fuchsia — AI / DS       */
+  --item-industry:       #BE123C;  /* Rose    — industry      */
+  --item-platform:       #0F766E;  /* Teal    — platform/apps */
   --item-default:        #495057;  /* Gray    — neutral-600   */
 
   /* ─── FABRIC-LENS EXTENSIONS: Item Type Backgrounds ─────── */
@@ -129,6 +133,10 @@
   --item-report-bg:         #FFFBEB;
   --item-semantic-model-bg: #FDF2F8;
   --item-dashboard-bg:      #FFF7ED;
+  --item-rti-bg:            #F7FEE7;
+  --item-ai-bg:             #FDF4FF;
+  --item-industry-bg:       #FFF1F2;
+  --item-platform-bg:       #F0FDFA;
   --item-default-bg:        var(--m-surface);
 
   /* ─── FABRIC-LENS EXTENSIONS: Roles ─────────────────────── */
@@ -295,6 +303,10 @@
   --item-report:         #FBBF24;  /* amber-400 */
   --item-semantic-model: #F472B6;  /* pink-400 */
   --item-dashboard:      #FB923C;  /* orange-400 */
+  --item-rti:            #A3E635;  /* lime-400 */
+  --item-ai:             #E879F9;  /* fuchsia-400 */
+  --item-industry:       #FB7185;  /* rose-400 */
+  --item-platform:       #2DD4BF;  /* teal-400 */
   --item-default:        #ADB5BD;  /* neutral-400 */
   --item-lakehouse-bg:      rgba(79, 70, 229, 0.15);
   --item-notebook-bg:       rgba(124, 58, 237, 0.15);
@@ -303,6 +315,10 @@
   --item-report-bg:         rgba(180, 83, 9, 0.15);
   --item-semantic-model-bg: rgba(219, 39, 119, 0.15);
   --item-dashboard-bg:      rgba(234, 88, 12, 0.15);
+  --item-rti-bg:            rgba(77, 124, 15, 0.15);
+  --item-ai-bg:             rgba(162, 28, 175, 0.15);
+  --item-industry-bg:       rgba(190, 18, 60, 0.15);
+  --item-platform-bg:       rgba(15, 118, 110, 0.15);
   --item-default-bg:        rgba(73, 80, 87, 0.15);
 
   /* Legacy alias overrides for dark mode */
