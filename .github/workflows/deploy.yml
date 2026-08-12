@@ -25,10 +25,10 @@ jobs:
     # Without a matrix the name is stable and Node can move freely.
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           # 22, not 20: react-router 8 declares engines.node >=22.22.0.
           node-version: 22
@@ -61,7 +61,7 @@ jobs:
       # step below runs build:demo and overwrites dist with a demo-mode build.
       # Uploading any later would ship demo mode to fabric-lens.com.
       - name: Upload built site
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: dist
           path: dist
@@ -75,7 +75,7 @@ jobs:
 
       - name: Upload Playwright artifacts
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-artifacts
           path: |
@@ -103,7 +103,7 @@ jobs:
       (github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed'))
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           submodules: true
           lfs: false
@@ -114,7 +114,7 @@ jobs:
       # pointing at snapshots that were never generated. Deploying the artifact
       # also means production gets the exact bytes the tests ran against.
       - name: Download built site
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: dist
           path: dist
