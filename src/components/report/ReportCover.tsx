@@ -1,4 +1,6 @@
 import type { ReportData } from '@/utils/reportData';
+import { useHealthConfigStore } from '@/store/healthConfigStore';
+import { DEFAULT_NAMING_PATTERN_STRING } from '@/utils/constants';
 
 interface Props {
   data: Pick<ReportData,
@@ -8,6 +10,10 @@ interface Props {
 }
 
 export function ReportCover({ data }: Props) {
+  const namingPattern = useHealthConfigStore((s) => s.namingPattern);
+  const customNamingPattern =
+    namingPattern === DEFAULT_NAMING_PATTERN_STRING ? null : namingPattern;
+
   const dateStr = data.generatedAt.toLocaleDateString('en-GB', {
     day: 'numeric', month: 'long', year: 'numeric',
   });
@@ -29,6 +35,15 @@ export function ReportCover({ data }: Props) {
           <p className="mt-3 text-sm text-[var(--m-text-secondary)]">
             Generated {dateStr} · fabric-lens.com
           </p>
+          {customNamingPattern && (
+            // Scores in this report were produced with a non-default naming
+            // pattern, so they will not match a report run with the shipped
+            // defaults. Say so on the page rather than letting two reports
+            // silently disagree.
+            <p className="mt-2 text-xs text-[var(--m-text-secondary)]">
+              Custom naming pattern: <code className="font-mono">{customNamingPattern}</code>
+            </p>
+          )}
         </div>
         <div className="text-center bg-[var(--m-bg)] rounded-xl px-6 py-4">
           <p className="text-[11px] font-semibold text-[var(--m-text-secondary)] uppercase tracking-[0.06em]">

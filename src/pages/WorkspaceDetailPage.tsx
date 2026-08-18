@@ -18,6 +18,7 @@ import { StateBadge } from '@/components/shared/StateBadge';
 import { HealthBadge } from '@/components/workspace/HealthBadge';
 import { HealthDetail } from '@/components/workspace/HealthDetail';
 import { calculateWorkspaceHealth } from '@/utils/healthScore';
+import { useNamingPattern } from '@/hooks/useNamingPattern';
 import type { Item } from '@/api/types/item';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
@@ -80,10 +81,12 @@ export function WorkspaceDetailPage() {
     ? getCapacityById(workspace.capacityId)
     : undefined;
 
+  const namingPattern = useNamingPattern();
+
   const healthScore = useMemo(() => {
     if (!workspace) return null;
-    return calculateWorkspaceHealth(workspace, items);
-  }, [workspace, items]);
+    return calculateWorkspaceHealth(workspace, items, namingPattern);
+  }, [workspace, items, namingPattern]);
 
   const columns: Column<Item>[] = [
     {

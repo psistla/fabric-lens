@@ -5,6 +5,7 @@ import type { GhostWorkspace } from '@/utils/ghostWorkspaces';
 import type { Workspace } from '@/api/types/workspace';
 import type { Item } from '@/api/types/item';
 import { calculateWorkspaceHealth } from '@/utils/healthScore';
+import { useNamingPattern } from '@/hooks/useNamingPattern';
 import type { HealthGrade } from '@/utils/healthScore';
 import { GHOST_WORKSPACE_THRESHOLD_DAYS, ACTIVITY_LOG_LOOKBACK_DAYS } from '@/utils/constants';
 
@@ -56,6 +57,8 @@ export function GhostWorkspacesPanel({
   scanProgress,
   onRetry,
 }: Props) {
+  const namingPattern = useNamingPattern();
+
   // Build a lookup map from workspaceId → Workspace for health grade computation
   const workspaceMap = useMemo(
     () => new Map(workspaces.map((w) => [w.id, w])),
@@ -208,7 +211,7 @@ export function GhostWorkspacesPanel({
             {sorted.map((ghost) => {
               const workspace = workspaceMap.get(ghost.workspaceId);
               const grade = workspace
-                ? calculateWorkspaceHealth(workspace, allItemsByWorkspace[ghost.workspaceId] ?? []).grade
+                ? calculateWorkspaceHealth(workspace, allItemsByWorkspace[ghost.workspaceId] ?? [], namingPattern).grade
                 : 'F';
 
               return (

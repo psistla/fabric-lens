@@ -242,9 +242,6 @@ export const HEALTH_GRADE_COLORS = {
 /** Maximum item count before a workspace is flagged as oversized. */
 export const MAX_REASONABLE_ITEM_COUNT = 100;
 
-/** Default number of days after which items are considered stale. */
-export const DEFAULT_STALE_THRESHOLD_DAYS = 90;
-
 // -- Security --
 
 /** Number of Admin-role assignments before flagging a user as over-permissioned. */
