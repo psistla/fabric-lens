@@ -236,7 +236,7 @@ export const HEALTH_GRADE_COLORS = {
   B: '#4F46E5',
   C: '#B45309',
   D: '#C2410C',
-  F: '#DC2626',
+  F: '#B91C1C',
 } as const;
 
 /** Maximum item count before a workspace is flagged as oversized. */

@@ -295,7 +295,7 @@ export function AboutPage() {
                   { grade: 'B', label: '≥ 80%', color: 'bg-[#4F46E5] text-white' },
                   { grade: 'C', label: '≥ 65%', color: 'bg-[#B45309] text-white' },
                   { grade: 'D', label: '≥ 50%', color: 'bg-[#C2410C] text-white' },
-                  { grade: 'F', label: '< 50%', color: 'bg-[#DC2626] text-white' },
+                  { grade: 'F', label: '< 50%', color: 'bg-[#B91C1C] text-white' },
                 ].map(({ grade, label, color }) => (
                   <div key={grade} className="flex items-center gap-2">
                     <span className={`flex h-7 w-7 items-center justify-center rounded-lg text-sm font-bold ${color}`}>
