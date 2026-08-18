@@ -230,13 +230,18 @@ export const GRADE_THRESHOLDS = {
   D: 50,
 } as const;
 
-/** Health grade hex colors — used for Recharts <Cell fill> where CSS vars cannot be used. */
+/** Health grade colors for inline `fill` / `backgroundColor`, where a Tailwind
+ *  class cannot reach. These are `var()` references rather than hex on purpose:
+ *  as literals they were a light-mode snapshot that never flipped, so the report
+ *  chips and the dashboard grade chart stayed light while every token-driven
+ *  chip beside them went dark. Recharts passes `var()` straight through to the
+ *  SVG attribute — the axis tick fill in DashboardPage already relies on it. */
 export const HEALTH_GRADE_COLORS = {
-  A: '#15803D',
-  B: '#4F46E5',
-  C: '#B45309',
-  D: '#C2410C',
-  F: '#B91C1C',
+  A: 'var(--health-a)',
+  B: 'var(--health-b)',
+  C: 'var(--health-c)',
+  D: 'var(--health-d)',
+  F: 'var(--health-f)',
 } as const;
 
 /** Maximum item count before a workspace is flagged as oversized. */
