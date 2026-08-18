@@ -115,15 +115,22 @@
   --item-lakehouse:      #4F46E5;  /* Indigo  — primary       */
   --item-notebook:       #7C3AED;  /* Violet                  */
   --item-pipeline:       #15803D;  /* Green   — success       */
-  --item-warehouse:      #0891B2;  /* Cyan                    */
+  --item-warehouse:      #0E7490;  /* Cyan    — cyan-700      */
   --item-report:         #B45309;  /* Amber   — accent        */
-  --item-semantic-model: #DB2777;  /* Pink                    */
-  --item-dashboard:      #EA580C;  /* Orange  — warning       */
+  --item-semantic-model: #BE185D;  /* Pink    — pink-700      */
+  --item-dashboard:      #BF310D;  /* Orange  — see note below */
   --item-rti:            #4D7C0F;  /* Lime    — real-time     */
   --item-ai:             #A21CAF;  /* Fuchsia — AI / DS       */
   --item-industry:       #BE123C;  /* Rose    — industry      */
   --item-platform:       #0F766E;  /* Teal    — platform/apps */
   --item-default:        #495057;  /* Gray    — neutral-600   */
+  /* Three light-mode colours were darkened 2026-08-17 to clear WCAG AA (4.5:1) against
+     their own tints at 11px: warehouse 3.54, semantic-model 4.21, dashboard 3.35.
+     warehouse and semantic-model took the Tailwind 700 step. dashboard could not:
+     orange-700 is #C2410C, which is already --health-d and --m-warning, and
+     --health-d-bg is the same #FFF7ED tint, so a D grade and a Dashboard badge would
+     have rendered identically. #BF310D is hand-picked at hue 12 instead, which also
+     opens the dashboard/report gap from 5.5 to 14 degrees. Dark mode was unaffected. */
 
   /* ─── FABRIC-LENS EXTENSIONS: Item Type Backgrounds ─────── */
   --item-lakehouse-bg:      #EEF2FF;
