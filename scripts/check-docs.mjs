@@ -81,6 +81,61 @@ check('every item colour family has tokens in both themes', () => {
   if (missing.length > 0) throw new Error(`undefined tokens: ${missing.join(', ')}`);
 });
 
+// --- The DESIGN_GUIDE item palette ------------------------------------------
+// Drifted 2026-08-11: v2.4.0 added four families and this list still showed
+// eight the next day, while CLAUDE.md step 10 sends every design audit to it.
+// Checks hex values and not just names, because the second drift (2026-08-17)
+// was three colours darkened for AA while every family name stayed put.
+// .local/ is gitignored, so this skips cleanly in CI.
+check('DESIGN_GUIDE item palette matches index.css', () => {
+  if (!existsSync('.local/DESIGN_GUIDE.md')) return 'no .local/DESIGN_GUIDE.md';
+
+  const constants = readFileSync('src/utils/constants.ts', 'utf8');
+  const map = constants.match(/const ITEM_TYPE_TOKENS[\s\S]*?\n\};/);
+  if (!map) throw new Error('could not locate ITEM_TYPE_TOKENS');
+  const families = new Set([...map[0].matchAll(/:\s*'([a-z-]+)'/g)].map((m) => m[1]));
+  families.add('default');
+
+  const css = readFileSync('src/index.css', 'utf8');
+  const rootAt = css.indexOf(':root {');
+  const darkAt = css.indexOf('.dark {');
+  if (rootAt === -1 || darkAt === -1) throw new Error('could not locate :root / .dark blocks');
+  const light = css.slice(rootAt, darkAt);
+
+  // Both sides parsed with the same literal. An earlier version built this
+  // regex with `new RegExp(`...\s*...`)`, where the template literal ate the
+  // backslash, so it matched nothing and the check passed vacuously.
+  const palette = (text) =>
+    new Map(
+      [...text.matchAll(/--item-([a-z-]+):\s*(#[0-9A-Fa-f]{6})/g)].map((m) => [
+        m[1],
+        m[2].toUpperCase(),
+      ]),
+    );
+
+  const guide = readFileSync('.local/DESIGN_GUIDE.md', 'utf8');
+  const shipped = palette(light);
+  const documented = palette(guide);
+
+  const problems = [];
+  for (const family of families) {
+    const actual = shipped.get(family);
+    if (!actual) continue; // check 3 already owns missing tokens
+    const claimed = documented.get(family);
+    if (!claimed) problems.push(`--item-${family} missing from DESIGN_GUIDE`);
+    else if (claimed !== actual) {
+      problems.push(`--item-${family}: DESIGN_GUIDE says ${claimed}, index.css has ${actual}`);
+    }
+  }
+
+  const stated = guide.match(/\/\* (\d+) families as of/);
+  if (stated && Number(stated[1]) !== families.size) {
+    problems.push(`DESIGN_GUIDE states ${stated[1]} families, there are ${families.size}`);
+  }
+
+  if (problems.length > 0) throw new Error(problems.join('; '));
+});
+
 // --- The backlog's current-release line -------------------------------------
 // Drifted for four releases (v2.0.1 through v2.3.0) before anyone noticed, because
 // the top of the backlog is read far more often than it is edited. .local/ is

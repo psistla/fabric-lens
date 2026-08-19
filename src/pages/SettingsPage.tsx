@@ -16,13 +16,16 @@ import { useUiStore } from '@/store/uiStore';
 import { isEffectiveDemoMode, msalInstance } from '@/auth/AuthProvider';
 import {
   DEFAULT_NAMING_PATTERN_STRING,
-  DEFAULT_STALE_THRESHOLD_DAYS,
   HEALTH_SCORE_WEIGHTS,
   HEALTH_SCORE_MAX,
   APP_VERSION,
   GRAPH_SCOPES,
   GITHUB_URL,
 } from '@/utils/constants';
+import {
+  useHealthConfigStore,
+  isValidPattern,
+} from '@/store/healthConfigStore';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 // --- Auth Status Section ---
@@ -241,8 +244,12 @@ function PermissionsSection() {
 // --- Health Config Section ---
 
 function HealthConfigSection() {
-  const [namingPattern, setNamingPattern] = useState(DEFAULT_NAMING_PATTERN_STRING);
-  const [staleThreshold, setStaleThreshold] = useState(DEFAULT_STALE_THRESHOLD_DAYS);
+  const namingPattern = useHealthConfigStore((s) => s.namingPattern);
+  const setNamingPattern = useHealthConfigStore((s) => s.setNamingPattern);
+  const reset = useHealthConfigStore((s) => s.reset);
+
+  const isDefault = namingPattern === DEFAULT_NAMING_PATTERN_STRING;
+  const patternValid = isValidPattern(namingPattern);
 
   return (
     <div className="rounded-xl border border-[var(--m-border)] bg-[var(--m-bg)]">
@@ -254,38 +261,40 @@ function HealthConfigSection() {
       </div>
       <div className="space-y-4 px-5 py-4">
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-[var(--m-text-secondary)]">
-            Naming Convention Pattern
-          </label>
+          <div className="mb-1.5 flex items-center justify-between gap-3">
+            <label htmlFor="naming-pattern" className="block text-sm font-medium text-[var(--m-text-secondary)]">
+              Naming Convention Pattern
+            </label>
+            {!isDefault && (
+              <button
+                type="button"
+                onClick={reset}
+                className="-my-1 py-1 text-xs font-medium text-[var(--m-primary)] hover:underline"
+              >
+                Reset to default
+              </button>
+            )}
+          </div>
           <input
+            id="naming-pattern"
             type="text"
             value={namingPattern}
             onChange={(e) => setNamingPattern(e.target.value)}
+            aria-invalid={!patternValid}
+            aria-describedby="naming-pattern-help"
             className="w-full rounded-lg border border-[var(--m-border)] bg-[var(--m-bg)] px-3 py-2 font-mono text-sm text-[var(--m-text)]"
           />
-          <p className="mt-1 text-xs text-[var(--m-text-tertiary)]">
-            Regex pattern for workspace naming compliance ({HEALTH_SCORE_WEIGHTS.naming} pts).
-          </p>
-        </div>
-
-        <div>
-          <label className="mb-1.5 block text-sm font-medium text-[var(--m-text-secondary)]">
-            Stale Threshold (days)
-          </label>
-          <input
-            type="number"
-            min={7}
-            max={365}
-            value={staleThreshold}
-            onChange={(e) =>
-              setStaleThreshold(
-                Math.min(365, Math.max(7, Number(e.target.value))),
-              )
-            }
-            className="w-32 rounded-lg border border-[var(--m-border)] bg-[var(--m-bg)] px-3 py-2 text-sm text-[var(--m-text)]"
-          />
-          <p className="mt-1 text-xs text-[var(--m-text-tertiary)]">
-            Items not modified within this period are considered stale. This is informational and does not affect the health score.
+          <p id="naming-pattern-help" className="mt-1 text-xs text-[var(--m-text-tertiary)]">
+            {patternValid ? (
+              <>
+                Regex pattern for workspace naming compliance ({HEALTH_SCORE_WEIGHTS.naming} pts).
+                {!isDefault && ' Scores across the app use this pattern.'}
+              </>
+            ) : (
+              <span className="font-medium text-[var(--m-error)]">
+                Not a valid regular expression. Scoring falls back to the default pattern until this is fixed.
+              </span>
+            )}
           </p>
         </div>
 

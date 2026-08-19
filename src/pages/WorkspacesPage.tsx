@@ -10,6 +10,7 @@ import { StateBadge } from '@/components/shared/StateBadge';
 import { ExportButton } from '@/components/shared/ExportButton';
 import { HealthBadge } from '@/components/workspace/HealthBadge';
 import { calculateWorkspaceHealth, type HealthScore } from '@/utils/healthScore';
+import { useNamingPattern } from '@/hooks/useNamingPattern';
 import { exportToCSV } from '@/utils/export';
 import { getCurrentUserEmail } from '@/auth/currentUser';
 import { getMyWorkspaceIds } from '@/utils/myWorkspaces';
@@ -44,16 +45,18 @@ export function WorkspacesPage() {
     populateDemoUsers();
   }, [fetchWorkspaces, fetchCapacities, fetchAllItems, populateDemoUsers]);
 
+  const namingPattern = useNamingPattern();
+
   // Health per workspace, from the same scorer the dashboard and detail pages use.
   const healthMap = useMemo(
     () =>
       new Map<string, HealthScore>(
         workspaces.map((w) => [
           w.id,
-          calculateWorkspaceHealth(w, allItemsByWorkspace[w.id] ?? []),
+          calculateWorkspaceHealth(w, allItemsByWorkspace[w.id] ?? [], namingPattern),
         ]),
       ),
-    [workspaces, allItemsByWorkspace],
+    [workspaces, allItemsByWorkspace, namingPattern],
   );
 
   const myWorkspaceIds = useMemo(

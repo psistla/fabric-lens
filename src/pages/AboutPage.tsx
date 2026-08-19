@@ -1,5 +1,10 @@
 import { usePageMeta } from '@/hooks/usePageMeta';
-import { GITHUB_URL, GITHUB_ISSUES_URL } from '@/utils/constants';
+import {
+  GITHUB_URL,
+  GITHUB_ISSUES_URL,
+  HEALTH_SCORE_WEIGHTS,
+  MAX_REASONABLE_ITEM_COUNT,
+} from '@/utils/constants';
 import {
   ShieldCheck,
   LayoutDashboard,
@@ -33,16 +38,20 @@ interface TableRow {
   note?: string;
 }
 
+// Points come from HEALTH_SCORE_WEIGHTS rather than being written out here.
+// This table is public, prerendered documentation of how scoring works, and the
+// hand-copied version drifted: it claimed Semantic Models counted as a data
+// layer and that 100 items failed the count check. Neither was true.
 const healthChecks: TableRow[] = [
-  { criterion: 'Assigned to a capacity', points: 15, note: 'Critical' },
-  { criterion: 'Workspace identity configured (SPN + Git)', points: 25, note: 'Critical' },
-  { criterion: 'Has a description', points: 10, note: 'Critical' },
-  { criterion: 'Assigned to a domain', points: 10 },
-  { criterion: 'Follows naming convention', points: 10 },
-  { criterion: 'Contains at least one item', points: 10 },
-  { criterion: 'Includes a data layer (Lakehouse/Warehouse/Semantic Model)', points: 10 },
-  { criterion: 'Reasonable item count (< 100)', points: 10 },
-  { criterion: 'Tag coverage ≥ 80% of items', points: 10, note: 'Skipped if no items' },
+  { criterion: 'Assigned to a capacity', points: HEALTH_SCORE_WEIGHTS.capacity, note: 'Critical' },
+  { criterion: 'Workspace identity configured (SPN + Git)', points: HEALTH_SCORE_WEIGHTS.workspaceIdentity, note: 'Critical' },
+  { criterion: 'Has a description', points: HEALTH_SCORE_WEIGHTS.description, note: 'Critical' },
+  { criterion: 'Assigned to a domain', points: HEALTH_SCORE_WEIGHTS.domain },
+  { criterion: 'Follows naming convention', points: HEALTH_SCORE_WEIGHTS.naming },
+  { criterion: 'Contains at least one item', points: HEALTH_SCORE_WEIGHTS.activeItems },
+  { criterion: 'Includes a data layer (Lakehouse/Warehouse)', points: HEALTH_SCORE_WEIGHTS.dataLayer },
+  { criterion: `Reasonable item count (≤ ${MAX_REASONABLE_ITEM_COUNT})`, points: HEALTH_SCORE_WEIGHTS.reasonableCount },
+  { criterion: 'Tag coverage ≥ 80% of items', points: HEALTH_SCORE_WEIGHTS.tagCoverage, note: 'Skipped if no items' },
 ];
 
 const toc = [
@@ -286,7 +295,7 @@ export function AboutPage() {
                   { grade: 'B', label: '≥ 80%', color: 'bg-[#4F46E5] text-white' },
                   { grade: 'C', label: '≥ 65%', color: 'bg-[#B45309] text-white' },
                   { grade: 'D', label: '≥ 50%', color: 'bg-[#C2410C] text-white' },
-                  { grade: 'F', label: '< 50%', color: 'bg-[#DC2626] text-white' },
+                  { grade: 'F', label: '< 50%', color: 'bg-[#B91C1C] text-white' },
                 ].map(({ grade, label, color }) => (
                   <div key={grade} className="flex items-center gap-2">
                     <span className={`flex h-7 w-7 items-center justify-center rounded-lg text-sm font-bold ${color}`}>

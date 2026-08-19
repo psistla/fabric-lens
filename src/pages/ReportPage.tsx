@@ -7,13 +7,13 @@ import { useSecurityStore } from '@/store/securityStore';
 import { useTenantSettingsStore } from '@/store/tenantSettingsStore';
 import { useWidelySharedStore } from '@/store/widelySharedStore';
 import { useActivityStore } from '@/store/activityStore';
-import { calculateWorkspaceHealth, type HealthGrade } from '@/utils/healthScore';
+import { calculateWorkspaceHealth, getGrade, type HealthGrade } from '@/utils/healthScore';
+import { useNamingPattern } from '@/hooks/useNamingPattern';
 import { computeSecurityPosture } from '@/utils/securityFindings';
 import type { UserSummary } from '@/utils/effectiveAccess';
 import { deriveRiskySettings } from '@/utils/tenantSettingRisks';
 import { assembleReportData } from '@/utils/reportData';
 import { generateExecutiveSummary } from '@/utils/reportSummary';
-import { GRADE_THRESHOLDS } from '@/utils/constants';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { ReportCover } from '@/components/report/ReportCover';
 import { ExecutiveSummarySection } from '@/components/report/ExecutiveSummarySection';
@@ -24,14 +24,6 @@ import { WidelySharedSection } from '@/components/report/WidelySharedSection';
 import { GhostWorkspacesSection } from '@/components/report/GhostWorkspacesSection';
 import { RecommendationsSection } from '@/components/report/RecommendationsSection';
 
-function getGrade(score: number): HealthGrade {
-  if (score >= GRADE_THRESHOLDS.A) return 'A';
-  if (score >= GRADE_THRESHOLDS.B) return 'B';
-  if (score >= GRADE_THRESHOLDS.C) return 'C';
-  if (score >= GRADE_THRESHOLDS.D) return 'D';
-  return 'F';
-}
-
 export function ReportPage() {
   useDocumentTitle('Governance Report');
   const { workspaces, allItemsByWorkspace } = useWorkspaceStore();
@@ -40,13 +32,15 @@ export function ReportPage() {
   const { artifacts, error: widelySharedError } = useWidelySharedStore();
   const { ghostWorkspaces, lastFetchedAt } = useActivityStore();
 
+  const namingPattern = useNamingPattern();
+
   // --- Health ---
   const healthMap = useMemo(
     () =>
       new Map(
-        workspaces.map((ws) => [ws.id, calculateWorkspaceHealth(ws, allItemsByWorkspace[ws.id] ?? [])]),
+        workspaces.map((ws) => [ws.id, calculateWorkspaceHealth(ws, allItemsByWorkspace[ws.id] ?? [], namingPattern)]),
       ),
-    [workspaces, allItemsByWorkspace],
+    [workspaces, allItemsByWorkspace, namingPattern],
   );
 
   const { tenantScore, tenantGrade } = useMemo(() => {

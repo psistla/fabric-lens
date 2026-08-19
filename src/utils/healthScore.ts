@@ -25,7 +25,10 @@ export interface HealthScore {
   grade: HealthGrade;
 }
 
-function getGrade(percentage: number): HealthGrade {
+/** The one grade ladder. Health scores, the tenant roll-up, the report and the
+ *  security posture all read it, so a threshold moves everywhere at once or
+ *  nowhere. It was written out four times before. */
+export function getGrade(percentage: number): HealthGrade {
   if (percentage >= GRADE_THRESHOLDS.A) return 'A';
   if (percentage >= GRADE_THRESHOLDS.B) return 'B';
   if (percentage >= GRADE_THRESHOLDS.C) return 'C';

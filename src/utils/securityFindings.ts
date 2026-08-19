@@ -6,9 +6,9 @@ import type { ResolvedGroup } from '@/api/types/admin';
 import type { UserSummary } from '@/utils/effectiveAccess';
 import {
   ADMIN_ROLE_WARNING_THRESHOLD,
-  GRADE_THRESHOLDS,
   ADMIN_ASSIGNMENT_PCT_THRESHOLD,
 } from '@/utils/constants';
+import { getGrade } from '@/utils/healthScore';
 
 export type FindingSeverity = 'critical' | 'warning' | 'info';
 
@@ -207,13 +207,10 @@ export interface SecurityPosture {
   checks: PostureCheck[];
 }
 
-function postureGrade(score: number): string {
-  if (score >= GRADE_THRESHOLDS.A) return 'A';
-  if (score >= GRADE_THRESHOLDS.B) return 'B';
-  if (score >= GRADE_THRESHOLDS.C) return 'C';
-  if (score >= GRADE_THRESHOLDS.D) return 'D';
-  return 'F';
-}
+/** Security posture deliberately shares the health grade ladder, so an A means
+ *  the same percentage on both scores. Splitting them would change shipped
+ *  security grades and is a product decision, not a refactor. */
+const postureGrade = getGrade;
 
 export function computeSecurityPosture(
   userSummaries: UserSummary[],

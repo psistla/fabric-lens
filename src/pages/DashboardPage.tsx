@@ -23,7 +23,8 @@ import { useUiStore } from '@/store/uiStore';
 import { StatCard } from '@/components/shared/StatCard';
 import { GovernanceIssuesPanel } from '@/components/dashboard/GovernanceIssuesPanel';
 import { aggregateGovernanceIssues } from '@/utils/governanceIssues';
-import { calculateWorkspaceHealth } from '@/utils/healthScore';
+import { calculateWorkspaceHealth, getGrade } from '@/utils/healthScore';
+import { useNamingPattern } from '@/hooks/useNamingPattern';
 import type { HealthScore } from '@/utils/healthScore';
 import { ExportButton } from '@/components/shared/ExportButton';
 import { CollapsibleSection } from '@/components/shared/CollapsibleSection';
@@ -31,18 +32,10 @@ import { HealthGrid } from '@/components/dashboard/HealthGrid';
 import { SecurityQuickView } from '@/components/dashboard/SecurityQuickView';
 import { ScoreRing } from '@/components/dashboard/ScoreRing';
 import { exportToJSON } from '@/utils/export';
-import { CHART_COLORS, CHART_FALLBACK_COLOR, CHART_TOOLTIP_STYLE, GRADE_THRESHOLDS, HEALTH_GRADE_COLORS, BENCHMARK_HEALTH_SCORE } from '@/utils/constants';
+import { CHART_COLORS, CHART_FALLBACK_COLOR, CHART_TOOLTIP_STYLE, HEALTH_GRADE_COLORS, BENCHMARK_HEALTH_SCORE } from '@/utils/constants';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 const GRADE_ORDER = ['F', 'D', 'C', 'B', 'A'] as const;
-
-function getGrade(score: number): string {
-  if (score >= GRADE_THRESHOLDS.A) return 'A';
-  if (score >= GRADE_THRESHOLDS.B) return 'B';
-  if (score >= GRADE_THRESHOLDS.C) return 'C';
-  if (score >= GRADE_THRESHOLDS.D) return 'D';
-  return 'F';
-}
 
 export function DashboardPage() {
   useDocumentTitle('Dashboard');
@@ -86,6 +79,8 @@ export function DashboardPage() {
     [allItemsByWorkspace],
   );
 
+  const namingPattern = useNamingPattern();
+
   // Health results map — computed once, drives all health-derived data
   const { healthMap, healthError } = useMemo((): {
     healthMap: Map<string, HealthScore>;
@@ -95,7 +90,7 @@ export function DashboardPage() {
       const map = new Map<string, HealthScore>(
         workspaces.map((ws) => {
           const wsItems = allItemsByWorkspace[ws.id] ?? [];
-          return [ws.id, calculateWorkspaceHealth(ws, wsItems)];
+          return [ws.id, calculateWorkspaceHealth(ws, wsItems, namingPattern)];
         }),
       );
       return { healthMap: map, healthError: null };
@@ -106,7 +101,7 @@ export function DashboardPage() {
           err instanceof Error ? err.message : 'Health score computation failed',
       };
     }
-  }, [workspaces, allItemsByWorkspace]);
+  }, [workspaces, allItemsByWorkspace, namingPattern]);
 
   // Tenant-level score, grade, and at-risk count
   const { tenantScore, tenantGrade, atRiskCount } = useMemo(() => {
@@ -210,7 +205,7 @@ export function DashboardPage() {
       },
       workspaces: workspaces.map((ws) => {
         const wsItems = allItemsByWorkspace[ws.id] ?? [];
-        const health = calculateWorkspaceHealth(ws, wsItems);
+        const health = calculateWorkspaceHealth(ws, wsItems, namingPattern);
         const cap = ws.capacityId ? getCapacityById(ws.capacityId) : null;
         return {
           id: ws.id,
@@ -235,6 +230,7 @@ export function DashboardPage() {
     tenantGrade,
     atRiskCount,
     getCapacityById,
+    namingPattern,
   ]);
 
   const refreshLabel = lastRefresh
