@@ -14,7 +14,7 @@ export interface AdminWorkspace {
 }
 
 export interface UserDetails {
-  userPrincipalName: string;
+  userPrincipalName: string | null;
   displayName: string;
   principalType?: PrincipalType;
 }
@@ -23,7 +23,23 @@ export interface WorkspaceAccessDetails {
   workspaceRole: WorkspaceRole;
 }
 
+// Raw shape of GET /admin/workspaces/{id}/users; normalised to WorkspaceUser in admin.ts.
+export interface WorkspaceAccessDetailsResponse {
+  accessDetails?: {
+    principal: {
+      id: string;
+      displayName: string;
+      type: PrincipalType;
+      userDetails?: { userPrincipalName: string };
+      groupDetails?: { groupType: GroupType };
+      servicePrincipalDetails?: { aadAppId: string };
+    };
+    workspaceAccessDetails: WorkspaceAccessDetails;
+  }[];
+}
+
 export interface WorkspaceUser {
+  id?: string;
   userDetails: UserDetails;
   workspaceAccessDetails: WorkspaceAccessDetails;
   principalType?: PrincipalType;

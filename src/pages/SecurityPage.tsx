@@ -59,7 +59,7 @@ import {
   ADMIN_RATE_LIMIT,
   ADMIN_ROLE_WARNING_THRESHOLD,
 } from '@/utils/constants';
-import { computeEffectiveAccess, type UserSummary } from '@/utils/effectiveAccess';
+import { computeEffectiveAccess, principalKey, type UserSummary } from '@/utils/effectiveAccess';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 type SortKey = 'displayName' | 'email' | 'assignmentCount';
@@ -332,17 +332,13 @@ export function SecurityPage() {
       const wsName =
         workspaces.find((w) => w.id === wsId)?.displayName ?? wsId;
       for (const u of users) {
-        // Live API may return null for userPrincipalName (e.g. service principals)
-        // and null for displayName. Normalise to strings to prevent downstream crashes.
-        const email =
-          u.userDetails.userPrincipalName ??
-          u.servicePrincipalDetails?.aadAppId ??
-          u.userDetails.displayName ??
-          'unknown-principal';
+        // Live API may return null for displayName. Normalise to strings to prevent downstream crashes.
+        const email = principalKey(u);
         const pType = u.userDetails.principalType ?? 'User';
         let summary = map.get(email);
         if (!summary) {
           summary = {
+            id: u.id,
             displayName:
               u.userDetails.displayName ??
               u.userDetails.userPrincipalName ??
@@ -370,13 +366,13 @@ export function SecurityPage() {
     if (!hasScanned) return;
     const groups = userSummaries.filter((u) => u.principalType === 'Group');
     for (const g of groups) {
-      void resolveGroupCount(g.email, g.displayName);
+      void resolveGroupCount(g.email, g.displayName, g.id);
     }
 
     // In demo mode, auto-resolve all group members immediately
     if (isEffectiveDemoMode()) {
       for (const g of groups) {
-        void resolveGroupMembers(g.email, g.displayName);
+        void resolveGroupMembers(g.email, g.displayName, g.id);
       }
     }
   }, [hasScanned, userSummaries, resolveGroupCount, resolveGroupMembers]);
@@ -455,7 +451,7 @@ export function SecurityPage() {
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
 
   const toggleGroupExpansion = useCallback(
-    (groupUpn: string, displayName: string) => {
+    (groupUpn: string, displayName: string, graphId?: string) => {
       setExpandedGroups((prev) => {
         const next = new Set(prev);
         if (next.has(groupUpn)) {
@@ -463,7 +459,7 @@ export function SecurityPage() {
         } else {
           next.add(groupUpn);
           // Resolve members on first expand
-          void resolveGroupMembers(groupUpn, displayName);
+          void resolveGroupMembers(groupUpn, displayName, graphId);
         }
         return next;
       });
@@ -1104,7 +1100,7 @@ export function SecurityPage() {
                         <GroupWrapper key={u.email}>
                           <tr
                             className={isGroup ? 'cursor-pointer transition-colors hover:bg-[var(--m-surface-hover)]' : ''}
-                            onClick={isGroup ? () => toggleGroupExpansion(u.email, u.displayName) : undefined}
+                            onClick={isGroup ? () => toggleGroupExpansion(u.email, u.displayName, u.id) : undefined}
                           >
                             <td className="whitespace-nowrap px-4 py-2.5">
                               <div className="flex items-center gap-1" title={TYPE_LABELS[u.principalType]}>
@@ -1121,7 +1117,7 @@ export function SecurityPage() {
                                   <GroupBadge
                                     group={resolved}
                                     expanded={isExpanded}
-                                    onToggle={() => toggleGroupExpansion(u.email, u.displayName)}
+                                    onToggle={() => toggleGroupExpansion(u.email, u.displayName, u.id)}
                                   />
                                 )}
                               </div>
@@ -1160,7 +1156,7 @@ export function SecurityPage() {
                           {isGroup && isExpanded && resolved && (
                             <GroupExpansionRow
                               group={resolved}
-                              onRetry={() => resolveGroupMembers(u.email, u.displayName)}
+                              onRetry={() => resolveGroupMembers(u.email, u.displayName, u.id)}
                             />
                           )}
                         </GroupWrapper>

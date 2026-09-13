@@ -1,6 +1,23 @@
-import type { PrincipalType, ResolvedGroup, EffectiveAccessSummary } from '@/api/types/admin';
+import type {
+  PrincipalType,
+  ResolvedGroup,
+  EffectiveAccessSummary,
+  WorkspaceUser,
+} from '@/api/types/admin';
+
+// Groups and SPNs have no UPN in the admin API, so fall through to a stable id.
+export function principalKey(u: WorkspaceUser): string {
+  return (
+    u.userDetails.userPrincipalName ??
+    u.servicePrincipalDetails?.aadAppId ??
+    u.id ??
+    u.userDetails.displayName ??
+    'unknown-principal'
+  );
+}
 
 export interface UserSummary {
+  id?: string;
   displayName: string;
   email: string;
   principalType: PrincipalType;

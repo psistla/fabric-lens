@@ -10,7 +10,7 @@ import { useActivityStore } from '@/store/activityStore';
 import { calculateWorkspaceHealth, getGrade, type HealthGrade } from '@/utils/healthScore';
 import { useNamingPattern } from '@/hooks/useNamingPattern';
 import { computeSecurityPosture } from '@/utils/securityFindings';
-import type { UserSummary } from '@/utils/effectiveAccess';
+import { principalKey, type UserSummary } from '@/utils/effectiveAccess';
 import { deriveRiskySettings } from '@/utils/tenantSettingRisks';
 import { assembleReportData } from '@/utils/reportData';
 import { generateExecutiveSummary } from '@/utils/reportSummary';
@@ -58,11 +58,11 @@ export function ReportPage() {
     for (const [wsId, users] of Object.entries(workspaceUsers)) {
       const wsName = workspaces.find((w) => w.id === wsId)?.displayName ?? wsId;
       for (const u of users) {
-        const email = u.userDetails.userPrincipalName;
+        const email = principalKey(u);
         const pType = u.userDetails.principalType ?? 'User';
         let summary = map.get(email);
         if (!summary) {
-          summary = { displayName: u.userDetails.displayName, email, principalType: pType, assignments: [] };
+          summary = { id: u.id, displayName: u.userDetails.displayName, email, principalType: pType, assignments: [] };
           map.set(email, summary);
         }
         summary.assignments.push({
