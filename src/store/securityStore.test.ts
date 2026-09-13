@@ -4,6 +4,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 // run (which are hoisted above all variable declarations by Vitest).
 // Without vi.hoisted, the factory would capture `undefined`.
 const mockGetWorkspaceUsers = vi.hoisted(() => vi.fn());
+const mockGetGroupMemberCount = vi.hoisted(() => vi.fn());
+const mockGetGroupMembers = vi.hoisted(() => vi.fn());
 
 // The store imports createAdminApi (not getWorkspaceUsers directly) and calls it
 // at module scope: `const api = createAdminApi(fabricClient)`. Mock the factory.
@@ -14,6 +16,10 @@ vi.mock('@/api/admin', () => ({
   }),
 }));
 vi.mock('@/api/fabricClientInstance', () => ({ fabricClient: {} }));
+vi.mock('@/api/graphClient', () => ({
+  getGroupMemberCount: mockGetGroupMemberCount,
+  getGroupMembers: mockGetGroupMembers,
+}));
 vi.mock('@/api/demo', () => ({
   isDemoMode: false,
   isMsalConfigured: true,
@@ -45,8 +51,16 @@ vi.mock('@/components/shared/Toast', () => ({
 import { useSecurityStore } from './securityStore';
 
 beforeEach(() => {
-  useSecurityStore.setState({ workspaceUsers: {}, loading: false, error: null, scanProgress: null });
+  useSecurityStore.setState({
+    workspaceUsers: {},
+    resolvedGroups: {},
+    loading: false,
+    error: null,
+    scanProgress: null,
+  });
   mockGetWorkspaceUsers.mockReset();
+  mockGetGroupMemberCount.mockReset();
+  mockGetGroupMembers.mockReset();
 });
 
 describe('fetchAllWorkspaceUsers', () => {
@@ -73,5 +87,64 @@ describe('fetchAllWorkspaceUsers', () => {
     const result = await useSecurityStore.getState().fetchAllWorkspaceUsers(['ws1']);
 
     expect(result).toEqual({ status: 'ok' });
+  });
+});
+
+describe('resolveGroupCount (live)', () => {
+  it('stores the Graph transitive member count under the group key', async () => {
+    mockGetGroupMemberCount.mockResolvedValue({ success: true, data: 42 });
+
+    await useSecurityStore.getState().resolveGroupCount('grp@x.com', 'Group', 'graph-id');
+
+    expect(mockGetGroupMemberCount).toHaveBeenCalledWith('graph-id');
+    expect(useSecurityStore.getState().resolvedGroups['grp@x.com']).toMatchObject({
+      memberCount: 42,
+      loading: false,
+      error: null,
+    });
+  });
+
+  it('records the Graph failure reason as the group error', async () => {
+    mockGetGroupMemberCount.mockResolvedValue({
+      success: false,
+      reason: 'consent_required',
+      message: 'nope',
+    });
+
+    await useSecurityStore.getState().resolveGroupCount('grp@x.com', 'Group', 'graph-id');
+
+    expect(useSecurityStore.getState().resolvedGroups['grp@x.com']).toMatchObject({
+      memberCount: null,
+      error: 'consent_required',
+    });
+  });
+});
+
+describe('resolveGroupMembers (live)', () => {
+  it('stores Graph members and their count under the group key', async () => {
+    const members = [{ displayName: 'A', userPrincipalName: 'a@x.com' }];
+    mockGetGroupMembers.mockResolvedValue({ success: true, data: members });
+
+    await useSecurityStore.getState().resolveGroupMembers('grp@x.com', 'Group', 'graph-id');
+
+    expect(mockGetGroupMembers).toHaveBeenCalledWith('graph-id');
+    expect(useSecurityStore.getState().resolvedGroups['grp@x.com']).toMatchObject({
+      members,
+      memberCount: 1,
+      loading: false,
+      error: null,
+    });
+  });
+
+  it('records the Graph failure reason as the group error', async () => {
+    mockGetGroupMembers.mockResolvedValue({ success: false, reason: 'error', message: 'boom' });
+
+    await useSecurityStore.getState().resolveGroupMembers('grp@x.com', 'Group', 'graph-id');
+
+    expect(useSecurityStore.getState().resolvedGroups['grp@x.com']).toMatchObject({
+      members: [],
+      loading: false,
+      error: 'error',
+    });
   });
 });

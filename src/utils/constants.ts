@@ -267,21 +267,6 @@ export const CU_RATE_PER_HOUR = 0.18;
 export const HOURS_PER_MONTH = 730;
 
 
-// -- Principal types --
-
-/**
- * Color map for principal types (used in Security page badges and charts).
- * Reviewed for the cobalt/cyan rebrand: Group's indigo is kept as-is, it
- * reads distinctly from both the new cobalt primary and the violet
- * ServicePrincipal entries. Revisit only if an in-context pass says otherwise.
- */
-export const PRINCIPAL_TYPE_COLORS: Record<string, string> = {
-  User: '#495057',
-  Group: '#4F46E5',
-  ServicePrincipal: '#7C3AED',
-  ServicePrincipalProfile: '#7C3AED',
-};
-
 // -- Demo mode --
 
 /** sessionStorage key used to track whether the user has visited the Security page in demo mode. */
@@ -294,14 +279,6 @@ export const DEMO_USER_UPN = 'alice@contoso.com';
 
 /** Display name of the demo persona. */
 export const DEMO_USER_NAME = 'Alice Johnson';
-
-// -- Session management --
-
-/** Idle timeout (ms) before the session is expired and the user is logged out. */
-export const SESSION_IDLE_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
-
-/** Warning threshold (ms) before idle timeout to optionally notify the user. */
-export const SESSION_WARNING_MS = 5 * 60 * 1000; // 5 minutes
 
 // -- Input validation --
 

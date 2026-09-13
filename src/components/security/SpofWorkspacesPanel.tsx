@@ -35,7 +35,7 @@ export function SpofWorkspacesPanel({ workspaceUsers, workspaces }: Props) {
           workspaceId: wsId,
           workspaceName: wsNameMap[wsId] ?? wsId,
           adminName: admin.userDetails.displayName,
-          adminEmail: admin.userDetails.userPrincipalName,
+          adminEmail: admin.userDetails.userPrincipalName ?? admin.id ?? '',
         });
       }
     }

@@ -256,7 +256,7 @@ export function WorkspacePivotTable({ workspaceUsers, workspaces }: Props) {
                                 <div
                                   key={`${u.userDetails.userPrincipalName}-${role}`}
                                   className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${ROLE_BADGE[role] ?? ''}`}
-                                  title={u.userDetails.userPrincipalName}
+                                  title={u.userDetails.userPrincipalName ?? undefined}
                                 >
                                   <PIcon className="h-3 w-3 opacity-70" />
                                   {u.userDetails.displayName}
