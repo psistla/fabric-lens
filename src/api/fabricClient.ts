@@ -1,6 +1,4 @@
 import type { IPublicClientApplication, AccountInfo } from '@azure/msal-browser';
-import { useMsal } from '@azure/msal-react';
-import { useMemo } from 'react';
 import { FabricApiError, type PaginatedResponse } from './types/common';
 import {
   DEFAULT_FABRIC_API_BASE,
@@ -21,23 +19,6 @@ export function isValidGuid(value: string): boolean {
   return GUID_REGEX.test(value);
 }
 import { isEffectiveDemoMode } from '@/auth/AuthProvider';
-
-// Module-level request counter — tracks all fabricClient requests, resets hourly.
-const HOUR_MS = 60 * 60 * 1000;
-let _reqCount = 0;
-let _reqWindowStart = Date.now();
-
-function trackClientRequest(): void {
-  if (Date.now() - _reqWindowStart >= HOUR_MS) {
-    _reqCount = 0;
-    _reqWindowStart = Date.now();
-  }
-  _reqCount++;
-}
-
-export function getClientRequestCount(): number {
-  return _reqCount;
-}
 
 const FABRIC_API_BASE =
   (import.meta.env.VITE_FABRIC_API_BASE as string) || DEFAULT_FABRIC_API_BASE;
@@ -76,34 +57,16 @@ export class FabricClient {
     }
   }
 
-  private async request<T>(
-    method: 'GET' | 'POST',
-    path: string,
-    body?: unknown,
-    retryCount = 0,
-    scopes?: string[],
-  ): Promise<T> {
+  private async request<T>(path: string, retryCount = 0, scopes?: string[]): Promise<T> {
     const token = await this.getToken(scopes ?? CORE_SCOPES);
     const url = path.startsWith('http') ? path : `${FABRIC_API_BASE}${path}`;
 
-    const headers: Record<string, string> = {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    };
-
-    trackClientRequest();
-    const response = await fetch(url, {
-      method,
-      headers,
-      body: body !== undefined ? JSON.stringify(body) : undefined,
-    });
+    const response = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
 
     if (response.status === 401) {
       const retryToken = await this.getToken(scopes ?? CORE_SCOPES);
       const retryResponse = await fetch(url, {
-        method,
-        headers: { ...headers, Authorization: `Bearer ${retryToken}` },
-        body: body !== undefined ? JSON.stringify(body) : undefined,
+        headers: { Authorization: `Bearer ${retryToken}` },
       });
       if (!retryResponse.ok) {
         throw await this.buildError(retryResponse);
@@ -127,7 +90,7 @@ export class FabricClient {
         MAX_RETRY_DELAY_MS,
       );
       await sleep(Math.max(serverWaitMs, backoffMs));
-      return this.request(method, path, body, retryCount + 1, scopes);
+      return this.request(path, retryCount + 1, scopes);
     }
 
     if (!response.ok) {
@@ -169,17 +132,7 @@ export class FabricClient {
         'This is a bug. Demo mode should use mock data exclusively.',
       );
     }
-    return this.request<T>('GET', path, undefined, 0, scopes);
-  }
-
-  async post<T>(path: string, body?: unknown, scopes?: string[]): Promise<T> {
-    if (isEffectiveDemoMode()) {
-      throw new Error(
-        'fabricClient: API call attempted in demo mode. ' +
-        'This is a bug. Demo mode should use mock data exclusively.',
-      );
-    }
-    return this.request<T>('POST', path, body, 0, scopes);
+    return this.request<T>(path, 0, scopes);
   }
 
   async listAll<T>(path: string): Promise<T[]> {
@@ -203,9 +156,4 @@ export class FabricClient {
     } while (continuationToken);
     return results;
   }
-}
-
-export function useFabricClient(): FabricClient {
-  const { instance } = useMsal();
-  return useMemo(() => new FabricClient(instance), [instance]);
 }

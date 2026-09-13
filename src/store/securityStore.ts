@@ -11,15 +11,14 @@ import { fabricClient } from '@/api/fabricClientInstance';
 import { createAdminApi } from '@/api/admin';
 import { getGroupMemberCount, getGroupMembers } from '@/api/graphClient';
 import { ADMIN_RATE_LIMIT, DEMO_PROGRESS_DELAY_MS } from '@/utils/constants';
-import { adminRateLimiter, type RateLimitUsage } from '@/utils/rateLimiter';
+import { adminRateLimiter } from '@/utils/rateLimiter';
 import { useToastStore } from '@/components/shared/Toast';
 
 const api = createAdminApi(fabricClient);
 
-function trackAdminRequest(set: (partial: Partial<SecurityState>) => void): void {
+function trackAdminRequest(): void {
   adminRateLimiter.trackRequest();
   const usage = adminRateLimiter.getUsage();
-  set({ rateLimitUsage: usage });
   if (adminRateLimiter.isApproachingLimit()) {
     useToastStore.getState().addToast(
       'info',
@@ -40,9 +39,7 @@ interface SecurityState {
   loading: boolean;
   error: string | null;
   scanProgress: { completed: number; total: number } | null;
-  rateLimitUsage: RateLimitUsage | null;
   checkAdminAccess: () => Promise<void>;
-  fetchWorkspaceUsers: (workspaceId: string) => Promise<void>;
   fetchAllWorkspaceUsers: (workspaceIds: string[]) => Promise<FetchResult>;
   populateDemoUsers: () => void;
   resolveGroupCount: (groupUpn: string, displayName: string, graphId?: string) => Promise<void>;
@@ -56,7 +53,6 @@ export const useSecurityStore = create<SecurityState>()((set, get) => ({
   loading: false,
   error: null,
   scanProgress: null,
-  rateLimitUsage: null,
 
   checkAdminAccess: async () => {
     if (isEffectiveDemoMode()) {
@@ -81,36 +77,6 @@ export const useSecurityStore = create<SecurityState>()((set, get) => ({
         isAdmin: null,
         error: e instanceof Error ? e.message : 'Failed to check admin access',
         loading: false,
-      });
-    }
-  },
-
-  fetchWorkspaceUsers: async (workspaceId: string) => {
-    try {
-      if (isEffectiveDemoMode()) {
-        const users = getMockWorkspaceUsers(workspaceId);
-        set((state) => ({
-          workspaceUsers: { ...state.workspaceUsers, [workspaceId]: users },
-        }));
-        return;
-      }
-      if (!adminRateLimiter.canMakeRequest()) {
-        set({ error: `Admin API rate limit reached (${ADMIN_RATE_LIMIT} req/hr). Try again later.` });
-        return;
-      }
-      const result = await api.getWorkspaceUsers(workspaceId);
-      if (result.success) {
-        trackAdminRequest(set);
-        set((state) => ({
-          workspaceUsers: {
-            ...state.workspaceUsers,
-            [workspaceId]: result.data,
-          },
-        }));
-      }
-    } catch (e) {
-      set({
-        error: e instanceof Error ? e.message : 'Failed to fetch workspace users',
       });
     }
   },
@@ -155,7 +121,7 @@ export const useSecurityStore = create<SecurityState>()((set, get) => ({
       if (result.success) {
         allUsers[wsId] = result.data;
       }
-      trackAdminRequest(set);
+      trackAdminRequest();
       set({
         scanProgress: { completed: i + 1, total: toFetch.length },
       });

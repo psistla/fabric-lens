@@ -1,21 +1,12 @@
 import { useState } from 'react';
 import { useMsal, useIsAuthenticated } from '@azure/msal-react';
-import { InteractionStatus, InteractionRequiredAuthError } from '@azure/msal-browser';
+import { InteractionStatus } from '@azure/msal-browser';
 import { fabricLoginRequest } from './msalConfig';
-import { ADMIN_SCOPES, GRAPH_SCOPES, SESSION_IDLE_TIMEOUT_MS } from '@/utils/constants';
-import { useToastStore } from '@/components/shared/Toast';
-
-// Module-level timestamp shared across all useAuth instances.
-let lastActivityAt = Date.now();
+import { ADMIN_SCOPES } from '@/utils/constants';
 
 // Module-level admin consent state — persists across page navigations within
 // the same session without requiring re-consent.
 let _adminConsentGranted = false;
-
-/** Reset the idle timeout clock. Pages should call this on meaningful user interactions. */
-export function resetActivityTimer(): void {
-  lastActivityAt = Date.now();
-}
 
 interface AuthUser {
   name: string;
@@ -65,61 +56,6 @@ export function useAuth() {
     window.location.reload();
   }
 
-  async function getToken(scopes: string[]): Promise<string> {
-    if (!account) {
-      throw new Error('No active account. Please sign in first.');
-    }
-
-    if (Date.now() - lastActivityAt > SESSION_IDLE_TIMEOUT_MS) {
-      try {
-        await logout();
-      } catch {
-        // Ignore logout errors — session is expired regardless.
-      }
-      useToastStore
-        .getState()
-        .addToast('error', 'Session expired due to inactivity. Please sign in again.');
-      throw new Error('Session expired due to inactivity.');
-    }
-
-    try {
-      const result = await instance.acquireTokenSilent({
-        scopes,
-        account,
-      });
-      return result.accessToken;
-    } catch {
-      const result = await instance.acquireTokenPopup({ scopes });
-      return result.accessToken;
-    }
-  }
-
-  async function getGraphToken(): Promise<string | null> {
-    if (!account) return null;
-
-    try {
-      const result = await instance.acquireTokenSilent({
-        scopes: GRAPH_SCOPES,
-        account,
-      });
-      return result.accessToken;
-    } catch (err) {
-      // Only prompt via popup when interaction is explicitly required
-      // (e.g. consent needed, MFA challenge). Silent-fail all other errors.
-      if (err instanceof InteractionRequiredAuthError) {
-        try {
-          const result = await instance.acquireTokenPopup({
-            scopes: GRAPH_SCOPES,
-          });
-          return result.accessToken;
-        } catch {
-          return null;
-        }
-      }
-      return null;
-    }
-  }
-
   /**
    * Try to acquire an admin-scoped token silently (no popup).
    * Returns true if previously consented, false if consent is still required.
@@ -160,8 +96,6 @@ export function useAuth() {
     user,
     login,
     logout,
-    getToken,
-    getGraphToken,
     checkAdminConsent,
     requestAdminConsent,
     hasAdminAccess,
