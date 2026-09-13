@@ -4,12 +4,6 @@ export interface PaginatedResponse<T> {
   continuationUri?: string;
 }
 
-export interface ApiError {
-  statusCode: number;
-  message: string;
-  errorCode?: string;
-}
-
 export class FabricApiError extends Error {
   readonly statusCode: number;
   readonly errorCode: string | undefined;

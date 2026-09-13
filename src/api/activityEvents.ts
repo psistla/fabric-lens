@@ -5,11 +5,6 @@ import { adminRateLimiter } from '@/utils/rateLimiter';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-export interface ActivityScanOptions {
-  /** Called after each UTC day of the window is fully consumed. */
-  onProgress?: (completed: number, total: number) => void;
-}
-
 /**
  * Creates the activity events API bound to the given FabricClient instance.
  */
@@ -30,7 +25,7 @@ export function createActivityEventsApi(client: FabricClient) {
      */
     async fetchLatestActivityByWorkspace(
       lookbackDays: number,
-      options: ActivityScanOptions = {},
+      options: { onProgress?: (completed: number, total: number) => void } = {},
     ): Promise<Map<string, Date>> {
       const latest = new Map<string, Date>();
       const now = Date.now();

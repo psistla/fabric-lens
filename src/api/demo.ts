@@ -835,10 +835,6 @@ export function getMockWorkspaceItems(workspaceId: string): Item[] {
   return itemsMap[workspaceId] ?? [];
 }
 
-export function getAllMockItems(): Item[] {
-  return Object.values(itemsMap).flat();
-}
-
 export function getMockAllWorkspaceItems(): Record<string, Item[]> {
   return { ...itemsMap };
 }
