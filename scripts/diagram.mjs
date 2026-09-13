@@ -1,10 +1,4 @@
-import { chromium } from '@playwright/test';
-import { readFileSync } from 'node:fs';
-
-// Manrope is self-hosted; setContent has no base URL, so inline the latin subset.
-const MANROPE = readFileSync(
-  'node_modules/@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2',
-).toString('base64');
+import { MANROPE_FACE, renderPages } from './render.mjs';
 
 const THEMES = {
   light: {
@@ -33,11 +27,7 @@ const THEMES = {
 
 const html = (t) => `<!DOCTYPE html>
 <html><head><meta charset="utf-8"><style>
-  @font-face {
-    font-family: 'Manrope';
-    font-weight: 200 800;
-    src: url(data:font/woff2;base64,${MANROPE}) format('woff2-variations');
-  }
+  ${MANROPE_FACE}
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
     width: 1200px; height: 520px;
@@ -175,16 +165,11 @@ const html = (t) => `<!DOCTYPE html>
 
 </div></body></html>`;
 
-const browser = await chromium.launch();
-for (const [name, tokens] of Object.entries(THEMES)) {
-  const page = await browser.newPage({
+await renderPages(
+  Object.entries(THEMES).map(([name, tokens]) => ({
+    html: html(tokens),
+    out: `docs/architecture-${name}.png`,
     viewport: { width: 1200, height: 520 },
     deviceScaleFactor: 2,
-  });
-  await page.setContent(html(tokens));
-  await page.evaluate(() => document.fonts.ready);
-  const out = `docs/architecture-${name}.png`;
-  await page.screenshot({ path: out });
-  console.log('captured', out);
-}
-await browser.close();
+  })),
+);

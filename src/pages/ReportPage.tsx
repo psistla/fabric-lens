@@ -28,8 +28,8 @@ export function ReportPage() {
   useDocumentTitle('Governance Report');
   const { workspaces, allItemsByWorkspace } = useWorkspaceStore();
   const { workspaceUsers, resolvedGroups } = useSecurityStore();
-  const { settings, error: settingsError } = useTenantSettingsStore();
-  const { artifacts, error: widelySharedError } = useWidelySharedStore();
+  const { items: settings, error: settingsError } = useTenantSettingsStore();
+  const { items: artifacts, error: widelySharedError } = useWidelySharedStore();
   const { ghostWorkspaces, lastFetchedAt } = useActivityStore();
 
   const namingPattern = useNamingPattern();

@@ -222,16 +222,16 @@ export function SecurityPage() {
     loading: wsLoading,
   } = useWorkspaceStore();
   const {
-    settings,
+    items: settings,
     loading: settingsLoading,
     error: settingsError,
-    fetchTenantSettings,
+    fetch: fetchTenantSettings,
   } = useTenantSettingsStore();
   const {
-    artifacts,
+    items: artifacts,
     loading: widelySharedLoading,
     error: widelySharedError,
-    fetchWidelySharedArtifacts,
+    fetch: fetchWidelySharedArtifacts,
   } = useWidelySharedStore();
   const {
     ghostWorkspaces,

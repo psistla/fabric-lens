@@ -1,49 +1,10 @@
-import { create } from 'zustand';
-import type { WidelySharedArtifact } from '@/api/types/widelyShared';
 import { getMockWidelySharedArtifacts } from '@/api/demo';
-import { isEffectiveDemoMode } from '@/auth/AuthProvider';
 import { fabricClient } from '@/api/fabricClientInstance';
 import { createWidelySharedApi } from '@/api/widelyShared';
-import { adminRateLimiter } from '@/utils/rateLimiter';
+import { createAdminListStore } from './adminListStore';
 
-const api = createWidelySharedApi(fabricClient);
-
-interface WidelySharedState {
-  artifacts: WidelySharedArtifact[];
-  loading: boolean;
-  error: string | null;
-  fetchWidelySharedArtifacts: () => Promise<void>;
-}
-
-export const useWidelySharedStore = create<WidelySharedState>()((set, get) => ({
-  artifacts: [],
-  loading: false,
-  error: null,
-
-  fetchWidelySharedArtifacts: async () => {
-    const { artifacts, error } = get();
-    // Cache guard: skip if already loaded successfully in this session
-    if (artifacts.length > 0 && !error) return;
-
-    if (!isEffectiveDemoMode() && !adminRateLimiter.canMakeRequest()) {
-      set({ error: 'Admin API rate limit reached. Please wait before retrying.' });
-      return;
-    }
-
-    set({ loading: true, error: null });
-    try {
-      const result = isEffectiveDemoMode()
-        ? getMockWidelySharedArtifacts()
-        : await api.fetchWidelySharedArtifacts();
-      if (!isEffectiveDemoMode()) {
-        adminRateLimiter.trackRequest();
-      }
-      set({ artifacts: result, loading: false });
-    } catch (e) {
-      set({
-        error: e instanceof Error ? e.message : 'Failed to fetch widely shared artifacts',
-        loading: false,
-      });
-    }
-  },
-}));
+export const useWidelySharedStore = createAdminListStore(
+  createWidelySharedApi(fabricClient).fetchWidelySharedArtifacts,
+  getMockWidelySharedArtifacts,
+  'Failed to fetch widely shared artifacts',
+);
