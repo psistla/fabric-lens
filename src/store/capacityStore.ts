@@ -3,9 +3,6 @@ import type { Capacity } from '@/api/types/capacity';
 import { mockCapacities } from '@/api/demo';
 import { isEffectiveDemoMode } from '@/auth/AuthProvider';
 import { fabricClient } from '@/api/fabricClientInstance';
-import { createCapacitiesApi } from '@/api/capacities';
-
-const api = createCapacitiesApi(fabricClient);
 
 interface CapacityState {
   capacities: Capacity[];
@@ -25,7 +22,7 @@ export const useCapacityStore = create<CapacityState>()((set, get) => ({
     try {
       const capacities = isEffectiveDemoMode()
         ? mockCapacities
-        : await api.listCapacities();
+        : await fabricClient.listAll<Capacity>('/capacities');
       set({ capacities, loading: false });
     } catch (e) {
       set({

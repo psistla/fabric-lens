@@ -1,24 +1,13 @@
-import { chromium } from '@playwright/test';
-import { readFileSync } from 'node:fs';
+import { MANROPE_FACE, renderPages } from './render.mjs';
 
 const OUT = 'public/og-image.png';
-
-// Manrope is self-hosted; setContent has no base URL, so the font has to be
-// inlined rather than linked. Latin subset only — the card is English.
-const MANROPE = readFileSync(
-  'node_modules/@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2',
-).toString('base64');
 
 const HTML = `<!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
 <style>
-  @font-face {
-    font-family: 'Manrope';
-    font-weight: 200 800;
-    src: url(data:font/woff2;base64,${MANROPE}) format('woff2-variations');
-  }
+  ${MANROPE_FACE}
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -162,11 +151,5 @@ const HTML = `<!DOCTYPE html>
 </body>
 </html>`;
 
-const browser = await chromium.launch();
 // deviceScaleFactor stays 1: OG wants exactly 1200x630, no downscale step.
-const page = await browser.newPage({ viewport: { width: 1200, height: 630 } });
-await page.setContent(HTML);
-await page.evaluate(() => document.fonts.ready);
-await page.screenshot({ path: OUT });
-await browser.close();
-console.log('captured', OUT);
+await renderPages([{ html: HTML, out: OUT, viewport: { width: 1200, height: 630 } }]);

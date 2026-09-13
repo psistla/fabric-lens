@@ -27,15 +27,6 @@ export const useToastStore = create<ToastStore>((set) => ({
     set((state) => ({ toasts: state.toasts.filter((t) => t.id !== id) })),
 }));
 
-export function useToast() {
-  const addToast = useToastStore((s) => s.addToast);
-  return {
-    success: (message: string) => addToast('success', message),
-    error: (message: string) => addToast('error', message),
-    info: (message: string) => addToast('info', message),
-  };
-}
-
 const icons = {
   success: CheckCircle2,
   error: XCircle,

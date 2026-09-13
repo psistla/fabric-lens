@@ -277,9 +277,6 @@ export const DEMO_SECURITY_VISITED_KEY = 'security_visited';
 /** UPN of the demo persona used for "My workspaces" filtering in demo mode. Alice is Admin on 16/35 demo workspaces. */
 export const DEMO_USER_UPN = 'alice@contoso.com';
 
-/** Display name of the demo persona. */
-export const DEMO_USER_NAME = 'Alice Johnson';
-
 // -- Input validation --
 
 /** GUID validation regex (RFC 4122, case-insensitive). Used to validate API
@@ -376,9 +373,6 @@ export const DOMAIN_UNASSIGNED_WARNING_COUNT = 5;
 
 /** Synthetic median tenant health score (percentage 0–100). Label as "typical" — never "industry average". */
 export const BENCHMARK_HEALTH_SCORE = 78;
-
-/** Synthetic median security posture score. Label as "typical" — never "industry average". */
-export const BENCHMARK_SECURITY_SCORE = 72;
 
 // -- External links --
 

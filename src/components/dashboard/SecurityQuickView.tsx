@@ -20,8 +20,8 @@ export function SecurityQuickView() {
   const navigate = useNavigate();
   const { workspaceUsers, resolvedGroups, fetchAllWorkspaceUsers, loading } = useSecurityStore();
   const { workspaces } = useWorkspaceStore();
-  const { fetchTenantSettings } = useTenantSettingsStore();
-  const { fetchWidelySharedArtifacts } = useWidelySharedStore();
+  const { fetch: fetchTenantSettings } = useTenantSettingsStore();
+  const { fetch: fetchWidelySharedArtifacts } = useWidelySharedStore();
   const { fetchActivityEvents } = useActivityStore();
 
   const hasData = Object.keys(workspaceUsers).length > 0;
