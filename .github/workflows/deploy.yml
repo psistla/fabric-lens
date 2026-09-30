@@ -150,3 +150,4 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_LIVELY_GRASS_0FA393E10 }}
           action: "close"
+          skip_deploy_on_missing_secrets: true
