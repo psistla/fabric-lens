@@ -26,11 +26,11 @@
     "diagram": "node scripts/diagram.mjs"
   },
   "dependencies": {
-    "@azure/msal-browser": "^5.23.0",
-    "@azure/msal-react": "^5.7.1",
+    "@azure/msal-browser": "^5.24.0",
+    "@azure/msal-react": "^5.7.2",
     "@fontsource-variable/jetbrains-mono": "^5.3.0",
     "@fontsource-variable/manrope": "^5.3.0",
-    "lucide-react": "^1.48.0",
+    "lucide-react": "^1.50.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "react-is": "^19.3.0",
@@ -44,20 +44,20 @@
     "@tailwindcss/vite": "^4.3.3",
     "@testing-library/dom": "^10.4.2",
     "@testing-library/react": "^16.3.3",
-    "@types/node": "^26.6.3",
+    "@types/node": "^26.6.4",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.1",
-    "@vitest/coverage-v8": "^5.0.2",
-    "eslint": "^10.11.0",
+    "@vitest/coverage-v8": "^5.0.3",
+    "eslint": "^10.12.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.7",
-    "globals": "^17.12.0",
+    "globals": "^17.13.0",
     "jsdom": "^30.1.1",
     "tailwindcss": "^4.2.1",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.70.1",
-    "vite": "^8.3.1",
-    "vitest": "^5.0.2"
+    "typescript-eslint": "^8.71.0",
+    "vite": "^8.3.2",
+    "vitest": "^5.0.3"
   }
 }
