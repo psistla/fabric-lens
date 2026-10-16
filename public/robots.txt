@@ -5,6 +5,7 @@ Disallow: /dashboard
 Disallow: /workspaces
 Disallow: /capacity
 Disallow: /security
+Disallow: /network
 Disallow: /settings
 Disallow: /report
 
