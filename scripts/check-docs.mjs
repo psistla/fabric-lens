@@ -160,6 +160,33 @@ check('TASKS.md current release matches the newest tag', () => {
   }
 });
 
+// --- Protected routes vs robots.txt ------------------------------------------
+// Missed twice: /settings (2026-04) and /network (2026-10). The host serves index.html
+// for every unknown path, so a protected route with no Disallow is crawlable and can be
+// indexed. Protected routes are everything declared after the catch-all `path="*"`
+// in App.tsx; the public marketing routes sit above it.
+check('every protected route is disallowed in robots.txt', () => {
+  const app = readFileSync('src/App.tsx', 'utf8');
+  const at = app.indexOf('path="*"');
+  if (at === -1) throw new Error('could not locate the protected-route block in App.tsx');
+
+  const routes = new Set(
+    [...app.slice(at).matchAll(/path="(\/[^"/]+)/g)].map((m) => m[1]),
+  );
+  if (routes.size === 0) throw new Error('found no protected routes, the parser has drifted');
+
+  const disallowed = new Set(
+    readFileSync('public/robots.txt', 'utf8')
+      .split(/\r?\n/)
+      .map((l) => l.match(/^Disallow:\s*(\S+)/)?.[1])
+      .filter(Boolean),
+  );
+  const missing = [...routes].filter((r) => !disallowed.has(r));
+  if (missing.length > 0) {
+    throw new Error(`robots.txt has no Disallow for ${missing.join(', ')}`);
+  }
+});
+
 // --- Report ----------------------------------------------------------------
 
 for (const name of checked) console.log(`  ok  ${name}`);
