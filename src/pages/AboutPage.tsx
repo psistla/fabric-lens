@@ -239,7 +239,7 @@ export function AboutPage() {
                   <p className="text-sm text-[var(--m-text-secondary)]">
                     <span className="font-semibold text-[var(--m-text)]">Note on consent prompts: </span>
                     fabric-lens requests only the scopes it needs, when it needs them. Core Fabric
-                    and ARM scopes are requested on sign-in. Admin API scopes are requested the
+                    scopes are requested on sign-in. Admin API scopes are requested the
                     first time you visit the Security or Settings page. Group expansion (Microsoft
                     Graph) is opt-in from Settings. You will see a Microsoft consent prompt once
                     per scope, not on every page visit.

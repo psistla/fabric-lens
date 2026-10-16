@@ -55,7 +55,6 @@ jobs:
           VITE_MSAL_TENANT_ID: common
           VITE_MSAL_REDIRECT_URI: https://fabric-lens.com
           VITE_FABRIC_API_BASE: https://api.fabric.microsoft.com/v1
-          VITE_ARM_API_BASE: https://management.azure.com
 
       # Captured HERE, immediately after the production build, because the e2e
       # step below runs build:demo and overwrites dist with a demo-mode build.
