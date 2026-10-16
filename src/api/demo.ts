@@ -5,6 +5,7 @@ import type { WorkspaceUser, GroupMember, ResolvedGroup, AdminWorkspace } from '
 import type { TenantSetting } from './types/tenantSettings';
 import type { WidelySharedArtifact } from './types/widelyShared';
 import type { ActivityEvent } from './types/activityEvents';
+import type { NetworkCommunicationPolicy } from './types/networkPolicy';
 
 export const isMsalConfigured =
   !!import.meta.env.VITE_MSAL_CLIENT_ID &&
@@ -840,6 +841,42 @@ export function getMockAdminWorkspaces(): AdminWorkspace[] {
     capacityId: w.capacityId,
     domainId: w.domainId,
   }));
+}
+
+const DENY = { defaultAction: 'Deny' as const };
+
+/** Mostly open, with four protected workspaces so every posture shows in the demo. */
+export function getMockNetworkPolicies(): NetworkCommunicationPolicy[] {
+  return mockWorkspaces.map((w, i): NetworkCommunicationPolicy => {
+    const base = { workspaceId: w.id, workspaceName: w.displayName, workspaceType: 'Workspace' };
+    if (i === 0) {
+      return {
+        ...base,
+        inbound: {
+          publicAccessRules: DENY,
+          firewall: { rules: [{ displayName: 'Corporate network', value: '10.0.0.0-10.255.255.255' }] },
+        },
+        outbound: {
+          publicAccessRules: DENY,
+          git: DENY,
+          managedPrivateEndpoints: [
+            {
+              id: 'mpe-1',
+              name: 'SqlProdEndpoint',
+              targetPrivateLinkResourceId: '/subscriptions/demo/resourceGroups/rg-prod/providers/Microsoft.Sql/servers/sql-prod',
+              targetSubresourceType: 'sqlServer',
+              provisioningState: 'Succeeded',
+              connectionState: { status: 'Approved' },
+            },
+          ],
+        },
+      };
+    }
+    if (i === 1) return { ...base, inbound: { publicAccessRules: DENY } };
+    if (i === 2) return { ...base, outbound: { publicAccessRules: DENY, git: { defaultAction: 'Allow' } } };
+    if (i === 3) return { ...base, outbound: { publicAccessRules: DENY, git: DENY } };
+    return base;
+  });
 }
 
 export function getMockWorkspaceItems(workspaceId: string): Item[] {

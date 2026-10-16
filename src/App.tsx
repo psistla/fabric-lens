@@ -9,6 +9,7 @@ import { WorkspacesPage } from '@/pages/WorkspacesPage';
 import { WorkspaceDetailPage } from '@/pages/WorkspaceDetailPage';
 import { CapacityPage } from '@/pages/CapacityPage';
 import { SecurityPage } from '@/pages/SecurityPage';
+import { NetworkPage } from '@/pages/NetworkPage';
 import { SettingsPage } from '@/pages/SettingsPage';
 import { AboutPage } from '@/pages/AboutPage';
 import { ReportPage } from '@/pages/ReportPage';
@@ -38,6 +39,7 @@ export function App() {
                   />
                   <Route path="/capacity" element={<CapacityPage />} />
                   <Route path="/security" element={<SecurityPage />} />
+                  <Route path="/network" element={<NetworkPage />} />
                   <Route path="/settings" element={<SettingsPage />} />
                   <Route path="/report" element={<ReportPage />} />
                 </Routes>

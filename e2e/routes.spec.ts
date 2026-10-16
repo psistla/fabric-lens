@@ -7,6 +7,7 @@ const ROUTES = [
   '/workspaces',
   '/capacity',
   '/security',
+  '/network',
   '/settings',
   '/report',
   '/about',
