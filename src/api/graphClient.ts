@@ -1,7 +1,8 @@
 import type { AccountInfo } from '@azure/msal-browser';
 import { msalInstance } from '@/auth/AuthProvider';
-import { GRAPH_SCOPES, DEFAULT_GRAPH_API_BASE } from '@/utils/constants';
+import { GRAPH_SCOPES, DEFAULT_GRAPH_API_BASE, MAX_RETRY_COUNT } from '@/utils/constants';
 import { isDemoMode } from '@/api/demo';
+import { fetchWithTimeout, isValidGuid, retryDelayMs } from './fabricClient';
 import type {
   ODataPagedResponse,
   GraphUser,
@@ -72,6 +73,20 @@ function isConsentError(status: number, body: string): boolean {
   );
 }
 
+/** GET with the Graph consistency header, a timeout, and bounded retry on 429. */
+async function graphGet(url: string, token: string, retryCount = 0): Promise<Response> {
+  const response = await fetchWithTimeout(url, token, { ConsistencyLevel: 'eventual' });
+  if (response.status !== 429 || retryCount >= MAX_RETRY_COUNT) return response;
+  await new Promise((resolve) =>
+    setTimeout(resolve, retryDelayMs(response.headers.get('Retry-After'), retryCount)),
+  );
+  return graphGet(url, token, retryCount + 1);
+}
+
+function invalidGroupId<T>(groupId: string): GraphResult<T> {
+  return { success: false, reason: 'error', message: `Invalid group ID: "${groupId}"` };
+}
+
 // ---------------------------------------------------------------------------
 // Public API
 // ---------------------------------------------------------------------------
@@ -92,6 +107,8 @@ export async function getGroupMemberCount(
       'This is a bug. Demo mode should use mock data exclusively.',
     );
   }
+  // Security: validate GUID before path interpolation, as the Fabric client does.
+  if (!isValidGuid(groupId)) return invalidGroupId(groupId);
   const token = await getGraphToken();
   if (!token) {
     return {
@@ -105,12 +122,7 @@ export async function getGroupMemberCount(
   const url = `${DEFAULT_GRAPH_API_BASE}/groups/${groupId}/transitiveMembers/$count`;
 
   try {
-    const response = await fetch(url, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        ConsistencyLevel: 'eventual',
-      },
-    });
+    const response = await graphGet(url, token);
 
     const body = await response.text();
 
@@ -168,6 +180,7 @@ export async function getGroupMembers(
       'This is a bug. Demo mode should use mock data exclusively.',
     );
   }
+  if (!isValidGuid(groupId)) return invalidGroupId(groupId);
   const token = await getGraphToken();
   if (!token) {
     return {
@@ -185,12 +198,7 @@ export async function getGroupMembers(
 
   try {
     while (url) {
-      const response = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          ConsistencyLevel: 'eventual',
-        },
-      });
+      const response = await graphGet(url, token);
 
       if (!response.ok) {
         const body = await response.text();

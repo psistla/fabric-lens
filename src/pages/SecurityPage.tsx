@@ -34,6 +34,7 @@ import { TenantSettingsRiskPanel } from '@/components/security/TenantSettingsRis
 import { WidelySharedPanel } from '@/components/security/WidelySharedPanel';
 import { DomainGovernancePanel } from '@/components/security/DomainGovernancePanel';
 import { GhostWorkspacesPanel } from '@/components/security/GhostWorkspacesPanel';
+import { WorkspaceStatePanel } from '@/components/security/WorkspaceStatePanel';
 import { LimitedAccessPanel } from '@/components/security/LimitedAccessPanel';
 import { SecurityPostureCard } from '@/components/security/SecurityPostureCard';
 import { SpnGovernancePanel } from '@/components/security/SpnGovernancePanel';
@@ -203,6 +204,7 @@ export function SecurityPage() {
   const navigate = useNavigate();
   const { checkAdminConsent, requestAdminConsent, hasAdminAccess } = useAuth();
   const {
+    adminWorkspaces,
     workspaceUsers,
     resolvedGroups,
     isAdmin,
@@ -418,6 +420,12 @@ export function SecurityPage() {
     [userSummaries],
   );
 
+  // Workspaces the admin list reports as anything other than Active (Orphaned, Deleted, Removing).
+  const nonActiveWorkspaces = useMemo(
+    () => adminWorkspaces.filter((w) => w.state !== 'Active'),
+    [adminWorkspaces],
+  );
+
   // Drill-in areas for the page IA. The SPOF and elevated-SPN counts come off
   // the findings that already derive them, rather than re-deriving here.
   const areas = useMemo(() => {
@@ -433,6 +441,7 @@ export function SecurityPage() {
       widelySharedCount: artifacts.length,
       unassignedDomainCount: unassignedCount,
       ghostCount: ghostWorkspaces.length,
+      nonActiveStateCount: nonActiveWorkspaces.length,
     });
     return Object.fromEntries(grouped.map((a) => [a.id, a])) as Record<
       SecurityAreaId,
@@ -445,6 +454,7 @@ export function SecurityPage() {
     artifacts,
     unassignedCount,
     ghostWorkspaces,
+    nonActiveWorkspaces,
   ]);
 
   // --- Expanded groups state ---
@@ -913,6 +923,7 @@ export function SecurityPage() {
               scanProgress={ghostScanProgress}
               onRetry={() => void fetchActivityEvents(workspaces)}
             />
+            <WorkspaceStatePanel workspaces={nonActiveWorkspaces} />
           </SecurityAreaSection>
 
           {/* Directory: the raw user/workspace pivot, one level down from the

@@ -30,6 +30,7 @@ export interface SecurityAreaInput {
   widelySharedCount: number;
   unassignedDomainCount: number;
   ghostCount: number;
+  nonActiveStateCount: number;
 }
 
 /**
@@ -110,6 +111,11 @@ export function groupSecurityAreas(input: SecurityAreaInput): SecurityArea[] {
       question: 'What is still provisioned but no longer used?',
       signals: [
         { key: 'ghost', label: 'Inactive workspaces', count: input.ghostCount },
+        {
+          key: 'workspace-state',
+          label: 'Workspaces not Active (orphaned or deleted)',
+          count: input.nonActiveStateCount,
+        },
       ],
     },
   ];

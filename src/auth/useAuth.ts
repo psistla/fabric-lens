@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useMsal, useIsAuthenticated } from '@azure/msal-react';
-import { InteractionStatus } from '@azure/msal-browser';
+import { BrowserAuthError, BrowserAuthErrorCodes, InteractionStatus } from '@azure/msal-browser';
 import { fabricLoginRequest } from './msalConfig';
 import { ADMIN_SCOPES } from '@/utils/constants';
 
@@ -38,10 +38,20 @@ export function useAuth() {
     // Use the current origin as the popup redirect URI so the popup and main
     // window share the same origin — required for MSAL's BroadcastChannel
     // handshake to work regardless of www vs non-www access.
-    await instance.loginPopup({
-      ...fabricLoginRequest,
-      redirectUri: window.location.origin,
-    });
+    const request = { ...fabricLoginRequest, redirectUri: window.location.origin };
+    try {
+      await instance.loginPopup(request);
+    } catch (e) {
+      // A blocked popup cannot be retried by the user; fall back to a full-page redirect.
+      // The redirect returns to this origin and AuthProvider completes it before first render.
+      const blocked =
+        e instanceof BrowserAuthError &&
+        (e.errorCode === BrowserAuthErrorCodes.popupWindowError ||
+          e.errorCode === BrowserAuthErrorCodes.emptyWindowError);
+      if (!blocked) throw e;
+      await instance.loginRedirect(request);
+      return;
+    }
     // Reload so stores re-initialise and fetch live tenant data.
     window.location.reload();
   }

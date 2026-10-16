@@ -21,6 +21,7 @@ const EMPTY = {
   widelySharedCount: 0,
   unassignedDomainCount: 0,
   ghostCount: 0,
+  nonActiveStateCount: 0,
 };
 
 describe('groupSecurityAreas', () => {
@@ -45,13 +46,14 @@ describe('groupSecurityAreas', () => {
       unassignedDomainCount: 5,
       riskySettingsCount: 6,
       ghostCount: 7,
+      nonActiveStateCount: 2,
     });
     const byId = Object.fromEntries(areas.map((a) => [a.id, a]));
 
     expect(byId.access.count).toBe(6); // 2 + 3 + 1
     expect(byId.sharing.count).toBe(9); // 4 + 5
     expect(byId.settings.count).toBe(6);
-    expect(byId.lifecycle.count).toBe(7);
+    expect(byId.lifecycle.count).toBe(9); // 7 + 2
   });
 
   it('lists member signals with their own counts', () => {

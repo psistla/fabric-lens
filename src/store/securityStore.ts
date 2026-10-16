@@ -1,6 +1,7 @@
 import { create } from 'zustand';
-import type { WorkspaceUser, ResolvedGroup } from '@/api/types/admin';
+import type { WorkspaceUser, ResolvedGroup, AdminWorkspace } from '@/api/types/admin';
 import {
+  getMockAdminWorkspaces,
   getMockWorkspaceUsers,
   getMockAllWorkspaceUsers,
   getMockGroupMemberCount,
@@ -33,6 +34,8 @@ export type FetchResult =
   | { status: 'error'; message: string };
 
 interface SecurityState {
+  /** Tenant-wide workspace list from /admin/workspaces, kept so lifecycle state can be reported. */
+  adminWorkspaces: AdminWorkspace[];
   workspaceUsers: Record<string, WorkspaceUser[]>;
   resolvedGroups: Record<string, ResolvedGroup>;
   isAdmin: boolean | null; // null = not yet checked
@@ -47,6 +50,7 @@ interface SecurityState {
 }
 
 export const useSecurityStore = create<SecurityState>()((set, get) => ({
+  adminWorkspaces: [],
   workspaceUsers: {},
   resolvedGroups: {},
   isAdmin: null,
@@ -56,14 +60,14 @@ export const useSecurityStore = create<SecurityState>()((set, get) => ({
 
   checkAdminAccess: async () => {
     if (isEffectiveDemoMode()) {
-      set({ isAdmin: true });
+      set({ isAdmin: true, adminWorkspaces: getMockAdminWorkspaces() });
       return;
     }
     set({ loading: true, error: null });
     try {
       const result = await api.listAdminWorkspaces();
       if (result.success) {
-        set({ isAdmin: true, loading: false });
+        set({ isAdmin: true, adminWorkspaces: result.data, loading: false });
       } else if (result.reason === 'access_denied') {
         // 403 — user genuinely lacks the Fabric Admin role
         set({ isAdmin: false, loading: false });

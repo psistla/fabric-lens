@@ -34,9 +34,13 @@ export function AuthProvider({ children }: Props) {
 
   useEffect(() => {
     if (isDemoMode || !msalInstance) return;
-    msalInstance.initialize().then(() => {
-      setIsReady(true);
-    });
+    // Complete a returning login redirect before first render, so the stores see the
+    // signed-in account instead of starting in demo mode.
+    const instance = msalInstance;
+    void instance
+      .initialize()
+      .then(() => instance.handleRedirectPromise().catch(() => null))
+      .then(() => setIsReady(true));
   }, []);
 
   if (!isReady) {

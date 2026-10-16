@@ -71,6 +71,16 @@ export const BASE_RETRY_DELAY_MS = 1000;
 /** Maximum delay (ms) cap for exponential backoff on 429 retries. */
 export const MAX_RETRY_DELAY_MS = 30000;
 
+/** Per-request timeout (ms) for Fabric and Power BI calls; a hung socket otherwise blocks a scan forever. */
+export const REQUEST_TIMEOUT_MS = 60000;
+
+/** Shown when Fabric answers 429 with errorCode CapacityLimitExceeded. */
+export const CAPACITY_LIMIT_MESSAGE =
+  "Your organization's Fabric capacity is over its limits. Retrying now will not help; ask a capacity admin to check the Capacity Metrics app.";
+
+/** Shown when a request exceeds REQUEST_TIMEOUT_MS. */
+export const REQUEST_TIMEOUT_MESSAGE = 'The request timed out. Try again.';
+
 /** Delay (ms) between mock progress updates in demo mode. */
 export const DEMO_PROGRESS_DELAY_MS = 80;
 

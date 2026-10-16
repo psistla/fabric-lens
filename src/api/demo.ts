@@ -1,7 +1,7 @@
 import type { Workspace } from './types/workspace';
 import type { Item } from './types/item';
 import type { Capacity } from './types/capacity';
-import type { WorkspaceUser, GroupMember, ResolvedGroup } from './types/admin';
+import type { WorkspaceUser, GroupMember, ResolvedGroup, AdminWorkspace } from './types/admin';
 import type { TenantSetting } from './types/tenantSettings';
 import type { WidelySharedArtifact } from './types/widelyShared';
 import type { ActivityEvent } from './types/activityEvents';
@@ -830,6 +830,17 @@ const itemsMap: Record<string, Item[]> = {
     { id: 'item-35-1', displayName: 'Q3 Summary', description: 'Q3 executive summary', type: 'PaginatedReport', workspaceId: 'ws-35' },
   ],
 };
+
+export function getMockAdminWorkspaces(): AdminWorkspace[] {
+  return mockWorkspaces.map((w) => ({
+    id: w.id,
+    name: w.displayName,
+    type: w.type,
+    state: w.state,
+    capacityId: w.capacityId,
+    domainId: w.domainId,
+  }));
+}
 
 export function getMockWorkspaceItems(workspaceId: string): Item[] {
   return itemsMap[workspaceId] ?? [];
