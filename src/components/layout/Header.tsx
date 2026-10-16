@@ -195,6 +195,9 @@ export function Header() {
                     <LogOut className="h-4 w-4" />
                     Sign out
                   </button>
+                  <p className="px-3 pb-2 text-xs text-[var(--m-text-tertiary)]">
+                    Clears fabric-lens only. Your Microsoft session stays signed in.
+                  </p>
                 </>
               )}
             </div>

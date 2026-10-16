@@ -7,9 +7,12 @@ import {
   MAX_RETRY_COUNT,
   BASE_RETRY_DELAY_MS,
   MAX_RETRY_DELAY_MS,
+  REQUEST_TIMEOUT_MS,
   GUID_REGEX,
   HTTP_ERROR_MESSAGES,
   HTTP_ERROR_MESSAGE_SERVER,
+  CAPACITY_LIMIT_MESSAGE,
+  REQUEST_TIMEOUT_MESSAGE,
 } from '@/utils/constants';
 
 /** Returns true if value is a valid RFC 4122 GUID. Use this before
@@ -25,6 +28,38 @@ const FABRIC_API_BASE =
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/** Fabric states the 429 cause in the body's errorCode; Retry-After is whole seconds. */
+const CAPACITY_LIMIT_CODE = 'CapacityLimitExceeded';
+
+/** Wait before retry number `retryCount` (0-based): the larger of Retry-After and capped backoff. */
+export function retryDelayMs(retryAfter: string | null, retryCount: number): number {
+  const seconds = retryAfter === null ? NaN : Number(retryAfter);
+  const serverWaitMs = Number.isFinite(seconds) ? seconds * 1000 : DEFAULT_RETRY_AFTER_MS;
+  const backoffMs = Math.min(
+    BASE_RETRY_DELAY_MS * Math.pow(2, retryCount) + Math.random() * 1000,
+    MAX_RETRY_DELAY_MS,
+  );
+  return Math.max(serverWaitMs, backoffMs);
+}
+
+export async function fetchWithTimeout(
+  url: string,
+  token: string,
+  extraHeaders: Record<string, string> = {},
+): Promise<Response> {
+  try {
+    return await fetch(url, {
+      headers: { Authorization: `Bearer ${token}`, ...extraHeaders },
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+    });
+  } catch (e) {
+    if (e instanceof DOMException && e.name === 'TimeoutError') {
+      throw new FabricApiError(408, REQUEST_TIMEOUT_MESSAGE, 'RequestTimeout');
+    }
+    throw e;
+  }
 }
 
 export class FabricClient {
@@ -61,35 +96,28 @@ export class FabricClient {
     const token = await this.getToken(scopes ?? CORE_SCOPES);
     const url = path.startsWith('http') ? path : `${FABRIC_API_BASE}${path}`;
 
-    const response = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+    const response = await fetchWithTimeout(url, token);
 
     if (response.status === 401) {
       const retryToken = await this.getToken(scopes ?? CORE_SCOPES);
-      const retryResponse = await fetch(url, {
-        headers: { Authorization: `Bearer ${retryToken}` },
-      });
+      const retryResponse = await fetchWithTimeout(url, retryToken);
       if (!retryResponse.ok) {
         throw await this.buildError(retryResponse);
       }
       return (await retryResponse.json()) as T;
     }
 
-    if (response.status === 429) {
-      if (retryCount >= MAX_RETRY_COUNT) {
-        throw new FabricApiError(
-          429,
-          HTTP_ERROR_MESSAGES[429] ?? HTTP_ERROR_MESSAGE_SERVER,
-        );
+    // 429 is always retryable. A 5xx is retried only when the server sent Retry-After,
+    // per Microsoft's guidance not to retry a bare 503.
+    const retryAfter = response.headers.get('Retry-After');
+    if (response.status === 429 || (response.status >= 500 && retryAfter)) {
+      const error = await this.buildError(response);
+      // CapacityLimitExceeded means the capacity is overloaded, not that this caller was
+      // too fast, so an immediate retry cannot succeed. Surface it instead of waiting.
+      if (error.errorCode === CAPACITY_LIMIT_CODE || retryCount >= MAX_RETRY_COUNT) {
+        throw error;
       }
-      const retryAfter = response.headers.get('Retry-After');
-      const serverWaitMs = retryAfter
-        ? parseInt(retryAfter, 10) * 1000
-        : DEFAULT_RETRY_AFTER_MS;
-      const backoffMs = Math.min(
-        BASE_RETRY_DELAY_MS * Math.pow(2, retryCount) + Math.random() * 1000,
-        MAX_RETRY_DELAY_MS,
-      );
-      await sleep(Math.max(serverWaitMs, backoffMs));
+      await sleep(retryDelayMs(retryAfter, retryCount));
       return this.request(path, retryCount + 1, scopes);
     }
 
@@ -105,14 +133,14 @@ export class FabricClient {
   }
 
   private async buildError(response: Response): Promise<FabricApiError> {
-    const userMessage =
+    let userMessage =
       HTTP_ERROR_MESSAGES[response.status] ?? HTTP_ERROR_MESSAGE_SERVER;
 
     let errorCode: string | undefined;
     try {
       const body = (await response.json()) as Record<string, unknown>;
       const error = (body.error ?? body) as Record<string, unknown>;
-      errorCode = error.code as string | undefined;
+      errorCode = (error.errorCode ?? error.code) as string | undefined;
       if (import.meta.env.DEV) {
         console.warn('[FabricClient] API error', response.status, body);
       }
@@ -122,6 +150,7 @@ export class FabricClient {
       }
     }
 
+    if (errorCode === CAPACITY_LIMIT_CODE) userMessage = CAPACITY_LIMIT_MESSAGE;
     return new FabricApiError(response.status, userMessage, errorCode);
   }
 
@@ -140,16 +169,17 @@ export class FabricClient {
     let continuationToken: string | undefined;
     do {
       const url = continuationToken
-        ? `${path}${path.includes('?') ? '&' : '?'}continuationToken=${continuationToken}`
+        ? `${path}${path.includes('?') ? '&' : '?'}continuationToken=${encodeURIComponent(continuationToken)}`
         : path;
       const response = await this.get<PaginatedResponse<T>>(url);
       if (!Array.isArray(response.value)) {
-        // The API returned an unexpected response shape. Log in dev so we can
-        // diagnose, then bail out with what we have rather than crashing.
-        if (import.meta.env.DEV) {
-          console.warn('[FabricClient] listAll: unexpected response, no "value" array', path, response);
-        }
-        break;
+        // Returning what we have would show a governance result that looks complete and
+        // is not. Fail loudly so the caller's error state tells the user.
+        throw new FabricApiError(
+          502,
+          'Fabric returned an unexpected response, so the list may be incomplete.',
+          'UnexpectedResponseShape',
+        );
       }
       results.push(...response.value);
       continuationToken = response.continuationToken;

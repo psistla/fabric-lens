@@ -1,10 +1,11 @@
 import type { Workspace } from './types/workspace';
 import type { Item } from './types/item';
 import type { Capacity } from './types/capacity';
-import type { WorkspaceUser, GroupMember, ResolvedGroup } from './types/admin';
+import type { WorkspaceUser, GroupMember, ResolvedGroup, AdminWorkspace } from './types/admin';
 import type { TenantSetting } from './types/tenantSettings';
 import type { WidelySharedArtifact } from './types/widelyShared';
 import type { ActivityEvent } from './types/activityEvents';
+import type { NetworkCommunicationPolicy } from './types/networkPolicy';
 
 export const isMsalConfigured =
   !!import.meta.env.VITE_MSAL_CLIENT_ID &&
@@ -830,6 +831,53 @@ const itemsMap: Record<string, Item[]> = {
     { id: 'item-35-1', displayName: 'Q3 Summary', description: 'Q3 executive summary', type: 'PaginatedReport', workspaceId: 'ws-35' },
   ],
 };
+
+export function getMockAdminWorkspaces(): AdminWorkspace[] {
+  return mockWorkspaces.map((w) => ({
+    id: w.id,
+    name: w.displayName,
+    type: w.type,
+    state: w.state,
+    capacityId: w.capacityId,
+    domainId: w.domainId,
+  }));
+}
+
+const DENY = { defaultAction: 'Deny' as const };
+
+/** Mostly open, with four protected workspaces so every posture shows in the demo. */
+export function getMockNetworkPolicies(): NetworkCommunicationPolicy[] {
+  return mockWorkspaces.map((w, i): NetworkCommunicationPolicy => {
+    const base = { workspaceId: w.id, workspaceName: w.displayName, workspaceType: 'Workspace' };
+    if (i === 0) {
+      return {
+        ...base,
+        inbound: {
+          publicAccessRules: DENY,
+          firewall: { rules: [{ displayName: 'Corporate network', value: '10.0.0.0-10.255.255.255' }] },
+        },
+        outbound: {
+          publicAccessRules: DENY,
+          git: DENY,
+          managedPrivateEndpoints: [
+            {
+              id: 'mpe-1',
+              name: 'SqlProdEndpoint',
+              targetPrivateLinkResourceId: '/subscriptions/demo/resourceGroups/rg-prod/providers/Microsoft.Sql/servers/sql-prod',
+              targetSubresourceType: 'sqlServer',
+              provisioningState: 'Succeeded',
+              connectionState: { status: 'Approved' },
+            },
+          ],
+        },
+      };
+    }
+    if (i === 1) return { ...base, inbound: { publicAccessRules: DENY } };
+    if (i === 2) return { ...base, outbound: { publicAccessRules: DENY, git: { defaultAction: 'Allow' } } };
+    if (i === 3) return { ...base, outbound: { publicAccessRules: DENY, git: DENY } };
+    return base;
+  });
+}
 
 export function getMockWorkspaceItems(workspaceId: string): Item[] {
   return itemsMap[workspaceId] ?? [];

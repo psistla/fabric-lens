@@ -5,6 +5,7 @@ import {
   LayoutDashboard,
   FolderOpen,
   Gauge,
+  Network,
   Shield,
   Settings,
   Info,
@@ -28,6 +29,7 @@ const BASE_NAV_ITEMS: Omit<NavItem, 'badge'>[] = [
   { label: 'Workspaces', path: '/workspaces', icon: FolderOpen },
   { label: 'Capacity', path: '/capacity', icon: Gauge },
   { label: 'Security', path: '/security', icon: Shield },
+  { label: 'Network', path: '/network', icon: Network },
   { label: 'Settings', path: '/settings', icon: Settings },
 ];
 

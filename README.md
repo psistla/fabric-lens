@@ -30,12 +30,11 @@ is no server.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/architecture-dark.png">
-  <img alt="You sign in with Entra ID; fabric-lens runs in your browser and calls the Fabric, Admin, and ARM APIs directly over read-only HTTPS. No server, no database, no telemetry sits in between." src="docs/architecture-light.png">
+  <img alt="You sign in with Entra ID; fabric-lens runs in your browser and calls the Fabric and Fabric Admin APIs directly over read-only HTTPS. No server, no database, no telemetry sits in between." src="docs/architecture-light.png">
 </picture>
 
 - **Read-only.** Every Fabric and Graph scope is a `*.Read.All` delegated permission, and the app
-  issues no writes. The one exception in naming is Azure Service Management, where `user_impersonation`
-  is the only delegated scope Azure offers; it is used solely for capacity read calls.
+  issues no writes.
 - **Nothing stored.** Tenant data lives in memory for the session and is never persisted or sent
   anywhere. The only things written to browser storage are your theme preference and the MSAL token
   cache, which uses `sessionStorage` so tokens die with the tab.
@@ -53,7 +52,8 @@ Details in [SECURITY.md](SECURITY.md).
 |--|--|
 | **Tenant health at a glance** | A single tenant score, then the Health Grid: a dense tile map of every workspace's grade, worst first. Governance issues and a security summary follow; distribution charts sit behind a fold |
 | **Workspace health scoring** | Every workspace scored across 9 governance checks (description, capacity, domain, workspace identity, naming, active items, data layer, item count, tag coverage) and graded A to F. [How scoring works](https://fabric-lens.com/about) |
-| **Security posture** | A posture score and top findings lead, then drill-in areas for Access, Sharing, Settings, and Lifecycle. Flags over-permissioned users and expands Entra ID group membership via Microsoft Graph (opt-in) |
+| **Security posture** | A posture score and top findings lead, then drill-in areas for Access, Sharing, Settings, and Lifecycle. Flags over-permissioned users and orphaned or deleted workspaces, and expands Entra ID group membership via Microsoft Graph (opt-in) |
+| **Network posture** | Which workspaces block inbound or outbound public network access, with IP firewall rule and managed private endpoint counts, from the tenant-wide workspace network policies API. Needs the Fabric Administrator role |
 | **Exposure detection** | Widely shared reports and semantic models reachable by the entire organization, high-risk tenant settings (PublishToWeb, external sharing), and org-wide sharing that bypasses domain boundaries |
 | **Ghost workspaces** | Workspaces with no recorded user activity in the last 28 days, the full retention window of the Power BI audit log |
 | **Capacity and cost** | SKUs, regions, and states, plus a cost calculator that opens on your own largest capacity and prices it at **that region's Azure retail rate**, not one flat number |
@@ -130,7 +130,6 @@ your Entra ID app registration details.
 | Microsoft Fabric | `Workspace.Read.All` | Delegated |
 | Microsoft Fabric | `Item.Read.All` | Delegated |
 | Microsoft Fabric | `Capacity.Read.All` | Delegated |
-| Azure Service Management | `user_impersonation` | Delegated |
 
 **Requested on demand, first visit to the Security page:**
 
